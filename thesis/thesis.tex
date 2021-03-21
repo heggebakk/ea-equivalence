@@ -1,0 +1,92 @@
+\documentclass[12pt, a4paper, openright, twoside, final]{memoir}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\usepackage{fontspec}
+
+\defaultfontfeatures{Ligatures=TeX}
+\newfontfeature{Microtype}{protrusion=default;expansion=default}
+\usepackage[final]{microtype}
+
+\usepackage{subfiles}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+\usepackage[autopunct=true,
+            strict=true,
+            autostyle=true]{csquotes}
+\usepackage[useprefix=true,
+            giveninits=true,
+            uniquename=init,
+            style=authoryear,
+            sortlocale=nb_NO,
+            autolang=hyphen,
+            language=auto,
+            sortcites=true,
+            dashed=false,
+            maxcitenames=2,
+            maxbibnames=99,
+            url=false,
+            backend=biber]{biblatex}
+\bibliography{references.bib}
+\SetCiteCommand{\parencite}
+
+\begin{document}
+\begin{titlingpage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\centering % Center everything on the page
+
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{\LARGE University of Bergen \\ Department of informatics}\\[1.5cm] % Name of your university/college
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.5cm]
+\begin{Huge}
+	\bfseries{Title of thesis}\\[0.7cm] % Title of your document
+\end{Huge}
+\HRule \\[0.5cm]
+
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+\large \emph{Author:} Marie Heggebakk\\
+\large \emph{Supervisors:} Lilya Budaghyan, Nikolay Stoyanov Kaleyski\\[2cm]
+
+%----------------------------------------------------------------------------------------
+%   LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\centerline{\includegraphics[scale=1.8]{figure/UiB-logo}}
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+
+{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlingpage}
+
+\tableofcontents*
+\chapter{Introduction}
+\section{Background}
+
+\printbibliography
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
