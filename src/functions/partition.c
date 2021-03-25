@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "computationOfMultiplicities.h"
+#include "partition.h"
 
 typedef struct vbfTruthTable truthTable;
+typedef struct partition partition;
 
 int compare(const void *a, const void *b) {
     return (*(int *) a - *(int *) b);
@@ -12,7 +13,7 @@ int compare(const void *a, const void *b) {
  * Works only for k = 4
  * TODO: Make it work for all k = even
  */
-void computationOfMultiplicities(truthTable * tt, int k) {
+void partitionElements(truthTable * tt, int k, int t) {
     if (k % 2 != 0) {
         printf("k is not even");
         exit(1);
@@ -57,7 +58,7 @@ void computationOfMultiplicities(truthTable * tt, int k) {
     }
     result[uniques] = count;
     qsort(&result[0], uniques + 1, sizeof(size_t), compare);
-    printf("Multiplicities: ");
+    printf("Partitions: ");
     for (int i = 0; i < uniques + 1; ++i) {
         printf("%zu ", result[i]);
     }
