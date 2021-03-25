@@ -1,7 +1,7 @@
 #ifndef SRC_COMPUTATIONOFMULTIPLICITIES_H
 #define SRC_COMPUTATIONOFMULTIPLICITIES_H
 #include "../structs.h"
-#define DIM2SIZE(D) ( 1L << D )
-void computationOfMultiplicities(struct vbfTruthTable *tt);
+
+void computationOfMultiplicities(struct vbfTruthTable *tt, int k);
 
 #endif //SRC_COMPUTATIONOFMULTIPLICITIES_H

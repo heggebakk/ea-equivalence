@@ -12,9 +12,14 @@ int compare(const void *a, const void *b) {
  * Works only for k = 4
  * TODO: Make it work for all k = even
  */
-void computationOfMultiplicities(truthTable * tt) {
+void computationOfMultiplicities(truthTable * tt, int k) {
+    if (k % 2 != 0) {
+        printf("k is not even");
+        exit(1);
+    }
+
     size_t *multiplicities;
-    multiplicities = malloc(sizeof(int) * tt->elements);
+    multiplicities = malloc(sizeof(size_t) * tt->elements);
 
     for (int i = 0; i < tt->elements; ++i) {
         multiplicities[i] = 0;
@@ -32,7 +37,28 @@ void computationOfMultiplicities(truthTable * tt) {
 
     qsort(&multiplicities[0], tt->elements, sizeof(size_t), compare);
 
-    for (int i = 0; i < tt->elements; i++) {
-        printf("%zu\n", multiplicities[i]);
+//    for (int i = 0; i < tt->elements; i++) {
+//        printf("%zu\n", multiplicities[i]);
+//    }
+
+    size_t *result;
+    result = calloc(tt->elements, sizeof(size_t));
+    int current = multiplicities[0];
+    int count = 0;
+    int uniques = 0;
+    for (int i = 0; i < tt->elements; ++i) {
+        if (multiplicities[i] != current) {
+            result[uniques] = count;
+            current = multiplicities[i];
+            count = 0;
+            uniques += 1;
+        }
+        count += 1;
+    }
+    result[uniques] = count;
+    qsort(&result[0], uniques + 1, sizeof(size_t), compare);
+    printf("Multiplicities: ");
+    for (int i = 0; i < uniques + 1; ++i) {
+        printf("%zu ", result[i]);
     }
 }
