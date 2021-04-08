@@ -30,7 +30,7 @@ void partitionElements(truthTable * tt, int k, int t) {
         for (int x2 = 0; x2 < tt->elements; ++x2) {
             for (int x3 = 0; x3 < tt->elements; ++x3) {
                 int x4 = x1 ^ x2 ^ x3;
-                int value = tt->array[x1] ^ tt->array[x2] ^ tt->array[x3] ^ tt->array[x4];
+                int value = tt->array[x1] ^ tt->array[x2] ^ tt->array[x3] ^ tt->array[x4] ^ t;
                 multiplicities[value] += 1;
             }
         }
@@ -44,7 +44,7 @@ void partitionElements(truthTable * tt, int k, int t) {
 
     size_t *result;
     result = calloc(tt->elements, sizeof(size_t));
-    int current = multiplicities[0];
+    size_t current = multiplicities[0];
     int count = 0;
     int uniques = 0;
     for (int i = 0; i < tt->elements; ++i) {
@@ -56,6 +56,7 @@ void partitionElements(truthTable * tt, int k, int t) {
         }
         count += 1;
     }
+
     result[uniques] = count;
     qsort(&result[0], uniques + 1, sizeof(size_t), compare);
     printf("Partitions: ");
