@@ -14,6 +14,7 @@ int comparePartition (const void *a, const void *b) {
 }
 
 /*
+ * Partition elements where k = even
  * Works only for k = 4
  * TODO: Make it work for all k = even
  */
@@ -45,6 +46,7 @@ partition partitionElements(truthTable * tt, int k, int t) {
     size_t current = multiplicities[0];
     int numBuckets = 0;
     int count = 0;
+    // Count the number of different multiplicities
     for (int i = 0; i < tt->elements; ++i) {
         if (multiplicities[i] != current) {
             current = multiplicities[i];
@@ -84,5 +86,6 @@ partition partitionElements(truthTable * tt, int k, int t) {
     for (int i = 0; i < partitions.numBuckets; ++i) {
         printf("[%zu, %zu] ", partitions.buckets[i].bucketSize, partitions.buckets[i].value);
     }
+    printf("\n");
     return partitions;
 }
