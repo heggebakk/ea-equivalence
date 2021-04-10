@@ -3,10 +3,14 @@
 #include "partition.h"
 
 typedef struct vbfTruthTable truthTable;
-typedef struct partition partition;
+typedef struct vbfPartitions partition;
 
 int compare(const void *a, const void *b) {
     return (*(int *) a - *(int *) b);
+}
+
+int comparePartition (const void *a, const void *b) {
+    return (int)(((struct vbfPartition*) a) -> bucketSize - ((struct vbfPartition*)b) -> bucketSize);
 }
 
 /*
@@ -36,31 +40,53 @@ void partitionElements(truthTable * tt, int k, int t) {
         }
     }
 
-    qsort(&multiplicities[0], tt->elements, sizeof(size_t), compare);
+    qsort(multiplicities, tt->elements, sizeof(size_t), compare);
 
 //    for (int i = 0; i < tt->elements; i++) {
-//        printf("%zu\n", multiplicities[i]);
+//        printf("%zu, ", multiplicities[i]);
 //    }
+//    printf("\n");
 
-    size_t *result;
-    result = calloc(tt->elements, sizeof(size_t));
     size_t current = multiplicities[0];
+    int numBuckets = 0;
     int count = 0;
-    int uniques = 0;
     for (int i = 0; i < tt->elements; ++i) {
         if (multiplicities[i] != current) {
-            result[uniques] = count;
             current = multiplicities[i];
             count = 0;
-            uniques += 1;
+            numBuckets += 1;
+        }
+        count += 1;
+    }
+    numBuckets += 1;
+    printf("Num buckets: %d\n", numBuckets);
+
+    partition partitions;
+    partitions.buckets = malloc(sizeof (struct vbfPartition) * numBuckets);
+    partitions.dimension = tt->dimension;
+
+    current = multiplicities[0];
+    partitions.numBuckets = 0;
+    count = 0;
+    for (int i = 0; i < tt->elements; ++i) {
+        if (multiplicities[i] != current) {
+            partitions.buckets[partitions.numBuckets].bucketSize = count;
+            partitions.buckets[partitions.numBuckets].value = current;
+            current = multiplicities[i];
+            count = 0;
+            partitions.numBuckets += 1;
         }
         count += 1;
     }
 
-    result[uniques] = count;
-    qsort(&result[0], uniques + 1, sizeof(size_t), compare);
+    partitions.buckets[partitions.numBuckets].bucketSize = count;
+    partitions.buckets[partitions.numBuckets].value = current;
+    partitions.numBuckets += 1;
+
+    qsort(partitions.buckets, partitions.numBuckets, sizeof(struct vbfPartition), comparePartition);
+
     printf("Partitions: ");
-    for (int i = 0; i < uniques + 1; ++i) {
-        printf("%zu ", result[i]);
+    for (int i = 0; i < partitions.numBuckets; ++i) {
+        printf("[%zu, %zu] ", partitions.buckets[i].bucketSize, partitions.buckets[i].value);
     }
 }
