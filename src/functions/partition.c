@@ -17,7 +17,7 @@ int comparePartition (const void *a, const void *b) {
  * Works only for k = 4
  * TODO: Make it work for all k = even
  */
-void partitionElements(truthTable * tt, int k, int t) {
+partition partitionElements(truthTable * tt, int k, int t) {
     if (k % 2 != 0) {
         printf("k is not even");
         exit(1);
@@ -41,11 +41,6 @@ void partitionElements(truthTable * tt, int k, int t) {
     }
 
     qsort(multiplicities, tt->elements, sizeof(size_t), compare);
-
-//    for (int i = 0; i < tt->elements; i++) {
-//        printf("%zu, ", multiplicities[i]);
-//    }
-//    printf("\n");
 
     size_t current = multiplicities[0];
     int numBuckets = 0;
@@ -89,4 +84,5 @@ void partitionElements(truthTable * tt, int k, int t) {
     for (int i = 0; i < partitions.numBuckets; ++i) {
         printf("[%zu, %zu] ", partitions.buckets[i].bucketSize, partitions.buckets[i].value);
     }
+    return partitions;
 }

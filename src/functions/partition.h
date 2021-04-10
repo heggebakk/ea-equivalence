@@ -2,6 +2,6 @@
 #define SRC_PARTITION_H
 #include "../utils/structs.h"
 
-void partitionElements(struct vbfTruthTable *tt, int k, int t);
+struct vbfPartitions partitionElements(struct vbfTruthTable *tt, int k, int t);
 
 #endif //SRC_PARTITION_H
