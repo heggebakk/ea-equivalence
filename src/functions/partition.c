@@ -10,7 +10,7 @@ int compare(const void *a, const void *b) {
 }
 
 int comparePartition (const void *a, const void *b) {
-    return (int)(((struct vbfPartition*) a) -> bucketSize - ((struct vbfPartition*)b) -> bucketSize);
+    return (int)(((struct vbfBucket*) a) -> bucketSize - ((struct vbfBucket*)b) -> bucketSize);
 }
 
 /*
@@ -59,7 +59,7 @@ partition partitionElements(truthTable * tt, int k, int t) {
     printf("Num buckets: %d\n", numBuckets);
 
     partition partitions;
-    partitions.buckets = malloc(sizeof (struct vbfPartition) * numBuckets);
+    partitions.buckets = malloc(sizeof (struct vbfBucket) * numBuckets);
     partitions.dimension = tt->dimension;
 
     current = multiplicities[0];
@@ -80,7 +80,7 @@ partition partitionElements(truthTable * tt, int k, int t) {
     partitions.buckets[partitions.numBuckets].value = current;
     partitions.numBuckets += 1;
 
-    qsort(partitions.buckets, partitions.numBuckets, sizeof(struct vbfPartition), comparePartition);
+    qsort(partitions.buckets, partitions.numBuckets, sizeof(struct vbfBucket), comparePartition);
 
     printf("Partitions: ");
     for (int i = 0; i < partitions.numBuckets; ++i) {

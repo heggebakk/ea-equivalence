@@ -7,7 +7,7 @@ struct vbfTruthTable {
     int * array;
 };
 
-struct vbfPartition {
+struct vbfBucket {
     size_t bucketSize;
     size_t value;
 };
@@ -15,7 +15,7 @@ struct vbfPartition {
 struct vbfPartitions {
     size_t dimension;
     size_t numBuckets;
-    struct vbfPartition *buckets;
+    struct vbfBucket *buckets;
 };
 
 #endif //SRC_STRUCTS_H
