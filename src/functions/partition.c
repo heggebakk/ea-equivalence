@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "partition.h"
+#include "stdbool.h"
 
 typedef struct vbfTruthTable truthTable;
 typedef struct vbfPartitions partition;
@@ -27,6 +28,9 @@ partition partitionFunction(truthTable * function, int k, int t) {
 
     size_t *multiplicities;
     multiplicities = malloc(sizeof(size_t) * function->elements);
+    size_t *uniqueMultiplicities;
+    uniqueMultiplicities = malloc(sizeof(size_t) * function->elements); // List with the multiplicity
+    int uniqueCount = 0;
 
     for (int i = 0; i < function->elements; ++i) {
         multiplicities[i] = 0;
@@ -38,55 +42,71 @@ partition partitionFunction(truthTable * function, int k, int t) {
                 int x4 = x1 ^x2 ^x3;
                 int value = function->array[x1] ^function->array[x2] ^function->array[x3] ^function->array[x4] ^t;
                 multiplicities[value] += 1;
+                for (int i = 0; i < uniqueCount; ++i) {
+                    if (uniqueMultiplicities[i] != value) {
+                        uniqueMultiplicities[uniqueCount] = value;
+                        uniqueCount += 1;
+                    }
+                }
             }
         }
     }
 
-    qsort(multiplicities, function->elements, sizeof(size_t), compare);
-
-    size_t current = multiplicities[0];
+    bucket *buckets;
+    buckets = malloc(sizeof(bucket) * function->elements);
     int numBuckets = 0;
-    int count = 0;
-    // Count the number of different multiplicities
-    for (int i = 0; i < function->elements; ++i) {
-        if (multiplicities[i] != current) {
-            current = multiplicities[i];
-            count = 0;
+
+    for (size_t i = 0; i < function->elements; ++i) {
+        size_t multiplicity = multiplicities[i];
+        // Check if multipl. is in buckets, if false add multip. to buckets
+        bool multiplicityInBuckets = false;
+        for (int b = 0; b < numBuckets; ++b) {
+            if (buckets[b].multiplicity == multiplicity) {
+                multiplicityInBuckets = true;
+                buckets[b].elements[buckets[b].size] = i;
+                buckets[b].size += 1;
+                break;
+            }
+        }
+        if (!multiplicityInBuckets) {
+            // Add a new bucket to the buckets list
+            bucket newBucket;
+            newBucket.size = 1;
+            newBucket.multiplicity = multiplicity;
+            newBucket.elements = malloc((sizeof(size_t) * function->elements));
+            newBucket.elements[0] = i;
+            buckets[numBuckets] = newBucket;
             numBuckets += 1;
         }
-        count += 1;
     }
-    numBuckets += 1;
-    printf("Num buckets: %d\n", numBuckets);
+    printf("Multiplicities: ");
+    for (int i = 0; i < function->elements; ++i) {
+        printf("%zu ", multiplicities[i]);
+    }
+    printf("\n");
+    for (int i = 0; i < numBuckets; ++i) {
+        printf("%d: ", buckets[i].size);
+        for (int j = 0; j < buckets[i].size; ++j) {
+            printf("%zu ", buckets[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    free(multiplicities);
 
     partition partitions;
-    partitions.buckets = malloc(sizeof (struct vbfBucket) * numBuckets);
+    partitions.buckets = malloc(sizeof (bucket) * numBuckets);
+    partitions.buckets = buckets;
     partitions.dimension = function->dimension;
-
-    current = multiplicities[0];
-    partitions.numBuckets = 0;
-    count = 0;
-    for (int i = 0; i < function->elements; ++i) {
-        if (multiplicities[i] != current) {
-            partitions.buckets[partitions.numBuckets].size= count;
-            partitions.buckets[partitions.numBuckets].elements = current;
-            current = multiplicities[i];
-            count = 0;
-            partitions.numBuckets += 1;
-        }
-        count += 1;
-    }
-
-    partitions.buckets[partitions.numBuckets].size = count;
-    partitions.buckets[partitions.numBuckets].elements = current;
-    partitions.numBuckets += 1;
+    partitions.numBuckets = numBuckets;
 
     qsort(partitions.buckets, partitions.numBuckets, sizeof(struct vbfBucket), comparePartition);
 
     printf("Partitions: ");
     for (int i = 0; i < partitions.numBuckets; ++i) {
-        printf("[%zu, %zu] ", partitions.buckets[i].size, partitions.buckets[i].elements);
+        printf("[%d, %zu] ", partitions.buckets[i].size, partitions.buckets[i].multiplicity);
     }
     printf("\n");
+
     return partitions;
 }
