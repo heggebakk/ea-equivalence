@@ -11,9 +11,9 @@ struct vbfTruthTable {
  * A bucket contains a list of all elements and the size of the bucket.
  */
 struct vbfBucket {
-    size_t multiplicities;
+    size_t multiplicity;
     size_t *elements;
-    size_t size;
+    int size;
 };
 
 struct vbfPartitions {
