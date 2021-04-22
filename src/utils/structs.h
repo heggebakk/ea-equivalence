@@ -22,4 +22,8 @@ struct vbfPartitions {
     struct vbfBucket *buckets;
 };
 
+struct vbfPermutation {
+
+};
+
 #endif //SRC_STRUCTS_H
