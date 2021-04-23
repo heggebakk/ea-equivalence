@@ -7,8 +7,6 @@ typedef struct vbfTruthTable truthTable;
 typedef struct vbfPartitions partition;
 typedef struct vbfBucket bucket;
 
-void freeBuckets(bucket *buckets);
-
 int compare(const void *a, const void *b) {
     return (*(int *) a - *(int *) b);
 }
