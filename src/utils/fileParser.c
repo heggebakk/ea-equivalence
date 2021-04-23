@@ -14,7 +14,7 @@ truthTable parseTruthTable(const char* filename) {
     }
 
     truthTable tt;
-    fscanf(fp, "%zd", &tt.dimension);
+    fscanf(fp, "%d", &tt.dimension);
 
     tt.elements = (int) pow(2, tt.dimension);
     tt.array = (int *) malloc(sizeof(int) * tt.elements);
@@ -23,7 +23,7 @@ truthTable parseTruthTable(const char* filename) {
         fscanf(fp, "%d", &tt.array[i]);
     }
     fclose(fp);
-    printf("Dimension: %zu\n", tt.dimension);
+    printf("Dimension: %d\n", tt.dimension);
     printf("Truth table: ");
     for (int i = 0; i < tt.elements; ++i) {
         printf("%d ", tt.array[i]);

@@ -7,10 +7,6 @@ typedef struct vbfTruthTable truthTable;
 typedef struct vbfPartitions partition;
 typedef struct vbfBucket bucket;
 
-int compare(const void *a, const void *b) {
-    return (*(int *) a - *(int *) b);
-}
-
 int comparePartition (const void *a, const void *b) {
     return (int)(((struct vbfBucket*) a) -> size - ((struct vbfBucket*)b) -> size);
 }
@@ -93,6 +89,7 @@ partition partitionFunction(truthTable * function, int k, int t) {
     }
 
     free(multiplicities);
+    free(uniqueMultiplicities);
 
     partition partitions;
     partitions.buckets = malloc(sizeof (bucket) * numBuckets);

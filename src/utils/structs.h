@@ -1,8 +1,9 @@
 #ifndef SRC_STRUCTS_H
 #define SRC_STRUCTS_H
+#include "stdio.h"
 
 struct vbfTruthTable {
-    size_t dimension;
+    int dimension;
     size_t elements;
     int * array;
 };
@@ -17,7 +18,7 @@ struct vbfBucket {
 };
 
 struct vbfPartitions {
-    size_t dimension;
+    int dimension;
     size_t numBuckets;
     struct vbfBucket *buckets;
 };
