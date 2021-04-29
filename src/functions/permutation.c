@@ -1,60 +1,19 @@
 #include <stdlib.h>
 #include "permutation.h"
 #include "math.h"
-typedef struct vbfPartitions partitions;
-typedef struct vbfBucket bucket;
-
-/**
- * Create a basis from the Identity matrix representation, but represented as integers.
- * @param dim The dimension
- * @return A list of binary representation in integers equal to the Identity matrix.
- */
-int * createBasis(int dim);
-/**
- * Find the bucket which holds the element b
- * @param b The element
- * @param partitions The partition holds all de buckets
- * @return The bucket where the element b lays
- */
-bucket findBucket(int b, partitions partitions);
-
-/**
- * Find at least one bucket which holds equal amount of elements
- * @param bucket The bucket to compare with
- * @param function The partition contains all the buckets the search over
- * @return At least one bucket
- */
-bucket findCorrespondingBucket(bucket bucket, partitions function);
+int *basis;
 
 void outerPermutation(partitions f, partitions g) {
-    int *basis = createBasis(f.dimension);
-    int sizeBasis = (int) pow(2, f.dimension);
+    basis = createBasis(f.dimension);
+    int n = f.dimension;
+    size_t sizeBasis = (size_t) pow(pow(2, n), n);
+    struct imagesOfElements images;
+    printf("Size basis: %zu\n", sizeBasis);
+    images.elements = (size_t *) malloc(sizeof(size_t) * sizeBasis);
+    images.size = 0;
+    int *generated = malloc(sizeof(int) * sizeBasis);
 
-    for (int b1 = 0; b1 < sizeBasis; ++b1) {
-        bucket bucketB1 = findBucket(basis[b1], f);
-        bucket bucketC1 = findCorrespondingBucket(bucketB1, g);
-        for (int c1 = 0; c1 < bucketC1.size; ++c1) {
-            for (int b2 = 0; b2 < sizeBasis; ++b2) {
-                bucket bucketB2 = findBucket(basis[b2], f);
-                bucket bucketC2 = findCorrespondingBucket(bucketB2, g);
-                for (int c2 = 0; c2 < bucketC2.size; ++c2) {
-                    bucket bucketB3 = findBucket(basis[b1 + b2], f);
-                    bucket bucketC3 = findBucket(basis[c1 + c2], g);
-                    if (bucketB3.size != bucketC3.size) {
-                        continue;
-                    }
-                }
-            }
-        }
-//        for (int b2 = 0; b2 < sizeBasis; ++b2) {
-//            bucket B3 = findBucket(basis[b1 + b2], f);
-//            bucket C3 = findBucket(basis[b1 + b2], g);
-//            if (B3.size == C3.size) {
-//                // TODO: Do something
-//                break;
-//            }
-//        }
-    }
+    recursive(0, images, f, g, n, generated);
 }
 
 bucket findCorrespondingBucket(bucket bucketB, partitions function) {
@@ -68,9 +27,9 @@ bucket findCorrespondingBucket(bucket bucketB, partitions function) {
     return result;
 }
 
-bucket findBucket(int b, partitions partitions) {
-    for (int i = 0; i < partitions.numBuckets; ++i) {
-        bucket bucket = partitions.buckets[i];
+bucket findBucket(int b, partitions function) {
+    for (int i = 0; i < function.numBuckets; ++i) {
+        bucket bucket = function.buckets[i];
         for (int j = 0; j < bucket.size; ++j) {
             if (bucket.elements[j] == b) {
                 return bucket;
@@ -82,10 +41,29 @@ bucket findBucket(int b, partitions partitions) {
 }
 
 int * createBasis(int dimension) {
-    int *basis;
     basis = malloc(sizeof(int) * dimension);
     for (int i = 0; i < dimension; ++i) {
         basis[i] = (int) pow(2, i);
     }
     return basis;
+}
+
+void recursive(int k, struct imagesOfElements images, partitions partitionF, partitions partitionG, int n,
+               int *generated) {
+    if (k == n) {
+        for (int i = 0; i < images.size; ++i) {
+            printf("Images of elements: %zu ", images.elements[i]);
+        }
+        printf("\nDone\n");
+        return;
+    }
+    bucket bf = findBucket(basis[k], partitionF); // Bucket of Pf containing basis[k]
+    bucket bg = findCorrespondingBucket(bf, partitionG); // Bucket of Pg corresponding to bf
+    for (int c = 0; c < bg.size; ++c) { // for c[k] in bg do..
+        printf("size: %zu\n", images.size);
+        images.size += (size_t) 1;
+
+//        images.elements[images.size] = bg.elements[basis[c]];
+    }
+    recursive(k + 1, images, partitionF, partitionG, n, generated);
 }

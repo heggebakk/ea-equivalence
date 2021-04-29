@@ -1,6 +1,47 @@
 #ifndef SRC_PERMUTATION_H
 #define SRC_PERMUTATION_H
 #include "../utils/structs.h"
+typedef struct vbfPartitions partitions;
+typedef struct vbfBucket bucket;
+
+struct imagesOfElements {
+    size_t *elements;
+    size_t size;
+};
+
+/**
+ * Create a basis from the Identity matrix representation, but represented as integers.
+ * @param dim The dimension
+ * @return A list of binary representation in integers equal to the Identity matrix.
+ */
+int * createBasis(int dim);
+
+/**
+ * Find the bucket which holds the element basis
+ * @param basis The element
+ * @param function The partition holds all de buckets
+ * @return The bucket where the element basis lays
+ */
+bucket findBucket(int basis, partitions function);
+
+/**
+ * Find at least one bucket which holds equal amount of elements
+ * @param bucket The bucket to compare with
+ * @param function The partition contains all the buckets the search over
+ * @return At least one bucket
+ */
+bucket findCorrespondingBucket(bucket bucket, partitions function);
+
+/**
+ * Recursive function
+ * @param k
+ * @param images
+ * @param partitionF
+ * @param partitionG
+ * @param n
+ * @param generated
+ */
+void recursive(int k, struct imagesOfElements images, partitions partitionF, partitions partitionG, int n, int *generated);
 /**
  *
  * @param f Function F

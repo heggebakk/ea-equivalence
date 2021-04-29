@@ -92,7 +92,7 @@ partition partitionFunction(truthTable * function, int k, int t) {
     free(uniqueMultiplicities);
 
     partition partitions;
-    partitions.buckets = malloc(sizeof (bucket) * numBuckets);
+    partitions.buckets = malloc(sizeof(bucket) * numBuckets);
     partitions.buckets = buckets;
     partitions.dimension = function->dimension;
     partitions.numBuckets = numBuckets;

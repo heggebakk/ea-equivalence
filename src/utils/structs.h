@@ -5,7 +5,7 @@
 struct vbfTruthTable {
     int dimension;
     size_t elements;
-    int * array;
+    int *array;
 };
 
 /**
@@ -23,7 +23,7 @@ struct vbfPartitions {
     struct vbfBucket *buckets;
 };
 
-struct vbfPermutation {
+struct vbfLinearPermutation{
 
 };
 
