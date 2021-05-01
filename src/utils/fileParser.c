@@ -33,3 +33,7 @@ truthTable parseTruthTable(const char* filename) {
     printf("\n");
     return tt;
 }
+
+void freeTruthTable(truthTable tt) {
+    free(tt.elements);
+}
