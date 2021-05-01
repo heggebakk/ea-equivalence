@@ -7,12 +7,18 @@ typedef struct vbfTruthTable truthTable;
 typedef struct vbfPartitions partition;
 typedef struct vbfBucket bucket;
 
+void freeBuckets(bucket *buckets);
+
+int compare(const void *a, const void *b) {
+    return (*(int *) a - *(int *) b);
+}
+
 int comparePartition (const void *a, const void *b) {
     return (int)(((struct vbfBucket*) a) -> size - ((struct vbfBucket*)b) -> size);
 }
 
 /*
- * Partition elements where k = even
+ * Partition size where k = even
  * Works only for k = 4
  * TODO: Make it work for all k = even
  */
@@ -23,20 +29,20 @@ partition partitionFunction(truthTable * function, int k, int t) {
     }
 
     size_t *multiplicities;
-    multiplicities = malloc(sizeof(size_t) * function->elements);
+    multiplicities = malloc(sizeof(size_t) * function->size);
     size_t *uniqueMultiplicities;
-    uniqueMultiplicities = malloc(sizeof(size_t) * function->elements); // List with the multiplicity
+    uniqueMultiplicities = malloc(sizeof(size_t) * function->size); // List with the multiplicity
     int uniqueCount = 0;
 
-    for (int i = 0; i < function->elements; ++i) {
+    for (int i = 0; i < function->size; ++i) {
         multiplicities[i] = 0;
     }
 
-    for (int x1 = 0; x1 < function->elements; ++x1) {
-        for (int x2 = 0; x2 < function->elements; ++x2) {
-            for (int x3 = 0; x3 < function->elements; ++x3) {
+    for (int x1 = 0; x1 < function->size; ++x1) {
+        for (int x2 = 0; x2 < function->size; ++x2) {
+            for (int x3 = 0; x3 < function->size; ++x3) {
                 int x4 = x1 ^x2 ^x3;
-                int value = function->array[x1] ^function->array[x2] ^function->array[x3] ^function->array[x4] ^t;
+                int value = function->elements[x1] ^function->elements[x2] ^function->elements[x3] ^function->elements[x4] ^t;
                 multiplicities[value] += 1;
                 for (int i = 0; i < uniqueCount; ++i) {
                     if (uniqueMultiplicities[i] != value) {
@@ -47,12 +53,12 @@ partition partitionFunction(truthTable * function, int k, int t) {
             }
         }
     }
-
+    free(uniqueMultiplicities);
     bucket *buckets;
-    buckets = malloc(sizeof(bucket) * function->elements);
+    buckets = malloc(sizeof(bucket) * function->size);
     int numBuckets = 0;
 
-    for (size_t i = 0; i < function->elements; ++i) {
+    for (size_t i = 0; i < function->size; ++i) {
         size_t multiplicity = multiplicities[i];
         // Check if multipl. is in buckets, if false add multip. to buckets
         bool multiplicityInBuckets = false;
@@ -69,16 +75,18 @@ partition partitionFunction(truthTable * function, int k, int t) {
             bucket newBucket;
             newBucket.size = 1;
             newBucket.multiplicity = multiplicity;
-            newBucket.elements = malloc((sizeof(size_t) * function->elements));
+            newBucket.elements = malloc((sizeof(size_t) * function->size));
             newBucket.elements[0] = i;
             buckets[numBuckets] = newBucket;
             numBuckets += 1;
         }
     }
     printf("Multiplicities: ");
-    for (int i = 0; i < function->elements; ++i) {
+    for (int i = 0; i < function->size; ++i) {
         printf("%zu ", multiplicities[i]);
     }
+    free(multiplicities);
+
     printf("\n");
     for (int i = 0; i < numBuckets; ++i) {
         printf("%d: ", buckets[i].size);
@@ -88,11 +96,9 @@ partition partitionFunction(truthTable * function, int k, int t) {
         printf("\n");
     }
 
-    free(multiplicities);
-    free(uniqueMultiplicities);
 
     partition partitions;
-    partitions.buckets = malloc(sizeof(bucket) * numBuckets);
+    partitions.buckets = malloc(sizeof (bucket) * numBuckets);
     partitions.buckets = buckets;
     partitions.dimension = function->dimension;
     partitions.numBuckets = numBuckets;
@@ -106,4 +112,14 @@ partition partitionFunction(truthTable * function, int k, int t) {
     printf("\n");
 
     return partitions;
+}
+
+void freeBuckets(bucket *buckets) {
+    for (int i = 0; i < buckets->size; ++i) {
+        free(buckets[i].elements);
+    }
+}
+
+void freePartition(partition p) {
+    free(p.buckets);
 }

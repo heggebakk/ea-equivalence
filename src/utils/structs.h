@@ -3,13 +3,15 @@
 #include "stdio.h"
 
 struct vbfTruthTable {
-    int dimension;
-    size_t elements;
-    int *array;
+    size_t dimension;
+    size_t size;
+    int * elements;
 };
 
+void freeTruthTable(struct vbfTruthTable tt);
+
 /**
- * A bucket contains a list of all elements and the size of the bucket.
+ * A bucket contains a list of all size and the size of the bucket.
  */
 struct vbfBucket {
     size_t multiplicity;
@@ -18,12 +20,16 @@ struct vbfBucket {
 };
 
 struct vbfPartitions {
-    int dimension;
+    size_t dimension;
     size_t numBuckets;
     struct vbfBucket *buckets;
 };
 
-struct vbfLinearPermutation{
+void freePartition(struct vbfPartitions p);
+
+void freeBuckets(struct vbfBucket *buckets);
+
+struct vbfPermutation {
 
 };
 
