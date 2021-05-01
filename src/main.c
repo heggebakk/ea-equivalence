@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "utils/fileParser.h"
 #include "functions/partition.h"
 
@@ -9,5 +10,8 @@ int main(void) {
     filename = "/home/marie/MasterUiB/ea-equivalence/src/resources/TT_library/dim6/q_6_1.tt";
     truthTable tt = parseTruthTable(filename);
     partitions partition = partitionFunction(&tt, 4, 0);
+    freeTruthTable(tt);
+    freeBuckets(partition.buckets);
+    free(partition.buckets);
     return 0;
 }

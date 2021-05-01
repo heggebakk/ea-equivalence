@@ -16,18 +16,24 @@ truthTable parseTruthTable(const char* filename) {
     truthTable tt;
     fscanf(fp, "%zd", &tt.dimension);
 
-    tt.elements = (int) pow(2, tt.dimension);
-    tt.array = (int *) malloc(sizeof(int) * tt.elements);
-    printf("Truth table size: %zu \n", tt.elements);
-    for (int i = 0; i < tt.elements; ++i) {
-        fscanf(fp, "%d", &tt.array[i]);
+    size_t size = (size_t) pow(2, (double) tt.dimension);
+    tt.elements = (int *) malloc(sizeof(int) * size);
+    tt.size = size;
+    printf("Truth table size: %zu \n", tt.size);
+    for (int i = 0; i < tt.size; ++i) {
+        fscanf(fp, "%d", &tt.elements[i]);
     }
     fclose(fp);
+
     printf("Dimension: %zu\n", tt.dimension);
     printf("Truth table: ");
-    for (int i = 0; i < tt.elements; ++i) {
-        printf("%d ", tt.array[i]);
+    for (int i = 0; i < tt.size; ++i) {
+        printf("%d ", tt.elements[i]);
     }
     printf("\n");
     return tt;
+}
+
+void freeTruthTable(truthTable tt) {
+    free(tt.elements);
 }
