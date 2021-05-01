@@ -1,6 +1,9 @@
 #include "fileParser.h"
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
+
+typedef struct vbfTruthTable truthTable;
 
 truthTable parseTruthTable(const char* filename) {
     FILE *fp;
@@ -11,14 +14,14 @@ truthTable parseTruthTable(const char* filename) {
     }
 
     truthTable tt;
-    fscanf(fp, "%zu", &tt.dimension);
+    fscanf(fp, "%zd", &tt.dimension);
 
-    size_t size = 1L << tt.dimension;
-    tt.elements = (size_t *) malloc(sizeof(size_t) * size);
+    size_t size = (size_t) pow(2, (double) tt.dimension);
+    tt.elements = (int *) malloc(sizeof(int) * size);
     tt.size = size;
-    printf("Truth table bucketSize: %zu \n", tt.size);
+    printf("Truth table size: %zu \n", tt.size);
     for (int i = 0; i < tt.size; ++i) {
-        fscanf(fp, "%zu", &tt.elements[i]);
+        fscanf(fp, "%d", &tt.elements[i]);
     }
     fclose(fp);
 
@@ -29,4 +32,8 @@ truthTable parseTruthTable(const char* filename) {
     }
     printf("\n");
     return tt;
+}
+
+void freeTruthTable(truthTable tt) {
+    free(tt.elements);
 }
