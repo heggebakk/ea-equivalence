@@ -41,7 +41,7 @@ bucket findCorrespondingBucket(bucket bucket, partitions function);
  * @param n
  * @param generated
  */
-void recursive(int k, struct imagesOfElements images, partitions partitionF, partitions partitionG, int n, int *generated);
+void recursive(int k, struct imagesOfElements *images, partitions partitionF, partitions partitionG, int n, int *generated);
 /**
  *
  * @param f Function F
