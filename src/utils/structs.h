@@ -22,12 +22,12 @@ struct vbfBucket {
 struct vbfPartitions {
     size_t dimension;
     size_t numBuckets;
-    struct vbfBucket *buckets;
+    struct vbfBucket ** buckets;
 };
 
 void freePartition(struct vbfPartitions p);
 
-void freeBuckets(struct vbfBucket *buckets);
+void freeBuckets(struct vbfPartitions *);
 
 struct vbfPermutation {
 

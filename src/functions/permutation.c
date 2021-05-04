@@ -18,11 +18,12 @@ void outerPermutation(partitions f, partitions g) {
     recursive(0, images, f, g, n, generated);
     free(images->elements);
     free(images);
+    free(basis);
 }
 
 bucket findCorrespondingBucket(bucket bucketB, partitions function) {
     for (int i = 0; i < function.numBuckets; ++i) {
-        bucket currentBucket = function.buckets[i];
+        bucket currentBucket = (*function.buckets[i]);
         if (bucketB.size == currentBucket.size) {
             return currentBucket;
         }
@@ -33,7 +34,7 @@ bucket findCorrespondingBucket(bucket bucketB, partitions function) {
 
 bucket findBucket(int b, partitions function) {
     for (int i = 0; i < function.numBuckets; ++i) {
-        bucket bucket = function.buckets[i];
+        bucket bucket = (*function.buckets[i]);
         for (int j = 0; j < bucket.size; ++j) {
             if (bucket.elements[j] == b) {
                 return bucket;
