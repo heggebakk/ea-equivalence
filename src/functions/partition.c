@@ -63,7 +63,7 @@ partition partitionFunction(truthTable * function, int k, int t) {
         for (int b = 0; b < numBuckets; ++b) {
             if (buckets[b].multiplicity == multiplicity) {
                 multiplicityInBuckets = true;
-                buckets[b].elements[buckets[b].size] = i;
+                buckets[b].elements[buckets[b].size - 1] = i;
                 buckets[b].size += 1;
                 break;
             }
@@ -77,6 +77,7 @@ partition partitionFunction(truthTable * function, int k, int t) {
             newBucket.elements[0] = i;
             buckets[numBuckets] = newBucket;
             numBuckets += 1;
+            free(newBucket.elements);
         }
     }
     printf("Multiplicities: ");
