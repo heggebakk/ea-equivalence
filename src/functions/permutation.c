@@ -5,7 +5,7 @@ int *basis;
 
 void outerPermutation(partitions f, partitions g) {
     basis = createBasis(f.dimension);
-    int n = f.dimension;
+    int n = (int) f.dimension;
     size_t sizeBasis = (size_t) pow(pow(2, n), n);
     struct imagesOfElements images;
     printf("Size basis: %zu\n", sizeBasis);
@@ -40,7 +40,7 @@ bucket findBucket(int b, partitions function) {
     return result;
 }
 
-int * createBasis(int dimension) {
+int * createBasis(size_t dimension) {
     basis = malloc(sizeof(int) * dimension);
     for (int i = 0; i < dimension; ++i) {
         basis[i] = (int) pow(2, i);
