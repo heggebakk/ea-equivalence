@@ -8,7 +8,6 @@ typedef struct vbfPartitions partitions;
 
 int main(void) {
     char *filename;
-    //filename = "/home/marie/MasterUiB/ea-equivalence/src/resources/TT_library/dim6/q_6_1.tt";
     filename = "resources/TT_library/dim6/q_6_1.tt";
     truthTable functionF = parseTruthTable(filename);
     partitions partitionF = partitionFunction(&functionF, 4, 0);
