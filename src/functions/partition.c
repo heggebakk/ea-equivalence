@@ -7,8 +7,6 @@ typedef struct vbfTruthTable truthTable;
 typedef struct vbfPartitions partition;
 typedef struct vbfBucket bucket;
 
-void freeBuckets(bucket *buckets);
-
 int compare(const void *a, const void *b) {
     return (*(int *) a - *(int *) b);
 }
@@ -54,8 +52,8 @@ partition partitionFunction(truthTable * function, int k, int t) {
         }
     }
     free(uniqueMultiplicities);
-    bucket *buckets;
-    buckets = malloc(sizeof(bucket) * function->size);
+    bucket ** buckets;
+    buckets = malloc(sizeof(bucket*) * function->size);
     int numBuckets = 0;
 
     for (size_t i = 0; i < function->size; ++i) {
@@ -63,23 +61,21 @@ partition partitionFunction(truthTable * function, int k, int t) {
         // Check if multipl. is in buckets, if false add multip. to buckets
         bool multiplicityInBuckets = false;
         for (int b = 0; b < numBuckets; ++b) {
-            if (buckets[b].multiplicity == multiplicity) {
+            if (buckets[b]->multiplicity == multiplicity) {
                 multiplicityInBuckets = true;
-                buckets[b].elements[buckets[b].size - 1] = i;
-                buckets[b].size += 1;
+                buckets[b]->elements[buckets[b]->size] = i;
+                buckets[b]->size += 1;
                 break;
             }
         }
         if (!multiplicityInBuckets) {
             // Add a new bucket to the buckets list
-            bucket newBucket;
-            newBucket.size = 1;
-            newBucket.multiplicity = multiplicity;
-            newBucket.elements = malloc((sizeof(size_t) * function->size));
-            newBucket.elements[0] = i;
-            buckets[numBuckets] = newBucket;
+	    buckets[numBuckets] = malloc(sizeof(bucket));
+            buckets[numBuckets]->size = 1;
+            buckets[numBuckets]->multiplicity = multiplicity;
+            buckets[numBuckets]->elements = malloc((sizeof(size_t) * function->size));
+            buckets[numBuckets]->elements[0] = i;
             numBuckets += 1;
-            free(newBucket.elements);
         }
     }
     printf("Multiplicities: ");
@@ -90,37 +86,40 @@ partition partitionFunction(truthTable * function, int k, int t) {
 
     printf("\n");
     for (int i = 0; i < numBuckets; ++i) {
-        printf("%d: ", buckets[i].size);
-        for (int j = 0; j < buckets[i].size; ++j) {
-            printf("%zu ", buckets[i].elements[j]);
+        printf("%d: ", buckets[i]->size);
+        for (int j = 0; j < buckets[i]->size; ++j) {
+            printf("%zu ", buckets[i]->elements[j]);
         }
         printf("\n");
     }
 
 
     partition partitions;
-    partitions.buckets = malloc(sizeof(bucket) * numBuckets);
     partitions.buckets = buckets;
     partitions.dimension = function->dimension;
     partitions.numBuckets = numBuckets;
 
-    qsort(partitions.buckets, partitions.numBuckets, sizeof(struct vbfBucket), comparePartition);
+    //qsort(partitions.buckets, partitions.numBuckets, sizeof(struct vbfBucket), comparePartition);
 
     printf("Partitions: ");
     for (int i = 0; i < partitions.numBuckets; ++i) {
-        printf("[%d, %zu] ", partitions.buckets[i].size, partitions.buckets[i].multiplicity);
+        printf("[%d, %zu] ", partitions.buckets[i]->size, partitions.buckets[i]->multiplicity);
     }
     printf("\n");
 
     return partitions;
 }
 
-void freeBuckets(bucket *buckets) {
-    for (int i = 0; i < buckets->size; ++i) {
-        free(buckets[i].elements);
+void freeBuckets(partition * partition) {
+    for (int i = 0; i < partition->numBuckets; ++i) {
+        free(partition->buckets[i]->elements);
     }
 }
 
 void freePartition(partition p) {
+    printf("numBuckets: %lu\n", p.numBuckets);
+    for(int i = 0; i < p.numBuckets; ++i) {
+      free(p.buckets[i]);
+    }
     free(p.buckets);
 }
