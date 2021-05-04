@@ -14,7 +14,7 @@ struct imagesOfElements {
  * @param dim The dimension
  * @return A list of binary representation in integers equal to the Identity matrix.
  */
-int * createBasis(int dim);
+int * createBasis(size_t dim);
 
 /**
  * Find the bucket which holds the element basis
