@@ -5,7 +5,7 @@ void freeTruthTable(truthTable tt) {
     free(tt.elements);
 }
 
-void freeBuckets(partitions * partition) {
+void freeBuckets(partitions *partition) {
     for (int i = 0; i < partition->numBuckets; ++i) {
         free(partition->buckets[i]->elements);
     }
@@ -22,10 +22,3 @@ void freeImagesOfElements(imagesOfElements *images) {
     free(images->elements);
     free(images);
 }
-
-
-void freeArray(array *arr) {
-    free(arr->array);
-    free(arr);
-}
-
