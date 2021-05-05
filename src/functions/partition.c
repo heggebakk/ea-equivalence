@@ -3,10 +3,6 @@
 #include "partition.h"
 #include "stdbool.h"
 
-typedef struct vbfTruthTable truthTable;
-typedef struct vbfPartitions partition;
-typedef struct vbfBucket bucket;
-
 int compare(const void *a, const void *b) {
     return (*(int *) a - *(int *) b);
 }
@@ -20,7 +16,7 @@ int comparePartition (const void *a, const void *b) {
  * Works only for k = 4
  * TODO: Make it work for all k = even
  */
-partition partitionFunction(truthTable * function, int k, int t) {
+partitions partitionFunction(truthTable * function, int k, int t) {
     if (k % 2 != 0) {
         printf("k is not even");
         exit(1);
@@ -94,7 +90,7 @@ partition partitionFunction(truthTable * function, int k, int t) {
     }
 
 
-    partition partitions;
+    partitions partitions;
     partitions.buckets = buckets;
     partitions.dimension = function->dimension;
     partitions.numBuckets = numBuckets;
@@ -110,13 +106,13 @@ partition partitionFunction(truthTable * function, int k, int t) {
     return partitions;
 }
 
-void freeBuckets(partition * partition) {
+void freeBuckets(partitions * partition) {
     for (int i = 0; i < partition->numBuckets; ++i) {
         free(partition->buckets[i]->elements);
     }
 }
 
-void freePartition(partition p) {
+void freePartition(partitions p) {
     for(int i = 0; i < p.numBuckets; ++i) {
       free(p.buckets[i]);
     }

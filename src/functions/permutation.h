@@ -1,8 +1,6 @@
 #ifndef SRC_PERMUTATION_H
 #define SRC_PERMUTATION_H
 #include "../utils/structs.h"
-typedef struct vbfPartitions partitions;
-typedef struct vbfBucket bucket;
 
 struct imagesOfElements {
     size_t *elements;
