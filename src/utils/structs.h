@@ -24,10 +24,24 @@ typedef struct vbfPartitions {
     struct vbfBucket ** buckets;
 } partitions;
 
+typedef struct imagesOfElements {
+    size_t *elements;
+    size_t size;
+} imagesOfElements;
+
+typedef struct array {
+    int size;
+    size_t *array;
+} array;
+
 void freeTruthTable(truthTable tt);
 
 void freePartition(partitions p);
 
 void freeBuckets(partitions *);
+
+void freeImagesOfElements(imagesOfElements *images);
+
+void freeArray(array *arr);
 
 #endif //SRC_STRUCTS_H

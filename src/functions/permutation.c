@@ -1,15 +1,17 @@
 #include <stdlib.h>
 #include "permutation.h"
 #include "math.h"
+
 int *basis;
+
 
 void outerPermutation(partitions f, partitions g) {
     basis = createBasis(f.dimension);
     int n = (int) f.dimension;
 
     size_t sizeBasis = (size_t) pow(pow(2, n), n);
-    struct imagesOfElements *images;
-    images = malloc(sizeof(struct imagesOfElements));
+    imagesOfElements *images;
+    images = malloc(sizeof(imagesOfElements));
     images->elements = (size_t *) malloc(sizeof(size_t) * sizeBasis);
     images->size = 0;
     int *generated = malloc(sizeof(int) * (int) pow(2, (double) f.dimension));
@@ -17,11 +19,14 @@ void outerPermutation(partitions f, partitions g) {
     for (int i = 0; i < pow(2, (double) f.dimension); ++i) {
         generated[i] = 0;
     }
-
+    array *linearCombinations;
+    linearCombinations = malloc(sizeof(array));
+    linearCombinations->array = malloc((size_t) pow(2, (int) f.dimension));
 
     recursive(0, images, f, g, n, generated);
-    free(images->elements);
-    free(images);
+
+    freeImagesOfElements(images);
+    freeArray(linearCombinations);
     free(basis);
     free(generated);
 }
@@ -70,5 +75,6 @@ void recursive(int k, struct imagesOfElements *images, partitions partitionF, pa
     for (int ck = 0; ck < bg->bucketSize; ++ck) { // for c[k] in bg do..
         if (generated[ck] == 1) continue;
     }
+
     recursive(k + 1, images, partitionF, partitionG, n, generated);
 }

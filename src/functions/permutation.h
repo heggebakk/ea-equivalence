@@ -2,11 +2,6 @@
 #define SRC_PERMUTATION_H
 #include "../utils/structs.h"
 
-struct imagesOfElements {
-    size_t *elements;
-    size_t size;
-};
-
 /**
  * Create a basis from the Identity matrix representation, but represented as integers.
  * @param dim The dimension
