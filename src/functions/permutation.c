@@ -8,46 +8,50 @@ void outerPermutation(partitions f, partitions g) {
     int n = (int) f.dimension;
 
     size_t sizeBasis = (size_t) pow(pow(2, n), n);
-    printf("Size basis: %zu\n", sizeBasis);
     struct imagesOfElements *images;
     images = malloc(sizeof(struct imagesOfElements));
     images->elements = (size_t *) malloc(sizeof(size_t) * sizeBasis);
     images->size = 0;
-    int *generated = malloc(sizeof(int) * sizeBasis);
+    int *generated = malloc(sizeof(int) * (int) pow(2, (double) f.dimension));
+    // Assign each position in generated with 0
+    for (int i = 0; i < pow(2, (double) f.dimension); ++i) {
+        generated[i] = 0;
+    }
 
     recursive(0, images, f, g, n, generated);
     free(images->elements);
     free(images);
     free(basis);
+    free(generated);
 }
 
-bucket findCorrespondingBucket(bucket bucketB, partitions function) {
+bucket * findCorrespondingBucket(bucket bucketB, partitions function) {
     for (int i = 0; i < function.numBuckets; ++i) {
-        bucket currentBucket = (*function.buckets[i]);
-        if (bucketB.size == currentBucket.size) {
+        bucket *currentBucket = &(*function.buckets[i]);
+        if (bucketB.bucketSize == currentBucket->bucketSize) {
             return currentBucket;
         }
     }
-    bucket result;
-    return result;
+    printf("Couldn't find a corresponding bucket to bucket with bucketSize %d", bucketB.bucketSize);
+    return NULL;
 }
 
-bucket findBucket(int b, partitions function) {
+bucket * findBucket(int b, partitions function) {
     for (int i = 0; i < function.numBuckets; ++i) {
-        bucket bucket = (*function.buckets[i]);
-        for (int j = 0; j < bucket.size; ++j) {
-            if (bucket.elements[j] == b) {
+        bucket *bucket = &(*function.buckets[i]);
+        for (int j = 0; j < bucket->bucketSize; ++j) {
+            if (bucket->elements[j] == b) {
                 return bucket;
             }
         }
     }
-    bucket result;
-    return result;
+    printf("Bucket not found");
+    return NULL;
 }
 
 int * createBasis(size_t dimension) {
-    basis = malloc(sizeof(int) * dimension);
-    for (int i = 0; i < dimension; ++i) {
+    basis = malloc(sizeof(size_t) * dimension + 1);
+    for (int i = 0; i < dimension + 1; ++i) {
         basis[i] = (int) pow(2, i);
     }
     return basis;
@@ -56,19 +60,14 @@ int * createBasis(size_t dimension) {
 void recursive(int k, struct imagesOfElements *images, partitions partitionF, partitions partitionG, int n,
                int *generated) {
     if (k == n) {
-//        for (int i = 0; i < images->size; ++i) {
-//            printf("Images of elements: %zu ", images->elements[i]);
-//        }
         printf("\nDone\n");
         return;
     }
-    bucket bf = findBucket(basis[k], partitionF); // Bucket of Pf containing basis[k]
-    bucket bg = findCorrespondingBucket(bf, partitionG); // Bucket of Pg corresponding to bf
-    for (int c = 0; c < bg.size; ++c) { // for c[k] in bg do..
-//        printf("size: %zu\n", images->size);
-//        printf("wat: %zu", bg.elements[basis[c]]);
-//        images->elements[images->size] = bg.elements[basis[c]];
-        images->size += 1;
+    bucket *bf = findBucket(basis[k], partitionF); // Bucket of Pf containing basis[k]
+    bucket *bg = findCorrespondingBucket(*bf, partitionG); // Bucket of Pg corresponding to bf
+    printf("Bg bucketSize: %d ", bg->bucketSize);
+    for (int ck = 0; ck < bg->bucketSize; ++ck) { // for c[k] in bg do..
+        if (generated[ck] == 1) continue;
     }
     recursive(k + 1, images, partitionF, partitionG, n, generated);
 }

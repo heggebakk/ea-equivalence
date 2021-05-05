@@ -12,11 +12,11 @@ int compare(const void *a, const void *b) {
 }
 
 int comparePartition (const void *a, const void *b) {
-    return (int)(((struct vbfBucket*) a) -> size - ((struct vbfBucket*)b) -> size);
+    return (int)(((struct vbfBucket*) a) -> bucketSize - ((struct vbfBucket*)b) -> bucketSize);
 }
 
 /*
- * Partition size where k = even
+ * Partition bucketSize where k = even
  * Works only for k = 4
  * TODO: Make it work for all k = even
  */
@@ -63,15 +63,15 @@ partition partitionFunction(truthTable * function, int k, int t) {
         for (int b = 0; b < numBuckets; ++b) {
             if (buckets[b]->multiplicity == multiplicity) {
                 multiplicityInBuckets = true;
-                buckets[b]->elements[buckets[b]->size] = i;
-                buckets[b]->size += 1;
+                buckets[b]->elements[buckets[b]->bucketSize] = i;
+                buckets[b]->bucketSize += 1;
                 break;
             }
         }
         if (!multiplicityInBuckets) {
             // Add a new bucket to the buckets list
 	    buckets[numBuckets] = malloc(sizeof(bucket));
-            buckets[numBuckets]->size = 1;
+            buckets[numBuckets]->bucketSize = 1;
             buckets[numBuckets]->multiplicity = multiplicity;
             buckets[numBuckets]->elements = malloc((sizeof(size_t) * function->size));
             buckets[numBuckets]->elements[0] = i;
@@ -86,8 +86,8 @@ partition partitionFunction(truthTable * function, int k, int t) {
 
     printf("\n");
     for (int i = 0; i < numBuckets; ++i) {
-        printf("%d: ", buckets[i]->size);
-        for (int j = 0; j < buckets[i]->size; ++j) {
+        printf("%d: ", buckets[i]->bucketSize);
+        for (int j = 0; j < buckets[i]->bucketSize; ++j) {
             printf("%zu ", buckets[i]->elements[j]);
         }
         printf("\n");
@@ -103,7 +103,7 @@ partition partitionFunction(truthTable * function, int k, int t) {
 
     printf("Partitions: ");
     for (int i = 0; i < partitions.numBuckets; ++i) {
-        printf("[%d, %zu] ", partitions.buckets[i]->size, partitions.buckets[i]->multiplicity);
+        printf("[%d, %zu] ", partitions.buckets[i]->bucketSize, partitions.buckets[i]->multiplicity);
     }
     printf("\n");
 
@@ -117,7 +117,6 @@ void freeBuckets(partition * partition) {
 }
 
 void freePartition(partition p) {
-    printf("numBuckets: %lu\n", p.numBuckets);
     for(int i = 0; i < p.numBuckets; ++i) {
       free(p.buckets[i]);
     }

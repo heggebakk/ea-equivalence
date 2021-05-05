@@ -19,7 +19,7 @@ truthTable parseTruthTable(const char* filename) {
     size_t size = (size_t) pow(2, (double) tt.dimension);
     tt.elements = (int *) malloc(sizeof(int) * size);
     tt.size = size;
-    printf("Truth table size: %zu \n", tt.size);
+    printf("Truth table bucketSize: %zu \n", tt.size);
     for (int i = 0; i < tt.size; ++i) {
         fscanf(fp, "%d", &tt.elements[i]);
     }

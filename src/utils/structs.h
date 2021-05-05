@@ -11,12 +11,13 @@ struct vbfTruthTable {
 void freeTruthTable(struct vbfTruthTable tt);
 
 /**
- * A bucket contains a list of all size and the size of the bucket.
+ * A bucket contains information about the multiplicity, a list of all elements in the bucket and the total size of the
+ * bucket.
  */
 struct vbfBucket {
     size_t multiplicity;
     size_t *elements;
-    int size;
+    int bucketSize;
 };
 
 struct vbfPartitions {
