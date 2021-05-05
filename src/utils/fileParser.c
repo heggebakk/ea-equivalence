@@ -3,8 +3,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-typedef struct vbfTruthTable truthTable;
-
 truthTable parseTruthTable(const char* filename) {
     FILE *fp;
     fp = fopen(filename, "r");

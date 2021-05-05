@@ -1,10 +1,6 @@
-#include <stdlib.h>
 #include "utils/fileParser.h"
 #include "functions/partition.h"
 #include "functions/permutation.h"
-
-typedef struct vbfTruthTable truthTable;
-typedef struct vbfPartitions partitions;
 
 int main(void) {
     char *filename;

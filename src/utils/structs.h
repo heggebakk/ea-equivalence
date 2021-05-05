@@ -2,36 +2,32 @@
 #define SRC_STRUCTS_H
 #include "stdio.h"
 
-struct vbfTruthTable {
+typedef struct vbfTruthTable {
     size_t dimension;
     size_t size;
     int * elements;
-};
-
-void freeTruthTable(struct vbfTruthTable tt);
+} truthTable;
 
 /**
  * A bucket contains information about the multiplicity, a list of all elements in the bucket and the total size of the
  * bucket.
  */
-struct vbfBucket {
+typedef struct vbfBucket {
     size_t multiplicity;
     size_t *elements;
     int bucketSize;
-};
+} bucket;
 
-struct vbfPartitions {
+typedef struct vbfPartitions {
     size_t dimension;
     size_t numBuckets;
     struct vbfBucket ** buckets;
-};
+} partitions;
 
-void freePartition(struct vbfPartitions p);
+void freeTruthTable(truthTable tt);
 
-void freeBuckets(struct vbfPartitions *);
+void freePartition(partitions p);
 
-struct vbfPermutation {
-
-};
+void freeBuckets(partitions *);
 
 #endif //SRC_STRUCTS_H
