@@ -25,8 +25,8 @@ typedef struct vbfPartitions {
 } partitions;
 
 typedef struct imagesOfElements {
+    int size;
     size_t *elements;
-    size_t size;
 } imagesOfElements;
 
 typedef struct array {
