@@ -4,15 +4,11 @@
 
 int *basis;
 
-
 void outerPermutation(partitions f, partitions g) {
     basis = createBasis(f.dimension);
     int n = (int) f.dimension;
 
-    size_t k = 1L << n;
-    printf("k = %zu", k);
-    size_t sizeBasis = 1L << k;
-    printf("Sizebasis is = %zu", sizeBasis);
+    size_t sizeBasis = 1L << n;
     imagesOfElements *images;
     images = malloc(sizeof(imagesOfElements));
     images->elements = (size_t *) malloc(sizeof(size_t) * sizeBasis);
@@ -29,6 +25,7 @@ void outerPermutation(partitions f, partitions g) {
 
     freeImagesOfElements(images);
     free(basis);
+    free(generated);
 }
 
 bucket * findCorrespondingBucket(bucket bucketB, partitions function) {
@@ -63,16 +60,20 @@ int * createBasis(size_t dimension) {
     return basis;
 }
 
-void
-recursive(int k, imagesOfElements *images, partitions partitionF, partitions partitionG, int n, int *generated,
-          size_t linearCombinationsL, size_t linearCombinationM) {
+void recursive(int k, imagesOfElements *images, partitions partitionF, partitions partitionG, int n, int *generated,
+               size_t linearCombinationsL, size_t linearCombinationM) {
     if (k == n) {
+        printf("\nGenerated: \n");
+        for (int i = 0; i < pow(2, n); ++i) {
+            printf("%d ", generated[i]);
+        }
         return;
     }
     bucket *bf = findBucket(basis[k], partitionF); // Bucket of Pf containing basis[k]
     bucket *bg = findCorrespondingBucket(*bf, partitionG); // Bucket of Pg corresponding to bf
+    int *generatedCopy = generated;
     for (size_t ck = 0; ck < bg->bucketSize; ++ck) { // for c[k] in bg do.. Where ck is the image element
-        if (generated[ck] == 1) {
+        if (generatedCopy[ck] == 1) {
             continue;
         }
         for (size_t linComb = 0; linComb < (int) pow(2, n); ++linComb) {
@@ -83,12 +84,8 @@ recursive(int k, imagesOfElements *images, partitions partitionF, partitions par
             if (bx->bucketSize != by->bucketSize) {
                 continue;
             }
-
+            generatedCopy[ck] = 1;
         }
-        if (generated[ck] == 0) {
-            images->elements[images->size] = ck;
-            images->size += 1;
-        }
+        recursive(k + 1, images, partitionF, partitionG, n, generatedCopy, linearCombinationsL, linearCombinationM);
     }
-    recursive(k + 1, images, partitionF, partitionG, n, generated, linearCombinationsL, 0);
 }
