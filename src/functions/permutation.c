@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include "permutation.h"
 #include "math.h"
 
@@ -6,22 +7,26 @@ int *basis;
 
 void outerPermutation(partitions f, partitions g) {
     basis = createBasis(f.dimension);
-    int n = (int) f.dimension;
+    size_t n = f.dimension;
 
     size_t sizeBasis = 1L << n;
     imagesOfElements *images;
     images = malloc(sizeof(imagesOfElements));
     images->elements = (size_t *) malloc(sizeof(size_t) * sizeBasis);
     images->size = 0;
-    int *generated = malloc(sizeof(int) * (int) pow(2, (double) f.dimension));
+    size_t *generated = malloc(sizeof(size_t) *  (1L << n));
     // Assign each position in generated with 0
-    for (int i = 0; i < pow(2, (double) f.dimension); ++i) {
+    for (int i = 0; i < 64; ++i) {
         generated[i] = 0;
     }
-    size_t linearCombinationsL = 0;
-    size_t linearCombinationsM = 0;
-
-    recursive(0, images, f, g, n, generated, linearCombinationsL, linearCombinationsM);
+    _Bool generated_images [(1L << n)];
+//    printf("Upper bound is %lu\n", (1L << n));
+    for(size_t i = 0; i < (1L << n); ++i) {
+        generated_images[i] = false;
+    }
+    printf("Hello\n");
+    generated_images[0] = true;
+    recursive(0, images, f, g, n, generated, generated_images);
 
     freeImagesOfElements(images);
     free(basis);
@@ -60,32 +65,59 @@ int * createBasis(size_t dimension) {
     return basis;
 }
 
-void recursive(int k, imagesOfElements *images, partitions partitionF, partitions partitionG, int n, int *generated,
-               size_t linearCombinationsL, size_t linearCombinationM) {
+void recursive(size_t k, imagesOfElements *images, partitions partitionF, partitions partitionG, int n, size_t *generated, _Bool * generated_images) {
     if (k == n) {
         printf("\nGenerated: \n");
-        for (int i = 0; i < pow(2, n); ++i) {
-            printf("%d ", generated[i]);
+        for (int i = 0; i < (1L << n); ++i) {
+            printf("%lu ", generated[i]);
         }
         return;
     }
     bucket *bf = findBucket(basis[k], partitionF); // Bucket of Pf containing basis[k]
     bucket *bg = findCorrespondingBucket(*bf, partitionG); // Bucket of Pg corresponding to bf
-    int *generatedCopy = generated;
-    for (size_t ck = 0; ck < bg->bucketSize; ++ck) { // for c[k] in bg do.. Where ck is the image element
-        if (generatedCopy[ck] == 1) {
+    for (size_t ick = 0; ick < bg->bucketSize; ++ick) { // for c[k] in bg do.. Where ck is the image element
+        size_t ck = bg->elements[ick];
+        if (generated_images[ck] == true) {
             continue;
         }
-        for (size_t linComb = 0; linComb < (int) pow(2, n); ++linComb) {
-            size_t x = linearCombinationsL + basis[k];
-            size_t y = linearCombinationM + ck;
+        _Bool problem = false;
+        size_t LIMIT = k ? (1L << (k)) : 1; /* a very poor but effective way to handle the case when k = 0, because
+ * otherwise for k = 0 we get (1L << (k-1)) == MAX_INT, and it loops figuratively forever */
+        for (size_t linComb = 0; linComb < LIMIT; ++linComb) {
+            size_t x = linComb ^basis[k];
+            size_t y = ck;
+            if(k) {
+                for (size_t j = 0; j < k; ++j) {
+                    if ((1L << j) & linComb) {
+                        y ^= generated[basis[j]];
+                    }
+                }
+            }
             bucket *bx = findBucket((int) x, partitionF); // Bucket that corresponds to x
             bucket *by = findBucket((int) y, partitionG); // Bucket that corresponds to y
             if (bx->bucketSize != by->bucketSize) {
-                continue;
+                problem = true;
+                break;
             }
-            generatedCopy[ck] = 1;
+            generated[x] = y;
+            generated_images[y] = true;
         }
-        recursive(k + 1, images, partitionF, partitionG, n, generatedCopy, linearCombinationsL, linearCombinationM);
+        if(!problem) {
+            images->elements[k] = ck;
+            recursive(k + 1, images, partitionF, partitionG, n, generated, generated_images);
+        }
+
+        for (size_t linComb = 0; linComb < LIMIT; ++linComb) {
+            size_t y = ck;
+            if(k) {
+                for (size_t j = 0; j < k; ++j) {
+                    if ((1L << j) & linComb) {
+                        y ^= generated[basis[j]];
+                    }
+                }
+            }
+
+            generated_images[y] = false;
+        }
     }
 }
