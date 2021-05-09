@@ -24,11 +24,6 @@ typedef struct vbfPartitions {
     struct vbfBucket ** buckets;
 } partitions;
 
-typedef struct array {
-    int size;
-    size_t *array;
-} array;
-
 void freeTruthTable(truthTable tt);
 
 void freePartition(partitions p);
