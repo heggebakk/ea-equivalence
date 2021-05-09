@@ -17,7 +17,3 @@ void freePartition(partitions p) {
     }
     free(p.buckets);
 }
-
-void freeImagesOfElements(size_t *images) {
-    free(images);
-}
