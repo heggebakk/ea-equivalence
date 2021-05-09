@@ -35,4 +35,6 @@ void freePartition(partitions p);
 
 void freeBuckets(partitions *);
 
+void freePermutations(permutations *permutation);
+
 #endif //SRC_STRUCTS_H

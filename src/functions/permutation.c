@@ -33,11 +33,7 @@ void outerPermutation(partitions f, partitions g) {
         }
         printf("\n");
     }
-    for (int i = 0; i < permutation->numPermutations; ++i) {
-        free(permutation[i].permutations);
-    }
-//    free(permutation->permutations);
-    free(permutation);
+    freePermutations(permutation);
     free(images);
     free(basis);
     free(generated);
