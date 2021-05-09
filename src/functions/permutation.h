@@ -34,8 +34,9 @@ bucket * findCorrespondingBucket(bucket bucket, partitions function);
  * @param n
  * @param generated
  */
-void
-recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated, _Bool *generated_images);
+permutations
+*recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
+           _Bool *generated_images, permutations *permutation);
 
 /**
  *

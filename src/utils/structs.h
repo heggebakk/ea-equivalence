@@ -24,6 +24,11 @@ typedef struct vbfPartitions {
     struct vbfBucket ** buckets;
 } partitions;
 
+typedef struct vbfPermutations {
+    size_t numPermutations;
+    size_t *permutations;
+} permutations;
+
 void freeTruthTable(truthTable tt);
 
 void freePartition(partitions p);

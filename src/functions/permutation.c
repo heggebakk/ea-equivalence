@@ -6,8 +6,8 @@
 int *basis;
 
 void outerPermutation(partitions f, partitions g) {
-    basis = createBasis(f.dimension);
     size_t n = f.dimension;
+    basis = createBasis(n);
 
     size_t *images = malloc(sizeof(size_t) * (1L << n));
     size_t *generated = malloc(sizeof(size_t) *  (1L << n));
@@ -20,10 +20,24 @@ void outerPermutation(partitions f, partitions g) {
     for(size_t i = 0; i < (1L << n); ++i) {
         generated_images[i] = false;
     }
-    printf("Hello\n");
     generated_images[0] = true;
-    recursive(0, images, f, g, n, generated, generated_images);
-
+    permutations *permutation;
+    permutation = malloc(sizeof(permutations *) * 1L << n << n);
+    permutation->numPermutations = 0;
+    recursive(0, images, f, g, n, generated, generated_images, permutation);
+    printf("Results: \n Num of permutations: %lu\n", permutation->numPermutations);
+    for (size_t i = 0; i < permutation->numPermutations; ++i) {
+        printf("%lu: ", i + 1);
+        for (size_t j = 0; j < 1L << n; ++j) {
+            printf("%lu ", permutation[i].permutations[j]);
+        }
+        printf("\n");
+    }
+    for (int i = 0; i < permutation->numPermutations; ++i) {
+        free(permutation[i].permutations);
+    }
+//    free(permutation->permutations);
+    free(permutation);
     free(images);
     free(basis);
     free(generated);
@@ -61,13 +75,19 @@ int * createBasis(size_t dimension) {
     return basis;
 }
 
-void recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated, _Bool * generated_images) {
+permutations
+*recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
+           bool *generated_images, permutations *permutation) {
     if (k == n) {
-        printf("\nGenerated: \n");
+        permutation[permutation->numPermutations].permutations = malloc(sizeof(size_t) * 1L << n);
+//        printf("\nGenerated: \n");
         for (int i = 0; i < (1L << n); ++i) {
-            printf("%lu ", generated[i]);
+//            printf("%lu ", generated[i]);
+            permutation[permutation->numPermutations].permutations[i] = generated[i];
         }
-        return;
+        permutation->numPermutations += 1;
+//        printf("\nSize perm: %lu", permutation->numPermutations);
+        return permutation;
     }
     bucket *bf = findBucket(basis[k], partitionF); // Bucket of Pf containing basis[k]
     bucket *bg = findCorrespondingBucket(*bf, partitionG); // Bucket of Pg corresponding to bf
@@ -82,7 +102,7 @@ void recursive(size_t k, size_t *images, partitions partitionF, partitions parti
         for (size_t linComb = 0; linComb < LIMIT; ++linComb) {
             size_t x = linComb ^basis[k];
             size_t y = ck;
-            if(k) {
+            if (k) {
                 for (size_t j = 0; j < k; ++j) {
                     if ((1L << j) & linComb) {
                         y ^= generated[basis[j]];
@@ -98,14 +118,14 @@ void recursive(size_t k, size_t *images, partitions partitionF, partitions parti
             generated[x] = y;
             generated_images[y] = true;
         }
-        if(!problem) {
+        if (!problem) {
             images[k] = ck;
-            recursive(k + 1, images, partitionF, partitionG, n, generated, generated_images);
+            recursive(k + 1, images, partitionF, partitionG, n, generated, generated_images, permutation);
         }
 
         for (size_t linComb = 0; linComb < LIMIT; ++linComb) {
             size_t y = ck;
-            if(k) {
+            if (k) {
                 for (size_t j = 0; j < k; ++j) {
                     if ((1L << j) & linComb) {
                         y ^= generated[basis[j]];

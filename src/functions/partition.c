@@ -48,7 +48,7 @@ partitions partitionFunction(truthTable * function, int k, int t) {
         }
     }
     free(uniqueMultiplicities);
-    bucket ** buckets;
+    bucket **buckets;
     buckets = malloc(sizeof(bucket*) * function->size);
     int numBuckets = 0;
 
@@ -66,7 +66,7 @@ partitions partitionFunction(truthTable * function, int k, int t) {
         }
         if (!multiplicityInBuckets) {
             // Add a new bucket to the buckets list
-	    buckets[numBuckets] = malloc(sizeof(bucket));
+            buckets[numBuckets] = malloc(sizeof(bucket));
             buckets[numBuckets]->bucketSize = 1;
             buckets[numBuckets]->multiplicity = multiplicity;
             buckets[numBuckets]->elements = malloc((sizeof(size_t) * function->size));
