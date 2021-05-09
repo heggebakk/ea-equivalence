@@ -24,7 +24,7 @@ void outerPermutation(partitions f, partitions g) {
     generated_images[0] = true;
     recursive(0, images, f, g, n, generated, generated_images);
 
-    (images);
+    free(images);
     free(basis);
     free(generated);
 }
