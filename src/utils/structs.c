@@ -18,7 +18,6 @@ void freePartition(partitions p) {
     free(p.buckets);
 }
 
-void freeImagesOfElements(imagesOfElements *images) {
-    free(images->elements);
+void freeImagesOfElements(size_t *images) {
     free(images);
 }

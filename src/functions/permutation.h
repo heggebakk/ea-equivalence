@@ -35,7 +35,7 @@ bucket * findCorrespondingBucket(bucket bucket, partitions function);
  * @param generated
  */
 void
-recursive(size_t k, struct imagesOfElements *images, partitions partitionF, partitions partitionG, int n, size_t *generated, _Bool *generated_images);
+recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, int n, size_t *generated, _Bool *generated_images);
 
 /**
  *
