@@ -24,11 +24,6 @@ typedef struct vbfPartitions {
     struct vbfBucket ** buckets;
 } partitions;
 
-typedef struct imagesOfElements {
-    int size;
-    size_t *elements;
-} imagesOfElements;
-
 typedef struct array {
     int size;
     size_t *array;
@@ -40,7 +35,7 @@ void freePartition(partitions p);
 
 void freeBuckets(partitions *);
 
-void freeImagesOfElements(imagesOfElements *images);
+void freeImagesOfElements(size_t *images);
 
 void freeArray(array *arr);
 
