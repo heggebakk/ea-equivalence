@@ -9,7 +9,7 @@ void outerPermutation(partitions f, partitions g) {
     basis = createBasis(f.dimension);
     size_t n = f.dimension;
 
-    int *images = malloc(sizeof(size_t) * (1L << n));
+    size_t *images = malloc(sizeof(size_t) * (1L << n));
     size_t *generated = malloc(sizeof(size_t) *  (1L << n));
     // Assign each position in generated with 0
     for (int i = 0; i < 64; ++i) {
@@ -24,7 +24,7 @@ void outerPermutation(partitions f, partitions g) {
     generated_images[0] = true;
     recursive(0, images, f, g, n, generated, generated_images);
 
-    freeImagesOfElements(images);
+    (images);
     free(basis);
     free(generated);
 }
@@ -61,7 +61,7 @@ int * createBasis(size_t dimension) {
     return basis;
 }
 
-void recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, int n, size_t *generated, _Bool * generated_images) {
+void recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated, _Bool * generated_images) {
     if (k == n) {
         printf("\nGenerated: \n");
         for (int i = 0; i < (1L << n); ++i) {
