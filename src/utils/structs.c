@@ -17,3 +17,10 @@ void freePartition(partitions p) {
     }
     free(p.buckets);
 }
+
+void freePermutations(permutations *permutation) {
+    for (int i = 0; i < permutation->numPermutations; ++i) {
+        free(permutation[i].permutations);
+    }
+    free(permutation);
+}
