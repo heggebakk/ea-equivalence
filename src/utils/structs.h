@@ -35,8 +35,4 @@ void freePartition(partitions p);
 
 void freeBuckets(partitions *);
 
-void freeImagesOfElements(size_t *images);
-
-void freeArray(array *arr);
-
 #endif //SRC_STRUCTS_H
