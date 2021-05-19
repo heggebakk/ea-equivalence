@@ -36,7 +36,7 @@ partitions partitionFunction(truthTable * function, int k, int t) {
         for (int x2 = 0; x2 < function->size; ++x2) {
             for (int x3 = 0; x3 < function->size; ++x3) {
                 int x4 = x1 ^x2 ^x3;
-                int value = function->elements[x1] ^function->elements[x2] ^function->elements[x3] ^function->elements[x4] ^t;
+                size_t value = function->elements[x1] ^function->elements[x2] ^function->elements[x3] ^function->elements[x4] ^t;
                 multiplicities[value] += 1;
                 for (int i = 0; i < uniqueCount; ++i) {
                     if (uniqueMultiplicities[i] != value) {
@@ -82,13 +82,12 @@ partitions partitionFunction(truthTable * function, int k, int t) {
 
     printf("\n");
     for (int i = 0; i < numBuckets; ++i) {
-        printf("%d: ", buckets[i]->bucketSize);
+        printf("%zu: ", buckets[i]->bucketSize);
         for (int j = 0; j < buckets[i]->bucketSize; ++j) {
             printf("%zu ", buckets[i]->elements[j]);
         }
         printf("\n");
     }
-
 
     partitions partitions;
     partitions.buckets = buckets;
@@ -99,7 +98,7 @@ partitions partitionFunction(truthTable * function, int k, int t) {
 
     printf("Partitions: ");
     for (int i = 0; i < partitions.numBuckets; ++i) {
-        printf("[%d, %zu] ", partitions.buckets[i]->bucketSize, partitions.buckets[i]->multiplicity);
+        printf("[%zu, %zu] ", partitions.buckets[i]->bucketSize, partitions.buckets[i]->multiplicity);
     }
     printf("\n");
 

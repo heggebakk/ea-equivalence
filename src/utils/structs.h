@@ -5,7 +5,7 @@
 typedef struct vbfTruthTable {
     size_t dimension;
     size_t size;
-    int * elements;
+    size_t *elements;
 } truthTable;
 
 /**
@@ -15,7 +15,7 @@ typedef struct vbfTruthTable {
 typedef struct vbfBucket {
     size_t multiplicity;
     size_t *elements;
-    int bucketSize;
+    size_t bucketSize;
 } bucket;
 
 typedef struct vbfPartitions {

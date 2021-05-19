@@ -1,6 +1,5 @@
 #include "fileParser.h"
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
 
 truthTable parseTruthTable(const char* filename) {
@@ -12,14 +11,14 @@ truthTable parseTruthTable(const char* filename) {
     }
 
     truthTable tt;
-    fscanf(fp, "%zd", &tt.dimension);
+    fscanf(fp, "%zu", &tt.dimension);
 
-    size_t size = (size_t) pow(2, (double) tt.dimension);
-    tt.elements = (int *) malloc(sizeof(int) * size);
+    size_t size = 1L << tt.dimension;
+    tt.elements = (size_t *) malloc(sizeof(size_t) * size);
     tt.size = size;
     printf("Truth table bucketSize: %zu \n", tt.size);
     for (int i = 0; i < tt.size; ++i) {
-        fscanf(fp, "%d", &tt.elements[i]);
+        fscanf(fp, "%zu", &tt.elements[i]);
     }
     fclose(fp);
 

@@ -8,7 +8,7 @@
  * @param dim The dimension
  * @return A list of binary representation in integers equal to the Identity matrix.
  */
-int * createBasis(size_t dim);
+size_t *createBasis(size_t dim);
 
 /**
  * Find the bucket which holds the element basis
@@ -16,7 +16,7 @@ int * createBasis(size_t dim);
  * @param function The partition holds all de buckets
  * @return The bucket where the element basis lays
  */
-bucket * findBucket(int basis, partitions function);
+bucket *findBucket(size_t basis, partitions function);
 
 /**
  * Find at least one bucket which holds equal amount of elements
