@@ -12,11 +12,10 @@ void outerPermutation(partitions f, partitions g) {
     size_t *images = malloc(sizeof(size_t) * (1L << n));
     size_t *generated = malloc(sizeof(size_t) *  (1L << n));
     // Assign each position in generated with 0
-    for (int i = 0; i < 64; ++i) {
+    for (int i = 0; i < 1L << n; ++i) {
         generated[i] = 0;
     }
     _Bool generated_images [(1L << n)];
-//    printf("Upper bound is %lu\n", (1L << n));
     for(size_t i = 0; i < (1L << n); ++i) {
         generated_images[i] = false;
     }
@@ -25,18 +24,41 @@ void outerPermutation(partitions f, partitions g) {
     permutation = malloc(sizeof(permutations *) * 1L << n << n);
     permutation->numPermutations = 0;
     recursive(0, images, f, g, n, generated, generated_images, permutation);
-    printf("Results: \n Num of permutations: %lu\n", permutation->numPermutations);
+    printf("\nNum of permutations: %lu\n", permutation->numPermutations);
+
+    bool bijective = isBijective(permutation, n);
+    printf("The permutations is bijective: %d\n", bijective);
+
+    freePermutations(permutation);
+    free(images);
+    free(basis);
+    free(generated);
+}
+
+bool isBijective(permutations *permutation, size_t n) {
+    for (int pi = 0; pi < permutation->numPermutations - 1; ++pi) {
+        for (int pj = pi + 1; pj < permutation->numPermutations; ++pj) {
+            bool bijective = false;
+            for (int i = 0; i < 1L << n; ++i) {
+                if (permutation[pi].permutations[i] != permutation[pj].permutations[i]) {
+                    bijective = true;
+                    break;
+                }
+            }
+            if (!bijective) return false;
+        }
+    }
+    return true;
+}
+
+bool isLinear(permutations *permutation, size_t n) {
+    // TODO: Check if permutations is linear
     for (size_t i = 0; i < permutation->numPermutations; ++i) {
-        printf("%lu: ", i + 1);
         for (size_t j = 0; j < 1L << n; ++j) {
             printf("%lu ", permutation[i].permutations[j]);
         }
         printf("\n");
     }
-    freePermutations(permutation);
-    free(images);
-    free(basis);
-    free(generated);
 }
 
 bucket * findCorrespondingBucket(bucket bucketB, partitions function) {
@@ -76,13 +98,13 @@ permutations
            bool *generated_images, permutations *permutation) {
     if (k == n) {
         permutation[permutation->numPermutations].permutations = malloc(sizeof(size_t) * 1L << n);
-//        printf("\nGenerated: \n");
+        printf("\nGenerated: \n");
         for (int i = 0; i < (1L << n); ++i) {
-//            printf("%lu ", generated[i]);
+            printf("%lu ", generated[i]);
             permutation[permutation->numPermutations].permutations[i] = generated[i];
         }
         permutation->numPermutations += 1;
-//        printf("\nSize perm: %lu", permutation->numPermutations);
+        printf("\nSize perm: %lu", permutation->numPermutations);
         return permutation;
     }
     bucket *bf = findBucket(basis[k], partitionF); // Bucket of Pf containing basis[k]
@@ -128,7 +150,6 @@ permutations
                     }
                 }
             }
-
             generated_images[y] = false;
         }
     }

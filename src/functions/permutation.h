@@ -1,6 +1,7 @@
 #ifndef SRC_PERMUTATION_H
 #define SRC_PERMUTATION_H
 #include "../utils/structs.h"
+#include "stdbool.h"
 
 /**
  * Create a basis from the Identity matrix representation, but represented as integers.
@@ -44,5 +45,22 @@ permutations
  * @param g Function G
  */
 void outerPermutation(struct vbfPartitions f, struct vbfPartitions g);
+
+/**
+ * Check whether the permutations are linear or not
+ * @param permutation List of all permutations
+ * @param n Dimension
+ * @return True if the permutations is linear, false otherwise
+ */
+bool isLinear(permutations *permutation, size_t n);
+
+/**
+ * Check whether the permutations is bijective or not
+ * @param permutation List of all permutations
+ * @param n Dimension
+ * @return True if bijective, false otherwise
+ */
+bool isBijective(permutations *permutation, size_t n);
+
 
 #endif //SRC_PERMUTATION_H
