@@ -1,10 +1,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "permutation.h"
+#include "time.h"
 
 size_t *basis;
 
 void outerPermutation(partitions f, partitions g) {
+    double timeSpentPermutation = 0.0;
+    clock_t startPermutation = clock();
+
     size_t n = f.dimension;
     basis = createBasis(n);
 
@@ -28,6 +32,10 @@ void outerPermutation(partitions f, partitions g) {
     bool bijective = isBijective(permutation, n);
     printf("The permutations is bijective: %s\n", (bijective ? "true" : "false"));
 //    bool linear = isLinear(permutation, n);
+
+    clock_t endPermutation = clock();
+    timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
+    printf("Time spent Permutation: %f seconds\n", timeSpentPermutation);
 
     freePermutations(permutation);
     free(images);
@@ -55,11 +63,9 @@ bool isBijective(permutations *permutation, size_t n) {
     return true;
 }
 
-bool isLinear(permutations *permutation, size_t n) {
-    // TODO: Check if permutations is linear
-    for (size_t i = 0; i < permutation->numPermutations; ++i) {
-        for (size_t j = 0; j < 1L << n; ++j) {
-        }
+bool isLinear(permutations *permutation, size_t k, size_t n) {
+    if (k == n) {
+
     }
     return true;
 }

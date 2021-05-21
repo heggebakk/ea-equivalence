@@ -14,20 +14,15 @@ int main(void) {
     freeTruthTable(functionF);
 
     printf("\n");
-    char *fileG;
-    fileG = "resources/TT_library/dim6/q_6_1.tt";
-    truthTable functionG = parseTruthTable(fileG);
+    truthTable functionG = parseTruthTable(filename);
     partitions partitionG = partitionFunction(&functionG, 4, 0);
     freeTruthTable(functionG);
 
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;
+    printf("Time spent Partitioning: %f seconds\n", timeSpentPartition);
 
-    double timeSpentPermutation = 0.0;
-    clock_t startPermutation = clock();
     outerPermutation(partitionF, partitionG);
-    clock_t endPermutation = clock();
-    timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
 
     freeBuckets(&partitionF);
     freeBuckets(&partitionG);
@@ -35,8 +30,6 @@ int main(void) {
     freePartition(partitionF);
     freePartition(partitionG);
 
-    printf("Time spent Partitioning: %f seconds\n", timeSpentPartition);
-    printf("Time spent Permutation: %f seconds\n", timeSpentPermutation);
 
     return 0;
 }

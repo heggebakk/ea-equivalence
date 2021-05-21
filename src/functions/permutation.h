@@ -49,10 +49,11 @@ void outerPermutation(struct vbfPartitions f, struct vbfPartitions g);
 /**
  * Check whether the permutations are linear or not
  * @param permutation List of all permutations
+ * @param k Counter to keep track of progress of recursion
  * @param n Dimension
  * @return True if the permutations is linear, false otherwise
  */
-bool isLinear(permutations *permutation, size_t n);
+bool isLinear(permutations *permutation, size_t k, size_t n);
 
 /**
  * Check whether the permutations is bijective or not
