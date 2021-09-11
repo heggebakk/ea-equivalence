@@ -74,20 +74,7 @@ partitions partitionFunction(truthTable * function, int k, int t) {
             numBuckets += 1;
         }
     }
-    printf("Multiplicities: ");
-    for (int i = 0; i < function->size; ++i) {
-        printf("%zu ", multiplicities[i]);
-    }
     free(multiplicities);
-
-    printf("\n");
-    for (int i = 0; i < numBuckets; ++i) {
-        printf("%zu: ", buckets[i]->bucketSize);
-        for (int j = 0; j < buckets[i]->bucketSize; ++j) {
-            printf("%zu ", buckets[i]->elements[j]);
-        }
-        printf("\n");
-    }
 
     partitions partitions;
     partitions.buckets = buckets;
@@ -95,12 +82,6 @@ partitions partitionFunction(truthTable * function, int k, int t) {
     partitions.numBuckets = numBuckets;
 
     //qsort(partitions.buckets, partitions.numBuckets, sizeof(struct vbfBucket), comparePartition);
-
-    printf("Partitions: ");
-    for (int i = 0; i < partitions.numBuckets; ++i) {
-        printf("[%zu, %zu] ", partitions.buckets[i]->bucketSize, partitions.buckets[i]->multiplicity);
-    }
-    printf("\n");
 
     return partitions;
 }
