@@ -96,7 +96,7 @@ bucket *findBucket(size_t b, partitions function) {
 
 size_t *createBasis(size_t dimension) {
     basis = malloc(sizeof(size_t) * dimension + 1);
-    for (size_t i = 0; i < dimension + 1; ++i) {
+    for (size_t i = 0; i < dimension; ++i) {
         basis[i] = 1L << i;
     }
     return basis;
