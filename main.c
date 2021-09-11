@@ -3,11 +3,15 @@
 #include "functions/permutation.h"
 #include "time.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        printf("Expected 2 arguments");
+        return 1;
+    }
     char *file1;
     char *file2;
-    file1 = "resources/TT_library/dim6/q_6_1.tt";
-    file2 = "resources/TT_library/dim6/q_6_1.tt";
+    file1 = argv[1];
+    file2 = argv[2];
 
     double timeSpentPartition = 0.0;
     clock_t startPartition = clock();
