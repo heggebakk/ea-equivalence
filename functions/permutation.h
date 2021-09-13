@@ -44,7 +44,7 @@ permutations
  * @param f Function F
  * @param g Function G
  */
-void outerPermutation(struct vbfPartitions f, struct vbfPartitions g);
+permutations * outerPermutation(struct vbfPartitions f, struct vbfPartitions g);
 
 /**
  * Check whether the permutations are linear or not

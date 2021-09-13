@@ -38,11 +38,22 @@ int main(int argc, char* argv[]) {
         printf("\n");
     }
 
-    outerPermutation(partitionF, partitionG);
+    double timeSpentPermutation = 0.0;
+    clock_t startPermutation = clock();
 
+    permutations * outerPerm = outerPermutation(partitionF, partitionG);
+    clock_t endPermutation = clock();
+    timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
+    printf("Time spent Outer permutation: %f seconds\n", timeSpentPermutation);
+    printf("Number of permutations: %zu\n", outerPerm->numPermutations);
+
+    bool bijective = isBijective(outerPerm, partitionF.dimension);
+    printf("The permutations is bijective: %s\n", (bijective ? "true" : "false"));
+//    bool linear = isLinear(permutation, n);
+
+    freePermutations(outerPerm);
     freeBuckets(&partitionF);
     freeBuckets(&partitionG);
-
     freePartition(partitionF);
     freePartition(partitionG);
 

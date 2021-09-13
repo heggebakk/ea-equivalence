@@ -5,16 +5,13 @@
 
 size_t *basis;
 
-void outerPermutation(partitions f, partitions g) {
-    double timeSpentPermutation = 0.0;
-    clock_t startPermutation = clock();
-
+permutations * outerPermutation(partitions f, partitions g) {
     size_t n = f.dimension;
     basis = createBasis(n);
 
     size_t *images = malloc(sizeof(size_t) * (1L << n));
     size_t *generated = malloc(sizeof(size_t) *  (1L << n));
-    // Assign each position in generated with 0
+    // Assign each position in Generated with 0
     for (size_t i = 0; i < 1L << n; ++i) {
         generated[i] = 0;
     }
@@ -27,20 +24,12 @@ void outerPermutation(partitions f, partitions g) {
     permutation = malloc(sizeof(permutations *) * 1L << n << n);
     permutation->numPermutations = 0;
     recursive(0, images, f, g, n, generated, generated_images, permutation);
-    printf("\nNum of permutations: %zu\n", permutation->numPermutations);
 
-    bool bijective = isBijective(permutation, n);
-    printf("The permutations is bijective: %s\n", (bijective ? "true" : "false"));
-//    bool linear = isLinear(permutation, n);
-
-    clock_t endPermutation = clock();
-    timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
-    printf("Time spent Permutation: %f seconds\n", timeSpentPermutation);
-
-    freePermutations(permutation);
     free(images);
     free(basis);
     free(generated);
+
+    return permutation;
 }
 
 bool isBijective(permutations *permutation, size_t n) {
@@ -64,10 +53,11 @@ bool isBijective(permutations *permutation, size_t n) {
 }
 
 bool isLinear(permutations *permutation, size_t k, size_t n) {
-    if (k == n) {
-
-    }
-    return true;
+    //TODO
+//    if (k == n) {
+//
+//    }
+    return false;
 }
 
 bucket *findCorrespondingBucket(bucket bucketB, partitions function) {
@@ -162,4 +152,5 @@ permutations
             generated_images[y] = false;
         }
     }
+    return NULL;
 }
