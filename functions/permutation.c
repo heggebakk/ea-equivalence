@@ -30,6 +30,8 @@ permutations * outerPermutation(partitions f, partitions g) {
     free(images);
     free(basis);
     free(generated);
+    free(fBucketPosition);
+    free(gBucketPosition);
 
     return permutation;
 }
