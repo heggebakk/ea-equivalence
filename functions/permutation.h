@@ -11,12 +11,20 @@
 size_t *createBasis(size_t dim);
 
 /**
- * Find the bucket which holds the element basis
- * @param basis The element
- * @param function The partition holds all de buckets
- * @return The bucket where the element basis lays
+ * Create a list representing in which bucket we can find i
+ * @param function The function with the partitions
+ * @return The list of bucket representation
  */
-bucket *findBucket(size_t basis, partitions function);
+size_t * correspondingBucket(partitions function);
+
+/**
+ * Get the bucket where we can find the k
+ * @param k The k we are looking for
+ * @param bucketPositions A list representing in which bucket the element k exists.
+ * @param function The partition function
+ * @return The bucket where we can find k
+ */
+bucket *getBucket(size_t k, const size_t *bucketPositions, partitions function);
 
 /**
  * Find at least one bucket which holds equal amount of elements
@@ -37,7 +45,7 @@ bucket * findCorrespondingBucket(bucket bucket, partitions function);
  */
 permutations
 *recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
-           _Bool *generated_images, permutations *permutation);
+           bool *generated_images, permutations *permutation, size_t *pInt, size_t *pInt1);
 
 /**
  *

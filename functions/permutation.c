@@ -23,7 +23,9 @@ permutations * outerPermutation(partitions f, partitions g) {
     permutations *permutation;
     permutation = malloc(sizeof(permutations *) * 1L << n << n);
     permutation->numPermutations = 0;
-    recursive(0, images, f, g, n, generated, generated_images, permutation);
+    size_t *fBucketPosition = correspondingBucket(f); // A list representing in which bucket each k is
+    size_t *gBucketPosition = correspondingBucket(g);
+    recursive(0, images, f, g, n, generated, generated_images, permutation, fBucketPosition, gBucketPosition);
 
     free(images);
     free(basis);
@@ -71,17 +73,25 @@ bucket *findCorrespondingBucket(bucket bucketB, partitions function) {
     return NULL;
 }
 
-bucket *findBucket(size_t b, partitions function) {
-    for (size_t i = 0; i < function.numBuckets; ++i) {
-        bucket *bucket = &*function.buckets[i];
-        for (size_t j = 0; j < bucket->bucketSize; ++j) {
-            if (bucket->elements[j] == b) {
-                return bucket;
+size_t * correspondingBucket(partitions function) {
+    size_t *list = (size_t *) malloc(sizeof(size_t) * 1L << function.dimension);
+
+    for (size_t i = 0; i < 1L << function.dimension; ++i) {
+        for (int j = 0; j < function.numBuckets; ++j) {
+            bucket *bucket = function.buckets[j];
+            for (size_t k = 0; k < bucket->bucketSize; ++k) {
+                if (bucket->elements[k] == i) {
+                    list[i] = j;
+                    break;
+                }
             }
         }
     }
-    printf("Bucket not found");
-    return NULL;
+    return list;
+}
+
+bucket *getBucket(size_t k, const size_t *bucketPositions, partitions function) {
+    return function.buckets[bucketPositions[k]];
 }
 
 size_t *createBasis(size_t dimension) {
@@ -94,7 +104,7 @@ size_t *createBasis(size_t dimension) {
 
 permutations
 *recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
-           bool *generated_images, permutations *permutation) {
+           bool *generated_images, permutations *permutation, size_t *fBucketPosition, size_t *gBucketPosition) {
     if (k == n) {
         permutation[permutation->numPermutations].permutations = malloc(sizeof(size_t) * 1L << n);
         for (size_t i = 0; i < (1L << n); ++i) {
@@ -103,9 +113,11 @@ permutations
         permutation->numPermutations += 1;
         return permutation;
     }
-    bucket *bf = findBucket(basis[k], partitionF); // Bucket of Pf containing basis[k]
+
+    bucket *bf = getBucket(basis[k], fBucketPosition, partitionF); // Bucket of Pf containing basis[k]
     bucket *bg = findCorrespondingBucket(*bf, partitionG); // Bucket of Pg corresponding to bf
-    for (size_t ick = 0; ick < bg->bucketSize; ++ick) { // for c[k] in bg do.. Where ck is the image element
+
+    for (size_t ick = 0; ick < bg->bucketSize; ++ick) { // for c[k] in bg do... Where ck is the image element
         size_t ck = bg->elements[ick];
         if (generated_images[ck] == true) {
             continue;
@@ -126,8 +138,8 @@ permutations
                     }
                 }
             }
-            bucket *bx = findBucket(x, partitionF); // Bucket that corresponds to x
-            bucket *by = findBucket(y, partitionG); // Bucket that corresponds to y
+            bucket *bx = getBucket(x, fBucketPosition, partitionF); // Bucket that corresponds to x
+            bucket *by = getBucket(y, gBucketPosition, partitionG); // Bucket that corresponds to y
             if (bx->bucketSize != by->bucketSize) {
                 problem = true;
                 break;
@@ -137,7 +149,7 @@ permutations
         }
         if (!problem) {
             images[k] = ck;
-            recursive(k + 1, images, partitionF, partitionG, n, generated, generated_images, permutation);
+            recursive(k + 1, images, partitionF, partitionG, n, generated, generated_images, permutation, fBucketPosition, gBucketPosition);
         }
 
         for (size_t linComb = 0; linComb < LIMIT; ++linComb) {
