@@ -1,6 +1,5 @@
 #include "fileParser.h"
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
 
 typedef struct vbfTruthTable truthTable;
@@ -16,7 +15,7 @@ truthTable parseTruthTable(const char* filename) {
     truthTable tt;
     fscanf(fp, "%zd", &tt.dimension);
 
-    size_t size = (size_t) pow(2, (double) tt.dimension);
+    size_t size = 1L << tt.dimension;
     tt.elements = (size_t *) malloc(sizeof(size_t) * size);
     tt.size = size;
     printf("Truth table size: %zu \n", tt.size);
