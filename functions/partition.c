@@ -74,3 +74,13 @@ partitions partitionFunction(truthTable *function, size_t k, size_t t) {
 
     return p;
 }
+
+void printPartitionInfo(partitions p) {
+    for (int i = 0; i < p.numBuckets; ++i) {
+        printf("%zu: ", p.buckets[i]->bucketSize);
+        for (int j = 0; j < p.buckets[i]->bucketSize; ++j) {
+            printf("%zu ", p.buckets[i]->elements[j]);
+        }
+        printf("\n");
+    }
+}
