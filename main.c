@@ -18,10 +18,12 @@ int main(int argc, char *argv[]) {
     double timeSpentParsing = 0.0;
     clock_t startParsing = clock();
     truthTable functionF = parseTruthTable(truthTable1);
-    printf("\n");
     truthTable functionG = parseTruthTable(truthTable2);
     clock_t endParsing = clock();
     timeSpentParsing += (double) (endParsing - startParsing) / CLOCKS_PER_SEC;
+    printTruthTableInfo(functionF);
+    printTruthTableInfo(functionG);
+    printf("\n");
 
     size_t k = 4;
     size_t t = 0;
@@ -31,43 +33,27 @@ int main(int argc, char *argv[]) {
     partitions partitionG = partitionFunction(&functionG, k, t);
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;
-    printf("\n");
-
     freeTruthTable(functionF);
     freeTruthTable(functionG);
 
     printf("Results from partition function F: \n");
-    for (int i = 0; i < partitionF.numBuckets; ++i) {
-        printf("%zu: ", partitionF.buckets[i]->bucketSize);
-        for (int j = 0; j < partitionF.buckets[i]->bucketSize; ++j) {
-            printf("%zu ", partitionF.buckets[i]->elements[j]);
-        }
-        printf("\n");
-    }
+    printPartitionInfo(partitionF);
     printf("Results from partition function G: \n");
-    for (int i = 0; i < partitionF.numBuckets; ++i) {
-        printf("%zu: ", partitionG.buckets[i]->bucketSize);
-        for (int j = 0; j < partitionG.buckets[i]->bucketSize; ++j) {
-            printf("%zu ", partitionG.buckets[i]->elements[j]);
-        }
-        printf("\n");
-    }
+    printPartitionInfo(partitionG);
     printf("\n");
 
     double timeSpentPermutation = 0.0;
     clock_t startPermutation = clock();
-    permutations *outerPerm = outerPermutation(partitionF, partitionG);
+    permutations *outerPerm = outerPermutation(partitionF, partitionG, functionF.dimension);
     clock_t endPermutation = clock();
     timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
     printf("Number of permutations: %zu \n", outerPerm->numPermutations);
 
-    bool bijective = isBijective(outerPerm, partitionF.dimension);
+    bool bijective = isBijective(outerPerm, functionF.dimension);
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
     printf("\n");
 
     freePermutations(outerPerm);
-    freeBuckets(&partitionF);
-    freeBuckets(&partitionG);
     freePartition(partitionF);
     freePartition(partitionG);
 

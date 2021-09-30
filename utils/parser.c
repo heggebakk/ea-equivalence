@@ -2,7 +2,6 @@
 #include "parser.h"
 
 truthTable parseTruthTable(const char* filename) {
-    // TODO: Move all print statements out to main function
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         printf("Requested file does not exists in system or is not found. \n");
@@ -14,18 +13,21 @@ truthTable parseTruthTable(const char* filename) {
     size_t size = 1L << tt.dimension;
     tt.elements = malloc(sizeof(size_t) * size);
     tt.size = size;
-    printf("Truth table size: %zu \n", tt.size);
 
     for (size_t i = 0; i < tt.size; ++i) {
         fscanf(file, "%zd", &tt.elements[i]);
     }
     fclose(file);
+    return tt;
+}
 
+void printTruthTableInfo(truthTable tt) {
+    printf("Truth table size: %zu \n", tt.size);
     printf("Dimension: %zu \n", tt.dimension);
     printf("Truth table: ");
+
     for (size_t i = 0; i < tt.size; ++i) {
         printf("%zu ", tt.elements[i]);
     }
     printf("\n");
-    return tt;
 }

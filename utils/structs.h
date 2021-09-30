@@ -8,16 +8,11 @@ typedef struct vbfTruthTable {
     size_t *elements;
 } truthTable;
 
-typedef struct vbfBucket {
-    size_t multiplicity;
-    size_t *elements;
-    size_t bucketSize;
-} bucket;
-
 typedef struct vbfPartitions {
-    size_t dimension;
-    size_t numBuckets; // TODO: Rename numBuckets to something that gives more meaning
-    bucket **buckets;
+    size_t numBuckets;
+    size_t *multiplicities;
+    size_t *bucketSizes;
+    size_t **buckets;
 } partitions;
 
 typedef struct vbfPermutations {

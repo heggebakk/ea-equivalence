@@ -5,8 +5,6 @@
 
 void freeTruthTable(truthTable tt);
 
-void freeBuckets(partitions *p);
-
 void freePartition(partitions p);
 
 void freePermutations(permutations *p);
