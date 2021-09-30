@@ -40,46 +40,44 @@ partitions partitionFunction(truthTable *function, size_t k, size_t t) {
     }
 
     free(uniqueMultiplicities);
-    bucket **buckets = malloc(sizeof(bucket *) * function->size);
-    int numBuckets = 0;
+    partitions partition;
+    partition.numBuckets = 0;
+    partition.multiplicities = malloc(sizeof(size_t) * function->size);
+    partition.bucketSizes = malloc(sizeof(size_t) * function->size);
+    partition.buckets = malloc(sizeof(size_t *) * function->size);
 
     for (size_t i = 0; i < function->size; ++i) {
+        size_t numBuckets = partition.numBuckets;
         size_t multiplicity = multiplicities[i];
         // Check if multiplicity is in bucket, if false; add multiplicity to bucket
         bool multiplicityInBuckets = false;
         for (size_t b = 0; b < numBuckets; ++b) {
-            if (buckets[b]->multiplicity == multiplicity) {
+            if (partition.multiplicities[b] == multiplicity) {
                 multiplicityInBuckets = true;
-                buckets[b]->elements[buckets[b]->bucketSize] = i;
-                buckets[b]->bucketSize += 1;
+                partition.buckets[b][partition.bucketSizes[b]] = i;
+                partition.bucketSizes[b] += 1;
                 break;
             }
         }
         if (!multiplicityInBuckets) {
             // Add a new bucket to the buckets list
-            buckets[numBuckets] = malloc(sizeof(bucket));
-            buckets[numBuckets]->bucketSize = 1;
-            buckets[numBuckets]->multiplicity = multiplicity;
-            buckets[numBuckets]->elements = malloc(sizeof(size_t) * function->size);
-            buckets[numBuckets]->elements[0] = i;
-            numBuckets += 1;
+            partition.buckets[numBuckets] = malloc(sizeof(size_t) * function->size);
+            partition.bucketSizes[numBuckets] = 1;
+            partition.multiplicities[numBuckets] = multiplicity;
+            partition.buckets[numBuckets][0] = i;
+            partition.numBuckets += 1;
         }
     }
     free(multiplicities);
 
-    partitions p;
-    p.buckets = buckets;
-    p.dimension = function->dimension;
-    p.numBuckets = numBuckets;
-
-    return p;
+    return partition;
 }
 
 void printPartitionInfo(partitions p) {
     for (int i = 0; i < p.numBuckets; ++i) {
-        printf("%zu: ", p.buckets[i]->bucketSize);
-        for (int j = 0; j < p.buckets[i]->bucketSize; ++j) {
-            printf("%zu ", p.buckets[i]->elements[j]);
+        printf("%zu, %zu: ", p.multiplicities[i], p.bucketSizes[i]);
+        for (int j = 0; j < p.bucketSizes[i]; ++j) {
+            printf("%zu ", p.buckets[i][j]);
         }
         printf("\n");
     }
