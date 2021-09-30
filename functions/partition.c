@@ -45,7 +45,7 @@ partitions partitionFunction(truthTable *function, size_t k, size_t t) {
 
     for (size_t i = 0; i < function->size; ++i) {
         size_t multiplicity = multiplicities[i];
-        // Chack if plultiplicity is in bucket, if false; add multiplicity to bucket
+        // Check if multiplicity is in bucket, if false; add multiplicity to bucket
         bool multiplicityInBuckets = false;
         for (size_t b = 0; b < numBuckets; ++b) {
             if (buckets[b]->multiplicity == multiplicity) {
