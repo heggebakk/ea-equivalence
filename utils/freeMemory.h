@@ -7,5 +7,5 @@ void freeTruthTable(truthTable tt);
 
 void freePartition(partitions p);
 
-void freePermutations(permutations *p);
+void freePermutations(permutations p);
 #endif //EA_EQUIVALENCE_FREEMEMORY_H

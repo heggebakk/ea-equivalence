@@ -17,7 +17,7 @@ typedef struct vbfPartitions {
 
 typedef struct vbfPermutations {
     size_t numPermutations;
-    size_t *permutations;
+    size_t **permutations;
 } permutations;
 
 #endif //EA_EQUIVALENCE_STRUCTS_H
