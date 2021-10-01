@@ -14,9 +14,9 @@ void freePartition(partitions p) {
     free(p.buckets);
 }
 
-void freePermutations(permutations *p) {
-    for (size_t i = 0; i < p->numPermutations; ++i) {
-        free(p[i].permutations);
+void freePermutations(permutations p) {
+    for (size_t i = 0; i < p.numPermutations; ++i) {
+        free(p.permutations[i]);
     }
-    free(p);
+    free(p.permutations);
 }

@@ -44,10 +44,10 @@ int main(int argc, char *argv[]) {
 
     double timeSpentPermutation = 0.0;
     clock_t startPermutation = clock();
-    permutations *outerPerm = outerPermutation(partitionF, partitionG, functionF.dimension);
+    permutations outerPerm = outerPermutation(partitionF, partitionG, functionF.dimension);
     clock_t endPermutation = clock();
     timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
-    printf("Number of permutations: %zu \n", outerPerm->numPermutations);
+    printf("Number of permutations: %zu \n", outerPerm.numPermutations);
 
     bool bijective = isBijective(outerPerm, functionF.dimension);
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");

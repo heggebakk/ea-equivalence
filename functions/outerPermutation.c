@@ -4,7 +4,7 @@
 
 size_t *basis;
 
-permutations *outerPermutation(partitions f, partitions g, size_t dimension) {
+permutations outerPermutation(partitions f, partitions g, size_t dimension) {
     size_t n = dimension;
     basis = createBasis(n);
     size_t *images = malloc(sizeof(size_t) * 1L << n);
@@ -17,11 +17,13 @@ permutations *outerPermutation(partitions f, partitions g, size_t dimension) {
         generated_images[i] = false;
     }
     generated_images[0] = true;
-    permutations *permutation = malloc(sizeof(permutations *) * 1L << n << n);
-    permutation->numPermutations = 0;
+    permutations permutation;
+    permutation.permutations = malloc(sizeof(size_t) * 1L << n << n);
+    permutation.numPermutations = 0;
+
     size_t *fBucketPosition = correspondingBucket(f, dimension);
     size_t *gBucketPosition = correspondingBucket(g, dimension);
-    recursive(0, images, f, g, n, generated, generated_images, permutation, fBucketPosition, gBucketPosition);
+    recursive(0, images, f, g, n, generated, generated_images, &permutation, fBucketPosition, gBucketPosition);
 
     free(images);
     free(basis);
@@ -60,9 +62,10 @@ permutations *
 recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
           bool *generatedImages, permutations *permutation, size_t *fBucketPosition, size_t *gBucketPosition) {
     if (k == n) {
-        permutation[permutation->numPermutations].permutations = malloc(sizeof(size_t) * 1L << n);
+        size_t numPermutations = permutation->numPermutations;
+        permutation->permutations[numPermutations] = malloc(sizeof(size_t) * 1L << n);
         for (int i = 0; i < 1L << n; ++i) {
-            permutation[permutation->numPermutations].permutations[i] = generated[i];
+            permutation->permutations[numPermutations][i] = generated[i];
         }
         permutation->numPermutations += 1;
         return permutation;
@@ -76,7 +79,6 @@ recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG
             continue;
         }
         bool problem = false;
-
 
         /* a very poor but effective way to handle the case when k = 0, because otherwise for k = 0 we get
          * (1L << (k-1)) == MAX_INT, and it loops figuratively forever */
@@ -117,7 +119,7 @@ recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG
             generatedImages[y] = false;
         }
     }
-    return NULL;
+    return permutation;
 }
 
 size_t findCorrespondingBucket(size_t bucketSizeF, partitions g) {
@@ -130,16 +132,16 @@ size_t findCorrespondingBucket(size_t bucketSizeF, partitions g) {
     exit(1);
 }
 
-bool isBijective(permutations *p, size_t n) {
-    if (p->numPermutations <= 0) {
+bool isBijective(permutations permutation, size_t n) {
+    if (permutation.numPermutations <= 0) {
         printf("There are no permutations to check \n");
         return false;
     }
-    for (size_t pi = 0; pi < p->numPermutations - 1; ++pi) {
-        for (size_t pj = pi + 1; pj < p->numPermutations; ++pj) {
+    for (size_t pi = 0; pi < permutation.numPermutations - 1; ++pi) {
+        for (size_t pj = pi + 1; pj < permutation.numPermutations; ++pj) {
             bool isBijective = false;
             for (size_t i = 0; i < 1L << n; ++i) {
-                if (p[pi].permutations[i] != p[pj].permutations[i]) {
+                if (permutation.permutations[pi] != permutation.permutations[pj]) {
                     isBijective = true;
                     break;
                 }

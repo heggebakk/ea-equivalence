@@ -3,7 +3,7 @@
 
 #include "../utils/structs.h"
 
-permutations *outerPermutation(partitions f, partitions g, size_t dimension);
+permutations outerPermutation(partitions f, partitions g, size_t dimension);
 
 size_t *createBasis(size_t dimension);
 
@@ -17,6 +17,6 @@ recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG
 
 size_t findCorrespondingBucket(size_t bucketSizeF, partitions g);
 
-bool isBijective(permutations *p, size_t n);
+bool isBijective(permutations permutation, size_t n);
 
 #endif //EA_EQUIVALENCE_OUTERPERMUTATION_H
