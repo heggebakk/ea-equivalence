@@ -27,11 +27,11 @@ int main(int argc, char *argv[]) {
     size_t DIMENSION = functionF.dimension;
 
     size_t k = 4;
-    size_t t = 0;
+    size_t target = 0;
     double timeSpentPartition = 0.0;
     clock_t startPartition = clock();
-    partitions partitionF = partitionFunction(&functionF, k, t);
-    partitions partitionG = partitionFunction(&functionG, k, t);
+    partitions partitionF = partitionFunction(&functionF, k, target);
+    partitions partitionG = partitionFunction(&functionG, k, target);
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;
     freeTruthTable(functionF);

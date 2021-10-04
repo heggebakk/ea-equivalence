@@ -2,7 +2,7 @@
 #define EA_EQUIVALENCE_PARTITION_H
 #include "../utils/structs.h"
 
-partitions partitionFunction(truthTable *function, size_t k, size_t t);
+partitions partitionFunction(truthTable *function, size_t k, size_t target);
 
 void printPartitionInfo(partitions p);
 
