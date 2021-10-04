@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
     printTruthTableInfo(functionF);
     printTruthTableInfo(functionG);
     printf("\n");
+    size_t DIMENSION = functionF.dimension;
 
     size_t k = 4;
     size_t t = 0;
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]) {
 
     double timeSpentPermutation = 0.0;
     clock_t startPermutation = clock();
-    permutations outerPerm = outerPermutation(partitionF, partitionG, functionF.dimension);
+    permutations outerPerm = outerPermutation(partitionF, partitionG, DIMENSION);
     clock_t endPermutation = clock();
     timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
     printf("Number of permutations: %zu \n", outerPerm.numPermutations);
