@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
     timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
     printf("Number of permutations: %zu \n", outerPerm.numPermutations);
 
-    bool bijective = isBijective(outerPerm, functionF.dimension);
+    bool bijective = isBijective(outerPerm, outerPerm);
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
     printf("\n");
 

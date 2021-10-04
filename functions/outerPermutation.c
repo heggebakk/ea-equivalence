@@ -132,22 +132,17 @@ size_t findCorrespondingBucket(size_t bucketSizeF, partitions g) {
     exit(1);
 }
 
-bool isBijective(permutations permutation, size_t n) {
-    if (permutation.numPermutations <= 0) {
+bool isBijective(permutations outerPermutation, permutations innerPermutation) {
+    if (outerPermutation.numPermutations <= 0 || innerPermutation.numPermutations <= 0) {
         printf("There are no permutations to check \n");
         return false;
     }
-    for (size_t pi = 0; pi < permutation.numPermutations - 1; ++pi) {
-        for (size_t pj = pi + 1; pj < permutation.numPermutations; ++pj) {
-            bool isBijective = false;
-            for (size_t i = 0; i < 1L << n; ++i) {
-                if (permutation.permutations[pi] != permutation.permutations[pj]) {
-                    isBijective = true;
-                    break;
-                }
-            }
-            if (!isBijective) return false;
+    bool isBijective = true;
+    for (size_t i = 0; i < outerPermutation.numPermutations; ++i) {
+        if (outerPermutation.permutations[i] != innerPermutation.permutations[i]) {
+            isBijective = false;
+            break;
         }
     }
-    return true;
+    return !isBijective ? false : true;
 }
