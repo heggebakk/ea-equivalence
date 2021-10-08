@@ -6,6 +6,7 @@
 #include "functions/partition.h"
 #include "utils/freeMemory.h"
 #include "functions/outerPermutation.h"
+#include "functions/innerPermutation.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -34,8 +35,6 @@ int main(int argc, char *argv[]) {
     partitions partitionG = partitionFunction(&functionG, k, target);
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;
-    freeTruthTable(functionF);
-    freeTruthTable(functionG);
 
     printf("Results from partition function F: \n");
     printPartitionInfo(partitionF);
@@ -54,6 +53,10 @@ int main(int argc, char *argv[]) {
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
     printf("\n");
 
+    innerPermutation(functionF, functionG);
+
+    freeTruthTable(functionF);
+    freeTruthTable(functionG);
     freePermutations(outerPerm);
     freePartition(partitionF);
     freePartition(partitionG);
