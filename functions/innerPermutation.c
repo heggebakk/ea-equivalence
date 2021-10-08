@@ -3,71 +3,60 @@
 #include "innerPermutation.h"
 
 void innerPermutation(truthTable f, truthTable g) {
-    bool *map = computeDomain(f, g, 1);
-    computeSetOfTs(map, f);
+    bool *map = computeSetOfTs(f, g, 1);
+    size_t *domain = computeDomain(map, f);
+    free(map);
+    free(domain);
 }
 
-bool * computeDomain(truthTable f, truthTable g, size_t x) {
+// x is basis
+bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
     size_t n = f.dimension;
-    bool *map = malloc(sizeof(bool) * 1L << n);
-    for (int i = 0; i < 1L << n; ++i) {
-        map[i] = false;
-    }
+    bool *map = calloc(sizeof(bool), 1L << n);
 
     for (size_t y = 0; y < 1L << n; ++y) {
-        size_t z = x ^ y;
-        size_t sum = x ^ y ^ z;
-        if (sum == 0) {
-            size_t t = g.elements[x] ^ g.elements[y] ^ g.elements[z];
-            map[t] = true;
-        }
+        size_t t = g.elements[x] ^ g.elements[y] ^ g.elements[x ^ y];
+        map[t] = true;
     }
-
-    printf("Map of all t's: ");
-    for (int i = 0; i < 1L << n; ++i) {
-        printf("%d ", map[i]);
-    }
-    printf("\n");
-
     return map;
 }
 
-void computeSetOfTs(const bool *map, truthTable f) {
+size_t * computeDomain(const bool *listOfTs, truthTable f) {
     size_t n = f.dimension;
-    bool *initialSet = malloc(sizeof(bool) * 1L << n);
-    for (int i = 0; i < 1L << n; ++i) {
-        initialSet[i] = true;
+    bool *domain = malloc(sizeof(bool) * 1L << n);
+    for (size_t i = 0; i < 1L << n; ++i) {
+        domain[i] = true;
     }
     for (int t = 0; t < 1L << n; ++t) {
-        if (map[t]) {
-            bool *tempSet = malloc(sizeof(bool) * 1L << n);
+        if (listOfTs[t]) {
+            bool *tempSet = calloc(sizeof(bool), 1L << n);
             for (size_t x = 0; x < 1L << n; ++x) {
-                for (int i = 0; i < 1L << n; ++i) {
-                    tempSet[i] = false;
-                }
                 for (size_t y = 0; y < 1L << n; ++y) {
                     size_t z = x ^ y;
-                    size_t sum = x ^ y ^ z;
-                    if (sum == 0 && (t == f.elements[x]) ^ f.elements[y] ^ f.elements[z]) {
+                    if (t == (f.elements[x] ^ f.elements[y] ^ f.elements[x ^ y])) {
                         tempSet[x] = true;
                         tempSet[y] = true;
-                        tempSet[z] = true;
+                        tempSet[x ^ y] = true;
                     }
                 }
             }
-            for (int i = 0; i < 1L << n; ++i) {
-                if (initialSet[i] != tempSet[i]) initialSet[i] = false;
+            for (size_t i = 0; i < 1L << n; ++i) {
+                domain[i] &= tempSet[i];
             }
-            printf("Tempset: ");
-            for (int i = 0; i < 1L << n; ++i) {
-                printf("%d ", tempSet[i]);
-            }
-            printf("\n");
-            printf("initset: ");
-            for (int i = 0; i < 1L << n; ++i) {
-                printf("%d ", initialSet[i]);
-            }
-            printf("\n");
+            free(tempSet);
         }
     }
+
+    // Represent the restricted domain in an array
+    // TODO: Change to a linked list
+    size_t *results = calloc(sizeof(size_t), 1L << n);
+    size_t numResult = 0;
+    for (size_t i = 0; i < 1L << n; ++i) {
+        if (domain[i]) {
+            results[numResult] = i;
+            numResult += 1;
+        }
+    }
+    free(domain);
+    return results;
 }

@@ -5,8 +5,8 @@
 
 void innerPermutation(truthTable f, truthTable g);
 
-bool * computeDomain(truthTable f, truthTable g, size_t x);
+bool * computeSetOfTs(truthTable f, truthTable g, size_t x);
 
-void computeSetOfTs(const bool *map, truthTable f);
+size_t * computeDomain(const bool *listOfTs, truthTable f);
 
 #endif //EA_EQUIVALENCE_INNERPERMUTATION_H
