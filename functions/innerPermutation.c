@@ -1,6 +1,12 @@
 #include <malloc.h>
 #include <stdbool.h>
 #include "innerPermutation.h"
+#include "../utils/linkedList.h"
+#include "../utils/freeMemory.h"
+
+//void reconstructInnerPermutation(size_t *domain, truthTable f, truthTable g);
+//
+//void recursiveLoop(size_t *domain, size_t *basis, size_t numOfBasis, size_t n);
 
 void innerPermutation(truthTable f, truthTable g) {
     bool *map = computeSetOfTs(f, g, 1);
@@ -60,3 +66,20 @@ size_t * computeDomain(const bool *listOfTs, truthTable f) {
     free(domain);
     return results;
 }
+
+// dfs
+// b1 basis, d1 domain 1, d2 domain 2
+//void reconstructInnerPermutation(size_t *domain, size_t *basis, size_t numOfBasis) {
+//    recursiveLoop(domain, basis, numOfBasis, numOfBasis);
+//}
+
+// array med pointer for [ lagre alle verdier v
+//void recursiveLoop(size_t *domain, size_t *basis, size_t numOfBasis, size_t n, size_t i) {
+//    if (1 >= n) {
+//         Do something
+//         print alle verdier vi har gitt
+//        return;
+//    }
+    // for loop for alle verdier i domain for verdi i
+//    recursiveLoop(domain, basis, numOfBasis, n, i + 1);
+//}
