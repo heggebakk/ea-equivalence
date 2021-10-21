@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "time.h"
 #include "utils/structs.h"
 #include "utils/parser.h"
@@ -42,9 +43,10 @@ int main(int argc, char *argv[]) {
     printPartitionInfo(partitionG);
     printf("\n");
 
+    size_t *basis = createBasis(DIMENSION);
     double timeSpentPermutation = 0.0;
     clock_t startPermutation = clock();
-    permutations outerPerm = outerPermutation(partitionF, partitionG, DIMENSION);
+    permutations outerPerm = outerPermutation(partitionF, partitionG, DIMENSION, basis);
     clock_t endPermutation = clock();
     timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
     printf("Number of permutations: %zu \n", outerPerm.numPermutations);
@@ -57,6 +59,7 @@ int main(int argc, char *argv[]) {
 
     freeTruthTable(functionF);
     freeTruthTable(functionG);
+    free(basis);
     freePermutations(outerPerm);
     freePartition(partitionF);
     freePartition(partitionG);
