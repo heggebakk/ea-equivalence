@@ -8,14 +8,21 @@
 //
 //void recursiveLoop(size_t *domain, size_t *basis, size_t numOfBasis, size_t n);
 
-void innerPermutation(truthTable f, truthTable g) {
-    bool *map = computeSetOfTs(f, g, 1);
-    size_t *domain = computeDomain(map, f);
-    free(map);
-    free(domain);
+void innerPermutation(truthTable f, truthTable g, size_t *basis) {
+    struct Node *domains = calloc(sizeof(struct Node), f.dimension); // A list of Linked Lists with the restricted domains
+
+    for (int i = 0; i < f.dimension; ++i) {
+        bool *map = computeSetOfTs(f, g, basis[i]);
+        domains[i] = *computeDomain(map, f);
+        free(map);
+    }
+//    reconstructInnerPermutation(domain, f, g);
+    // TODO: Free memory not working
+    for (size_t i = 0; i < f.dimension; ++i) {
+        freeLinkedLists(&domains[i]);
+    }
 }
 
-// x is basis
 bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
     size_t n = f.dimension;
     bool *map = calloc(sizeof(bool), 1L << n);
@@ -24,10 +31,21 @@ bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
         size_t t = g.elements[x] ^ g.elements[y] ^ g.elements[x ^ y];
         map[t] = true;
     }
+    printf("Map of all t's: ");
+    for (int i = 0; i < 1L << n; ++i) {
+        printf("%d ", map[i]);
+    }
+    printf("\n");
     return map;
 }
 
-size_t * computeDomain(const bool *listOfTs, truthTable f) {
+/**
+ * Compute the domain for the given list of T's. The domain is represented with a linked list.
+ * @param listOfTs A set of T's that we want to compute the domain for
+ * @param f A function F
+ * @return The domain represented as a linked list.
+ */
+struct Node * computeDomain(const bool *listOfTs, truthTable f) {
     size_t n = f.dimension;
     bool *domain = malloc(sizeof(bool) * 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -38,7 +56,6 @@ size_t * computeDomain(const bool *listOfTs, truthTable f) {
             bool *tempSet = calloc(sizeof(bool), 1L << n);
             for (size_t x = 0; x < 1L << n; ++x) {
                 for (size_t y = 0; y < 1L << n; ++y) {
-                    size_t z = x ^ y;
                     if (t == (f.elements[x] ^ f.elements[y] ^ f.elements[x ^ y])) {
                         tempSet[x] = true;
                         tempSet[y] = true;
@@ -52,19 +69,37 @@ size_t * computeDomain(const bool *listOfTs, truthTable f) {
             free(tempSet);
         }
     }
+    printf("Restricted domain: ");
+    for (int i = 0; i < 1L << n; ++i) {
+        printf("%d ", domain[i]);
+    }
+    printf("\n");
 
-    // Represent the restricted domain in an array
-    // TODO: Change to a linked list
-    size_t *results = calloc(sizeof(size_t), 1L << n);
-    size_t numResult = 0;
+    // Restricted domain represented as a Linked List
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
     for (size_t i = 0; i < 1L << n; ++i) {
         if (domain[i]) {
-            results[numResult] = i;
-            numResult += 1;
+            // Add a new node to the linked list
+            struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
+            newNode->data = i;
+            newNode->next = NULL;
+
+            // Check if the linked list is empty
+            if (head == NULL) {
+                head = newNode;
+                tail = newNode;
+            } else {
+                tail->next = newNode;
+                tail = newNode;
+            }
         }
     }
-    free(domain);
-    return results;
+
+    displayLinkedList(head);
+    countNodes(head);
+
+    return head;
 }
 
 // dfs

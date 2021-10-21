@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
     printf("\n");
 
-    innerPermutation(functionF, functionG);
+    innerPermutation(functionF, functionG, basis);
 
     freeTruthTable(functionF);
     freeTruthTable(functionG);
