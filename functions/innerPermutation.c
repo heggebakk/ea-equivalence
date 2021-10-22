@@ -9,7 +9,7 @@
 //void recursiveLoop(size_t *domain, size_t *basis, size_t numOfBasis, size_t n);
 
 void innerPermutation(truthTable f, truthTable g, size_t *basis) {
-    struct Node *domains = calloc(sizeof(struct Node), f.dimension); // A list of Linked Lists with the restricted domains
+    struct Node **domains = calloc(sizeof(struct Node*), f.dimension); // A list of Linked Lists with the restricted domains
 
     for (int i = 0; i < f.dimension; ++i) {
         bool *map = computeSetOfTs(f, g, basis[i]);
@@ -17,13 +17,14 @@ void innerPermutation(truthTable f, truthTable g, size_t *basis) {
         free(map);
     }
     for (int i = 0; i < f.dimension; ++i) {
-        displayLinkedList(&domains[i]);
+        displayLinkedList(domains[i]);
     }
 //    reconstructInnerPermutation(domain, f, g);
     // TODO: Free memory not working
     for (size_t i = 0; i < f.dimension; ++i) {
-        freeLinkedList(&domains[i]);
+        freeLinkedList(domains[i]);
     }
+    free(domains);
 }
 
 bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
@@ -49,7 +50,7 @@ bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
  * @param f A function F
  * @return The restricted domain represented as a linked list.
  */
-struct Node computeDomain(const bool *listOfTs, truthTable f) {
+struct Node * computeDomain(const bool *listOfTs, truthTable f) {
     size_t n = f.dimension;
     bool *domain = malloc(sizeof(bool) * 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -101,7 +102,7 @@ struct Node computeDomain(const bool *listOfTs, truthTable f) {
     }
 
     free(domain);
-    return *head;
+    return head;
 }
 
 // dfs
