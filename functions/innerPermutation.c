@@ -40,10 +40,11 @@ bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
 }
 
 /**
- * Compute the domain for the given list of T's. The domain is represented with a linked list.
+ * Compute the restricted domain for the given list of T's.
+ * The domain is represented with a linked list.
  * @param listOfTs A set of T's that we want to compute the domain for
  * @param f A function F
- * @return The domain represented as a linked list.
+ * @return The restricted domain represented as a linked list.
  */
 struct Node * computeDomain(const bool *listOfTs, truthTable f) {
     size_t n = f.dimension;
@@ -110,7 +111,7 @@ struct Node * computeDomain(const bool *listOfTs, truthTable f) {
 
 // array med pointer for [ lagre alle verdier v
 //void recursiveLoop(size_t *domain, size_t *basis, size_t numOfBasis, size_t n, size_t i) {
-//    if (1 >= n) {
+//    if (i >= n) {
 //         Do something
 //         print alle verdier vi har gitt
 //        return;
