@@ -112,9 +112,9 @@ void reconstructInnerPermutation(struct Node **domains, size_t dimension) {
     dfs(domains, dimension, 0, values);
 }
 
- /**
-  * A depth first search over a array containing linked lists.
-  */
+/**
+ * A depth first search over a array containing linked lists.
+ */
 void dfs(struct Node **domains, size_t dimension, size_t k, size_t *values) {
     if (k >= dimension) {
         printf("Values: ");
@@ -124,11 +124,11 @@ void dfs(struct Node **domains, size_t dimension, size_t k, size_t *values) {
         printf("\n");
         return;
     }
-        struct Node *current = domains[k];
-        while (current != NULL) {
-            values[k] = current->data;
-            dfs(domains, dimension, k + 1, values);
-            current = current->next;
-        }
+    struct Node *current = domains[k];
+    while (current != NULL) {
+        values[k] = current->data;
+        dfs(domains, dimension, k + 1, values);
+        current = current->next;
+    }
 }
 
