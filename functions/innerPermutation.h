@@ -9,8 +9,8 @@ bool * computeSetOfTs(truthTable f, truthTable g, size_t x);
 
 struct Node * computeDomain(const bool *listOfTs, truthTable f);
 
-void reconstructInnerPermutation(size_t *domain, size_t *basis, size_t numOfBasis, size_t n);
+void reconstructInnerPermutation(struct Node **domains, size_t dimension);
 
-void recursiveLoop(size_t *domain, size_t *basis, size_t numOfBasis, size_t n);
+void dfs(struct Node **domains, size_t dimension, size_t k, size_t *values);
 
 #endif //EA_EQUIVALENCE_INNERPERMUTATION_H

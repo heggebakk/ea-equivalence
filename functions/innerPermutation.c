@@ -4,10 +4,6 @@
 #include "../utils/linkedList.h"
 #include "../utils/freeMemory.h"
 
-//void reconstructInnerPermutation(size_t *domain, truthTable f, truthTable g);
-//
-//void recursiveLoop(size_t *domain, size_t *basis, size_t numOfBasis, size_t n);
-
 void innerPermutation(truthTable f, truthTable g, size_t *basis) {
     struct Node **domains = calloc(sizeof(struct Node*), f.dimension); // A list of Linked Lists with the restricted domains
 
@@ -19,6 +15,7 @@ void innerPermutation(truthTable f, truthTable g, size_t *basis) {
     for (int i = 0; i < f.dimension; ++i) {
         displayLinkedList(domains[i]);
     }
+    reconstructInnerPermutation(domains, f.dimension);
 //    reconstructInnerPermutation(domain, f, g);
     // TODO: Free memory not working
     for (size_t i = 0; i < f.dimension; ++i) {
@@ -52,7 +49,7 @@ bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
  */
 struct Node * computeDomain(const bool *listOfTs, truthTable f) {
     size_t n = f.dimension;
-    bool *domain = malloc(sizeof(bool) * 1L << n);
+    bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
         domain[i] = true;
     }
@@ -105,19 +102,33 @@ struct Node * computeDomain(const bool *listOfTs, truthTable f) {
     return head;
 }
 
-// dfs
-// b1 basis, d1 domain 1, d2 domain 2
-//void reconstructInnerPermutation(size_t *domain, size_t *basis, size_t numOfBasis) {
-//    recursiveLoop(domain, basis, numOfBasis, numOfBasis);
-//}
+/**
+ *
+ * @param domains
+ * @param dimension
+ */
+void reconstructInnerPermutation(struct Node **domains, size_t dimension) {
+    size_t *values = calloc(sizeof(size_t), dimension);
+    dfs(domains, dimension, 0, values);
+}
 
-// array med pointer for [ lagre alle verdier v
-//void recursiveLoop(size_t *domain, size_t *basis, size_t numOfBasis, size_t n, size_t i) {
-//    if (i >= n) {
-//         Do something
-//         print alle verdier vi har gitt
-//        return;
-//    }
-    // for loop for alle verdier i domain for verdi i
-//    recursiveLoop(domain, basis, numOfBasis, n, i + 1);
-//}
+ /**
+  * A depth first search over a array containing linked lists.
+  */
+void dfs(struct Node **domains, size_t dimension, size_t k, size_t *values) {
+    if (k >= dimension) {
+        printf("Values: ");
+        for (int i = 0; i < dimension; ++i) {
+            printf("%zu ", values[i]);
+        }
+        printf("\n");
+        return;
+    }
+        struct Node *current = domains[k];
+        while (current != NULL) {
+            values[k] = current->data;
+            dfs(domains, dimension, k + 1, values);
+            current = current->next;
+        }
+}
+
