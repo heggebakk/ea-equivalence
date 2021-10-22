@@ -10,6 +10,6 @@ void freePartition(partitions p);
 
 void freePermutations(permutations p);
 
-void freeLinkedLists(struct Node *head);
+void freeLinkedList(struct Node *head);
 
 #endif //EA_EQUIVALENCE_FREEMEMORY_H

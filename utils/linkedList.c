@@ -6,7 +6,7 @@ void displayLinkedList(struct Node *head) {
         printf("Linked list is empty. \n");
         return;
     }
-    printf("Nodes of linked list: \n");
+    printf("Nodes of linked list: ");
     while (current != NULL) {
         printf("%zu ", current->data);
         current = current->next;

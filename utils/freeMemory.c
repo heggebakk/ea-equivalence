@@ -21,8 +21,8 @@ void freePermutations(permutations p) {
     free(p.permutations);
 }
 
-void freeLinkedLists(struct Node *head) {
-    struct Node *current;
+void freeLinkedList(struct Node *head) {
+    struct Node *current = NULL;
     while (head != NULL) {
         current = head;
         head = head->next;

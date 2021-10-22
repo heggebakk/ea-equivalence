@@ -13,13 +13,16 @@ void innerPermutation(truthTable f, truthTable g, size_t *basis) {
 
     for (int i = 0; i < f.dimension; ++i) {
         bool *map = computeSetOfTs(f, g, basis[i]);
-        domains[i] = *computeDomain(map, f);
+        domains[i] = computeDomain(map, f);
         free(map);
+    }
+    for (int i = 0; i < f.dimension; ++i) {
+        displayLinkedList(&domains[i]);
     }
 //    reconstructInnerPermutation(domain, f, g);
     // TODO: Free memory not working
     for (size_t i = 0; i < f.dimension; ++i) {
-        freeLinkedLists(&domains[i]);
+        freeLinkedList(&domains[i]);
     }
 }
 
@@ -31,11 +34,11 @@ bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
         size_t t = g.elements[x] ^ g.elements[y] ^ g.elements[x ^ y];
         map[t] = true;
     }
-    printf("Map of all t's: ");
-    for (int i = 0; i < 1L << n; ++i) {
-        printf("%d ", map[i]);
-    }
-    printf("\n");
+//    printf("Map of all t's: ");
+//    for (int i = 0; i < 1L << n; ++i) {
+//        printf("%d ", map[i]);
+//    }
+//    printf("\n");
     return map;
 }
 
@@ -46,7 +49,7 @@ bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
  * @param f A function F
  * @return The restricted domain represented as a linked list.
  */
-struct Node * computeDomain(const bool *listOfTs, truthTable f) {
+struct Node computeDomain(const bool *listOfTs, truthTable f) {
     size_t n = f.dimension;
     bool *domain = malloc(sizeof(bool) * 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -97,10 +100,8 @@ struct Node * computeDomain(const bool *listOfTs, truthTable f) {
         }
     }
 
-    displayLinkedList(head);
-    countNodes(head);
-
-    return head;
+    free(domain);
+    return *head;
 }
 
 // dfs
