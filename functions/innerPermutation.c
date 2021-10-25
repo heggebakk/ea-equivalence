@@ -19,7 +19,6 @@ void innerPermutation(truthTable f, truthTable g, size_t *basis) {
     for (size_t i = 0; i < f.dimension; ++i) {
         freeLinkedList(domains[i]);
     }
-    reconstructTruthTable(basis, f.dimension);
     free(domains);
 }
 
@@ -117,11 +116,7 @@ void reconstructInnerPermutation(struct Node **domains, size_t dimension) {
  */
 void dfs(struct Node **domains, size_t dimension, size_t k, size_t *values) {
     if (k >= dimension) {
-        printf("Values: ");
-        for (int i = 0; i < dimension; ++i) {
-            printf("%zu ", values[i]);
-        }
-        printf("\n");
+        reconstructTruthTable(values, dimension);
         return;
     }
     struct Node *current = domains[k];
@@ -134,26 +129,20 @@ void dfs(struct Node **domains, size_t dimension, size_t k, size_t *values) {
 
 /**
  * Reconstruction of a truth table
- * @param basis A standard basis, powers of 2
+ * @param basisValues A standard basisValues, powers of 2
  * @param dimension Dimension of the Function
  */
-void reconstructTruthTable(const size_t *basis, size_t dimension) {
-    size_t result = 0;
+void reconstructTruthTable(const size_t *basisValues, size_t dimension) {
     size_t *truthTable = calloc(sizeof(size_t), 1L << dimension);
 
     for (size_t coordinate = 0; coordinate < 1L << dimension; ++coordinate) {
+        size_t result = 0;
         for (size_t i = 0; i < dimension; ++i) {
-            printf("1L << i = %zu, Coordinate = %zu, i = %zu\n", 1L << i, coordinate, i);
-            if (1L << i & coordinate) {
-                result = result ^ basis[i];
+            if ((1L << i) & coordinate) {
+                result = result ^ basisValues[i];
             }
         }
         truthTable[coordinate] = result;
     }
-    printf("New Truth table: ");
-    for (int i = 0; i < 1L << dimension; ++i) {
-        printf("%zu ", truthTable[i]);
-    }
-    printf("\n");
     free(truthTable);
 }
