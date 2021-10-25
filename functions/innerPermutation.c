@@ -15,7 +15,9 @@ void innerPermutation(truthTable f, truthTable g, size_t *basis) {
     for (int i = 0; i < f.dimension; ++i) {
         displayLinkedList(domains[i]);
     }
+
     reconstructInnerPermutation(domains, f.dimension);
+
     for (size_t i = 0; i < f.dimension; ++i) {
         freeLinkedList(domains[i]);
     }
@@ -30,11 +32,6 @@ bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
         size_t t = g.elements[x] ^ g.elements[y] ^ g.elements[x ^ y];
         map[t] = true;
     }
-//    printf("Map of all t's: ");
-//    for (int i = 0; i < 1L << n; ++i) {
-//        printf("%d ", map[i]);
-//    }
-//    printf("\n");
     return map;
 }
 
@@ -69,11 +66,6 @@ struct Node * computeDomain(const bool *listOfTs, truthTable f) {
             free(tempSet);
         }
     }
-    printf("Restricted domain: ");
-    for (int i = 0; i < 1L << n; ++i) {
-        printf("%d ", domain[i]);
-    }
-    printf("\n");
 
     // Restricted domain represented as a Linked List
     struct Node *head = NULL;
@@ -95,7 +87,6 @@ struct Node * computeDomain(const bool *listOfTs, truthTable f) {
             }
         }
     }
-
     free(domain);
     return head;
 }
