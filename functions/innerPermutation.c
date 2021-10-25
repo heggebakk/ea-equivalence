@@ -137,3 +137,16 @@ void reconstructTruthTable(const size_t *basisValues, size_t dimension) {
     }
     free(truthTable);
 }
+
+/**
+ * Compose function F with function G
+ * @param f
+ * @param g
+ */
+size_t * composeFunctions(const size_t *f, const size_t *g, size_t dimension) {
+    size_t *result = calloc(sizeof(size_t), 1L << dimension);
+    for (size_t x = 0; x < 1L << dimension; ++x) {
+        result[x] = f[g[x]];
+    }
+    return result;
+}
