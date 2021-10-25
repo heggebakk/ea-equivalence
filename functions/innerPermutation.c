@@ -16,8 +16,6 @@ void innerPermutation(truthTable f, truthTable g, size_t *basis) {
         displayLinkedList(domains[i]);
     }
     reconstructInnerPermutation(domains, f.dimension);
-//    reconstructInnerPermutation(domain, f, g);
-    // TODO: Free memory not working
     for (size_t i = 0; i < f.dimension; ++i) {
         freeLinkedList(domains[i]);
     }
