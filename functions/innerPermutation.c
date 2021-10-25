@@ -150,3 +150,16 @@ size_t * composeFunctions(const size_t *f, const size_t *g, size_t dimension) {
     }
     return result;
 }
+/**
+ * Add function F and function G together
+ * @param f
+ * @param g
+ */
+size_t * addFunctionsTogether(const size_t *f, const size_t *g, size_t dimension) {
+    size_t *result = calloc(sizeof(size_t), 1L << dimension);
+    for (int i = 0; i < 1L << dimension; ++i) {
+        result[i] = f[i] ^ g[i];
+    }
+    return result;
+}
+
