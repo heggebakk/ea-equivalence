@@ -163,3 +163,19 @@ size_t * addFunctionsTogether(const size_t *f, const size_t *g, size_t dimension
     return result;
 }
 
+/**
+ * Check if a function is linear or not
+ * @param f The function to check
+ * @param dimension The dimension of the function
+ * @return True if the function is linear, false otherwise
+ */
+bool isLinear(const size_t *f, size_t dimension) {
+    for (size_t a = 1; a < 1L << dimension; ++a) {
+        for (size_t b = a + 1; b < 1L << dimension; ++b) {
+            if (b > (a ^ b)) continue;
+            size_t result = f[0] ^ f[a] ^ f[b] ^ f[a ^ b];
+            if (result != 0) return false;
+        }
+    }
+    return true;
+}
