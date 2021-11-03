@@ -20,3 +20,12 @@ void freePermutations(permutations p) {
     }
     free(p.permutations);
 }
+
+void freeLinkedList(struct Node *head) {
+    struct Node *current = NULL;
+    while (head != NULL) {
+        current = head;
+        head = head->next;
+        free(current);
+    }
+}

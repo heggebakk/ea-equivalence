@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "time.h"
 #include "utils/structs.h"
 #include "utils/parser.h"
 #include "functions/partition.h"
 #include "utils/freeMemory.h"
 #include "functions/outerPermutation.h"
+#include "functions/innerPermutation.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -24,17 +26,16 @@ int main(int argc, char *argv[]) {
     printTruthTableInfo(functionF);
     printTruthTableInfo(functionG);
     printf("\n");
+    size_t DIMENSION = functionF.dimension;
 
     size_t k = 4;
-    size_t t = 0;
+    size_t target = 0;
     double timeSpentPartition = 0.0;
     clock_t startPartition = clock();
-    partitions partitionF = partitionFunction(&functionF, k, t);
-    partitions partitionG = partitionFunction(&functionG, k, t);
+    partitions partitionF = partitionFunction(&functionF, k, target);
+    partitions partitionG = partitionFunction(&functionG, k, target);
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;
-    freeTruthTable(functionF);
-    freeTruthTable(functionG);
 
     printf("Results from partition function F: \n");
     printPartitionInfo(partitionF);
@@ -42,17 +43,35 @@ int main(int argc, char *argv[]) {
     printPartitionInfo(partitionG);
     printf("\n");
 
+    size_t *basis = createBasis(DIMENSION);
     double timeSpentPermutation = 0.0;
     clock_t startPermutation = clock();
-    permutations outerPerm = outerPermutation(partitionF, partitionG, functionF.dimension);
+    permutations outerPerm = outerPermutation(partitionF, partitionG, DIMENSION, basis);
     clock_t endPermutation = clock();
     timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
     printf("Number of permutations: %zu \n", outerPerm.numPermutations);
 
-    bool bijective = isBijective(outerPerm, functionF.dimension);
+    bool bijective = isBijective(outerPerm, outerPerm);
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
     printf("\n");
 
+    size_t *l2 = calloc(sizeof(size_t), 1L << DIMENSION);
+    size_t *lPrime = calloc(sizeof(size_t), 1L << DIMENSION);
+    innerPermutation(functionF, functionG, basis, l2, lPrime);
+    printf("L2: ");
+    for (size_t i = 0; i < 1L << DIMENSION; ++i) {
+        printf("%zu ", l2[i]);
+    }
+    printf("\n");
+    printf("L': ");
+    for (size_t i = 0; i < 1L << DIMENSION; ++i) {
+        printf("%zu ", lPrime[i]);
+    }
+    printf("\n");
+
+    freeTruthTable(functionF);
+    freeTruthTable(functionG);
+    free(basis);
     freePermutations(outerPerm);
     freePartition(partitionF);
     freePartition(partitionG);

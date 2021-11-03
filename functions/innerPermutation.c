@@ -1,0 +1,199 @@
+#include <malloc.h>
+#include <stdbool.h>
+#include "innerPermutation.h"
+#include "../utils/linkedList.h"
+#include "../utils/freeMemory.h"
+
+void innerPermutation(truthTable f, truthTable g, size_t *basis, size_t *l2, size_t *lPrime) {
+    struct Node **domains = calloc(sizeof(struct Node*), f.dimension); // A list of Linked Lists containing the restricted domains
+
+    for (int i = 0; i < f.dimension; ++i) {
+        bool *map = computeSetOfTs(f, g, basis[i]);
+        domains[i] = computeDomain(map, f);
+        free(map);
+    }
+    for (int i = 0; i < f.dimension; ++i) {
+        displayLinkedList(domains[i]);
+    }
+
+    reconstructInnerPermutation(domains, f.dimension, f, g, l2, lPrime);
+
+    for (size_t i = 0; i < f.dimension; ++i) {
+        freeLinkedList(domains[i]);
+    }
+    free(domains);
+}
+
+bool * computeSetOfTs(truthTable f, truthTable g, size_t x) {
+    size_t n = f.dimension;
+    bool *map = calloc(sizeof(bool), 1L << n);
+
+    for (size_t y = 0; y < 1L << n; ++y) {
+        size_t t = g.elements[x] ^ g.elements[y] ^ g.elements[x ^ y];
+        map[t] = true;
+    }
+    return map;
+}
+
+/**
+ * Compute the restricted domain for the given list of T's.
+ * The domain is represented with a linked list.
+ * @param listOfTs A set of T's that we want to compute the domain for
+ * @param f A function F
+ * @return The restricted domain represented as a linked list.
+ */
+struct Node * computeDomain(const bool *listOfTs, truthTable f) {
+    size_t n = f.dimension;
+    bool *domain = calloc(sizeof(bool), 1L << n);
+    for (size_t i = 0; i < 1L << n; ++i) {
+        domain[i] = true;
+    }
+    for (int t = 0; t < 1L << n; ++t) {
+        if (listOfTs[t]) {
+            bool *tempSet = calloc(sizeof(bool), 1L << n);
+            for (size_t x = 0; x < 1L << n; ++x) {
+                for (size_t y = 0; y < 1L << n; ++y) {
+                    if (t == (f.elements[x] ^ f.elements[y] ^ f.elements[x ^ y])) {
+                        tempSet[x] = true;
+                        tempSet[y] = true;
+                        tempSet[x ^ y] = true;
+                    }
+                }
+            }
+            for (size_t i = 0; i < 1L << n; ++i) {
+                domain[i] &= tempSet[i];
+            }
+            free(tempSet);
+        }
+    }
+
+    // Restricted domain represented as a Linked List
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    for (size_t i = 0; i < 1L << n; ++i) {
+        if (domain[i]) {
+            // Add a new node to the linked list
+            struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
+            newNode->data = i;
+            newNode->next = NULL;
+
+            // Check if the linked list is empty
+            if (head == NULL) {
+                head = newNode;
+                tail = newNode;
+            } else {
+                tail->next = newNode;
+                tail = newNode;
+            }
+        }
+    }
+    free(domain);
+    return head;
+}
+
+/**
+ *
+ * @param domains
+ * @param dimension
+ */
+void reconstructInnerPermutation(struct Node **domains, size_t dimension, truthTable f, truthTable g, size_t *l2,
+                                 size_t *lPrime) {
+    size_t *values = calloc(sizeof(size_t), dimension);
+    dfs(domains, dimension, 0, values, f, g, l2, lPrime);
+    free(values);
+}
+
+/**
+ * A depth first search over a array containing linked lists.
+  * @param domains A array containing linked list of domains
+  * @param dimension The dimension of the function
+  * @param k
+  * @param values
+  * @return True if the reconstructed truth table is linear, false otherwise.
+  */
+bool dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable f, truthTable g, size_t *l2,
+         size_t *lPrime) {
+    if (k >= dimension) {
+        // Compose the reconstructed truth table L2 with F and add the result with G, resulting in L'
+        reconstructTruthTable(values, dimension, l2);
+        size_t *composedFunctions = composeFunctions(f.elements, l2, dimension);
+        size_t *addedFunctions = addFunctionsTogether(composedFunctions, g.elements, dimension);
+        if(isLinear(addedFunctions, dimension)) {
+            // Assign the result from L composed L2 added with G to L'.
+            for (size_t i = 0; i < 1L << dimension; ++i) {
+                lPrime[i] = addedFunctions[i];
+            }
+            return true;
+        }
+    }
+    struct Node *current = domains[k];
+    while (current != NULL) {
+        values[k] = current->data;
+        bool linear = dfs(domains, dimension, k + 1, values, f, g, l2, lPrime);
+        if (linear) return true;
+        current = current->next;
+    }
+    return false;
+}
+
+/**
+ * Reconstruction of a truth table
+ * @param basisValues A standard basisValues, powers of 2
+ * @param dimension Dimension of the Function
+ */
+void reconstructTruthTable(const size_t *basisValues, size_t dimension, size_t *l2) {
+    for (size_t coordinate = 0; coordinate < 1L << dimension; ++coordinate) {
+        size_t result = 0;
+        for (size_t i = 0; i < dimension; ++i) {
+            if ((1L << i) & coordinate) {
+                result = result ^ basisValues[i];
+            }
+        }
+        l2[coordinate] = result;
+    }
+}
+
+/**
+ * Compose function F with function G
+ * @param f
+ * @param g
+ */
+size_t *composeFunctions(const size_t *f, const size_t *g, size_t dimension) {
+    size_t *result = calloc(sizeof(size_t), 1L << dimension);
+    for (size_t x = 0; x < 1L << dimension; ++x) {
+        result[x] = f[g[x]];
+    }
+    return result;
+}
+
+/**
+ * Add function F with function G
+  * @param f
+  * @param g
+  * @param dimension
+  * @return
+  */
+size_t * addFunctionsTogether(const size_t *f, const size_t *g, size_t dimension) {
+    size_t *result = calloc(sizeof(size_t), 1L << dimension);
+    for (int i = 0; i < 1L << dimension; ++i) {
+        result[i] = f[i] ^ g[i];
+    }
+    return result;
+}
+
+/**
+ * Check if a function is linear or not
+ * @param f The function to check
+ * @param dimension The dimension of the function
+ * @return True if the function is linear, false otherwise
+ */
+bool isLinear(const size_t *f, size_t dimension) {
+    for (size_t a = 1; a < 1L << dimension; ++a) {
+        for (size_t b = a + 1; b < 1L << dimension; ++b) {
+            if (b > (a ^ b)) continue;
+            size_t result = f[0] ^ f[a] ^ f[b] ^ f[a ^ b];
+            if (result != 0) return false;
+        }
+    }
+    return true;
+}

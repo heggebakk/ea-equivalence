@@ -2,9 +2,7 @@
 #include "stdlib.h"
 #include "outerPermutation.h"
 
-size_t *basis;
-
-permutations outerPermutation(partitions f, partitions g, size_t dimension) {
+permutations outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis) {
     size_t n = dimension;
     basis = createBasis(n);
     size_t *images = malloc(sizeof(size_t) * 1L << n);
@@ -23,7 +21,7 @@ permutations outerPermutation(partitions f, partitions g, size_t dimension) {
 
     size_t *fBucketPosition = correspondingBucket(f, dimension);
     size_t *gBucketPosition = correspondingBucket(g, dimension);
-    recursive(0, images, f, g, n, generated, generated_images, &permutation, fBucketPosition, gBucketPosition);
+    recursive(0, basis, images, f, g, n, generated, generated_images, &permutation, fBucketPosition, gBucketPosition);
 
     free(images);
     free(basis);
@@ -32,14 +30,6 @@ permutations outerPermutation(partitions f, partitions g, size_t dimension) {
     free(gBucketPosition);
 
     return permutation;
-}
-
-size_t *createBasis(size_t dimension) {
-    basis = malloc(sizeof(size_t) * dimension + 1);
-    for (size_t i = 0; i < dimension; ++i) {
-        basis[i] = 1L << i;
-    }
-    return basis;
 }
 
 size_t *correspondingBucket(partitions function, size_t dimension) {
@@ -59,8 +49,8 @@ size_t *correspondingBucket(partitions function, size_t dimension) {
 }
 
 permutations *
-recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
-          bool *generatedImages, permutations *permutation, size_t *fBucketPosition, size_t *gBucketPosition) {
+recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
+          bool *generatedImages, permutations *permutation, const size_t *fBucketPosition, const size_t *gBucketPosition) {
     if (k == n) {
         size_t numPermutations = permutation->numPermutations;
         permutation->permutations[numPermutations] = malloc(sizeof(size_t) * 1L << n);
@@ -103,7 +93,7 @@ recursive(size_t k, size_t *images, partitions partitionF, partitions partitionG
         }
         if (!problem) {
             images[k] = ck;
-            recursive(k + 1, images, partitionF, partitionG, n, generated, generatedImages, permutation,
+            recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, permutation,
                       fBucketPosition, gBucketPosition);
         }
 
@@ -132,22 +122,17 @@ size_t findCorrespondingBucket(size_t bucketSizeF, partitions g) {
     exit(1);
 }
 
-bool isBijective(permutations permutation, size_t n) {
-    if (permutation.numPermutations <= 0) {
+bool isBijective(permutations outerPermutation, permutations innerPermutation) {
+    if (outerPermutation.numPermutations <= 0 || innerPermutation.numPermutations <= 0) {
         printf("There are no permutations to check \n");
         return false;
     }
-    for (size_t pi = 0; pi < permutation.numPermutations - 1; ++pi) {
-        for (size_t pj = pi + 1; pj < permutation.numPermutations; ++pj) {
-            bool isBijective = false;
-            for (size_t i = 0; i < 1L << n; ++i) {
-                if (permutation.permutations[pi] != permutation.permutations[pj]) {
-                    isBijective = true;
-                    break;
-                }
-            }
-            if (!isBijective) return false;
+    bool isBijective = true;
+    for (size_t i = 0; i < outerPermutation.numPermutations; ++i) {
+        if (outerPermutation.permutations[i] != innerPermutation.permutations[i]) {
+            isBijective = false;
+            break;
         }
     }
-    return true;
+    return !isBijective ? false : true;
 }

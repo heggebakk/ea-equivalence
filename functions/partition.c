@@ -7,10 +7,10 @@
  * Works only for k = 4
  * @param function The function to be partitioned
  * @param k The size of the tuple T
- * @param t An element of F2^n
+ * @param target An element of F2^n
  * @return Partitions
  */
-partitions partitionFunction(truthTable *function, size_t k, size_t t) {
+partitions partitionFunction(truthTable *function, size_t k, size_t target) {
     if (k % 2 != 0) {
         printf("k is odd, the function partitionFunction works only for even numbers.");
         exit(1);
