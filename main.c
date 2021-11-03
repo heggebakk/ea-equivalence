@@ -55,7 +55,19 @@ int main(int argc, char *argv[]) {
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
     printf("\n");
 
-    innerPermutation(functionF, functionG, basis);
+    size_t *l2 = calloc(sizeof(size_t), 1L << DIMENSION);
+    size_t *lPrime = calloc(sizeof(size_t), 1L << DIMENSION);
+    innerPermutation(functionF, functionG, basis, l2, lPrime);
+    printf("L2: ");
+    for (size_t i = 0; i < 1L << DIMENSION; ++i) {
+        printf("%zu ", l2[i]);
+    }
+    printf("\n");
+    printf("L': ");
+    for (size_t i = 0; i < 1L << DIMENSION; ++i) {
+        printf("%zu ", lPrime[i]);
+    }
+    printf("\n");
 
     freeTruthTable(functionF);
     freeTruthTable(functionG);

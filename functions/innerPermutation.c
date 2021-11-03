@@ -4,8 +4,8 @@
 #include "../utils/linkedList.h"
 #include "../utils/freeMemory.h"
 
-void innerPermutation(truthTable f, truthTable g, size_t *basis) {
-    struct Node **domains = calloc(sizeof(struct Node*), f.dimension); // A list of Linked Lists with the restricted domains
+void innerPermutation(truthTable f, truthTable g, size_t *basis, size_t *l2, size_t *lPrime) {
+    struct Node **domains = calloc(sizeof(struct Node*), f.dimension); // A list of Linked Lists containing the restricted domains
 
     for (int i = 0; i < f.dimension; ++i) {
         bool *map = computeSetOfTs(f, g, basis[i]);
@@ -16,7 +16,7 @@ void innerPermutation(truthTable f, truthTable g, size_t *basis) {
         displayLinkedList(domains[i]);
     }
 
-    reconstructInnerPermutation(domains, f.dimension);
+    reconstructInnerPermutation(domains, f.dimension, f, g, l2, lPrime);
 
     for (size_t i = 0; i < f.dimension; ++i) {
         freeLinkedList(domains[i]);
@@ -96,26 +96,44 @@ struct Node * computeDomain(const bool *listOfTs, truthTable f) {
  * @param domains
  * @param dimension
  */
-void reconstructInnerPermutation(struct Node **domains, size_t dimension) {
+void reconstructInnerPermutation(struct Node **domains, size_t dimension, truthTable f, truthTable g, size_t *l2,
+                                 size_t *lPrime) {
     size_t *values = calloc(sizeof(size_t), dimension);
-    dfs(domains, dimension, 0, values);
+    dfs(domains, dimension, 0, values, f, g, l2, lPrime);
     free(values);
 }
 
 /**
  * A depth first search over a array containing linked lists.
- */
-void dfs(struct Node **domains, size_t dimension, size_t k, size_t *values) {
+  * @param domains A array containing linked list of domains
+  * @param dimension The dimension of the function
+  * @param k
+  * @param values
+  * @return True if the reconstructed truth table is linear, false otherwise.
+  */
+bool dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable f, truthTable g, size_t *l2,
+         size_t *lPrime) {
     if (k >= dimension) {
-        reconstructTruthTable(values, dimension);
-        return;
+        // Compose the reconstructed truth table L2 with F and add the result with G, resulting in L'
+        reconstructTruthTable(values, dimension, l2);
+        size_t *composedFunctions = composeFunctions(f.elements, l2, dimension);
+        size_t *addedFunctions = addFunctionsTogether(composedFunctions, g.elements, dimension);
+        if(isLinear(addedFunctions, dimension)) {
+            // Assign the result from L composed L2 added with G to L'.
+            for (size_t i = 0; i < 1L << dimension; ++i) {
+                lPrime[i] = addedFunctions[i];
+            }
+            return true;
+        }
     }
     struct Node *current = domains[k];
     while (current != NULL) {
         values[k] = current->data;
-        dfs(domains, dimension, k + 1, values);
+        bool linear = dfs(domains, dimension, k + 1, values, f, g, l2, lPrime);
+        if (linear) return true;
         current = current->next;
     }
+    return false;
 }
 
 /**
@@ -123,9 +141,7 @@ void dfs(struct Node **domains, size_t dimension, size_t k, size_t *values) {
  * @param basisValues A standard basisValues, powers of 2
  * @param dimension Dimension of the Function
  */
-void reconstructTruthTable(const size_t *basisValues, size_t dimension) {
-    size_t *truthTable = calloc(sizeof(size_t), 1L << dimension);
-
+void reconstructTruthTable(const size_t *basisValues, size_t dimension, size_t *l2) {
     for (size_t coordinate = 0; coordinate < 1L << dimension; ++coordinate) {
         size_t result = 0;
         for (size_t i = 0; i < dimension; ++i) {
@@ -133,9 +149,8 @@ void reconstructTruthTable(const size_t *basisValues, size_t dimension) {
                 result = result ^ basisValues[i];
             }
         }
-        truthTable[coordinate] = result;
+        l2[coordinate] = result;
     }
-    free(truthTable);
 }
 
 /**
@@ -143,18 +158,21 @@ void reconstructTruthTable(const size_t *basisValues, size_t dimension) {
  * @param f
  * @param g
  */
-size_t * composeFunctions(const size_t *f, const size_t *g, size_t dimension) {
+size_t *composeFunctions(const size_t *f, const size_t *g, size_t dimension) {
     size_t *result = calloc(sizeof(size_t), 1L << dimension);
     for (size_t x = 0; x < 1L << dimension; ++x) {
         result[x] = f[g[x]];
     }
     return result;
 }
+
 /**
- * Add function F and function G together
- * @param f
- * @param g
- */
+ * Add function F with function G
+  * @param f
+  * @param g
+  * @param dimension
+  * @return
+  */
 size_t * addFunctionsTogether(const size_t *f, const size_t *g, size_t dimension) {
     size_t *result = calloc(sizeof(size_t), 1L << dimension);
     for (int i = 0; i < 1L << dimension; ++i) {
