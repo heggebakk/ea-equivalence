@@ -3,24 +3,24 @@
 
 #include "../utils/structs.h"
 
-void innerPermutation(truthTable f, truthTable g, size_t *basis, size_t *l2, size_t *lPrime);
+void innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable *lPrime);
 
-bool * computeSetOfTs(truthTable f, truthTable g, size_t x);
+bool * computeSetOfTs(truthTable *f, truthTable *g, size_t x);
 
-struct Node * computeDomain(const bool *listOfTs, truthTable f);
+struct Node * computeDomain(const bool *listOfTs, truthTable *f);
 
-void reconstructInnerPermutation(struct Node **domains, size_t dimension, truthTable f, truthTable g, size_t *l2,
-                                 size_t *lPrime);
+void
+reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2, truthTable *lPrime);
 
-bool dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable f, truthTable g, size_t *l2,
-         size_t *lPrime);
+bool dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
+         truthTable *lPrime);
 
-void reconstructTruthTable(const size_t *basisValues, size_t dimension, size_t *l2);
+void reconstructTruthTable(const size_t *basisValues, truthTable *l2);
 
-size_t * composeFunctions(const size_t *f, const size_t *g, size_t dimension);
+void composeFunctions(truthTable *to, truthTable *from);
 
-size_t * addFunctionsTogether(const size_t *f, const size_t *g, size_t dimension);
+void addFunctionsTogether(truthTable *to, truthTable *from);
 
-bool isLinear(const size_t *f, size_t dimension);
+bool isLinear(truthTable *f);
 
 #endif //EA_EQUIVALENCE_INNERPERMUTATION_H

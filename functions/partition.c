@@ -16,15 +16,15 @@ partitions partitionFunction(truthTable *function, size_t k, size_t target) {
         exit(1);
     }
 
-    size_t *multiplicities = malloc(sizeof(size_t) * function->size);
-    size_t *uniqueMultiplicities = malloc(sizeof(size_t) * function->size); // List of multiplicities
+    size_t *multiplicities = calloc(sizeof(size_t), 1L << function->dimension);
+    size_t *uniqueMultiplicities = calloc(sizeof(size_t), 1L << function->dimension); // List of multiplicities
     size_t uniqueCount = 0;
 
-    for (size_t i = 0; i < function->size; ++i) multiplicities[i] = 0;
+    for (size_t i = 0; i < 1L << function->dimension; ++i) multiplicities[i] = 0;
     // TODO: Make this a recursive function that work for all k = even
-    for (size_t x1 = 0; x1 < function->size; ++x1) {
-        for (size_t x2 = 0; x2 < function->size; ++x2) {
-            for (size_t x3 = 0; x3 < function->size; ++x3) {
+    for (size_t x1 = 0; x1 < 1L << function->dimension; ++x1) {
+        for (size_t x2 = 0; x2 < 1L << function->dimension; ++x2) {
+            for (size_t x3 = 0; x3 < 1L << function->dimension; ++x3) {
                 size_t x4 = x1 ^ x2 ^ x3;
                 size_t value = function->elements[x1] ^ function->elements[x2] ^ function->elements[x3] ^
                                function->elements[x4];
@@ -42,11 +42,11 @@ partitions partitionFunction(truthTable *function, size_t k, size_t target) {
     free(uniqueMultiplicities);
     partitions partition;
     partition.numBuckets = 0;
-    partition.multiplicities = malloc(sizeof(size_t) * function->size);
-    partition.bucketSizes = malloc(sizeof(size_t) * function->size);
-    partition.buckets = malloc(sizeof(size_t *) * function->size);
+    partition.multiplicities = calloc(sizeof(size_t), 1L << function->dimension);
+    partition.bucketSizes = calloc(sizeof(size_t), 1L << function->dimension);
+    partition.buckets = calloc(sizeof(size_t *), 1L << function->dimension);
 
-    for (size_t i = 0; i < function->size; ++i) {
+    for (size_t i = 0; i < 1L << function->dimension; ++i) {
         size_t numBuckets = partition.numBuckets;
         size_t multiplicity = multiplicities[i];
         // Check if multiplicity is in bucket, if false; add multiplicity to bucket
@@ -61,7 +61,7 @@ partitions partitionFunction(truthTable *function, size_t k, size_t target) {
         }
         if (!multiplicityInBuckets) {
             // Add a new bucket to the buckets list
-            partition.buckets[numBuckets] = malloc(sizeof(size_t) * function->size);
+            partition.buckets[numBuckets] = calloc(sizeof(size_t), 1L << function->dimension);
             partition.bucketSizes[numBuckets] = 1;
             partition.multiplicities[numBuckets] = multiplicity;
             partition.buckets[numBuckets][0] = i;

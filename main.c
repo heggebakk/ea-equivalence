@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
     truthTable functionG = parseTruthTable(truthTable2);
     clock_t endParsing = clock();
     timeSpentParsing += (double) (endParsing - startParsing) / CLOCKS_PER_SEC;
-    printTruthTableInfo(functionF);
-    printTruthTableInfo(functionG);
+    printTruthTable(functionF);
+    printTruthTable(functionG);
     printf("\n");
     size_t DIMENSION = functionF.dimension;
 
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     printPartitionInfo(partitionG);
     printf("\n");
 
-    size_t *basis = createBasis(DIMENSION);
+    size_t *basis = createBasis(DIMENSION); // Standard basis
     double timeSpentPermutation = 0.0;
     clock_t startPermutation = clock();
     permutations outerPerm = outerPermutation(partitionF, partitionG, DIMENSION, basis);
@@ -55,19 +55,17 @@ int main(int argc, char *argv[]) {
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
     printf("\n");
 
-    size_t *l2 = calloc(sizeof(size_t), 1L << DIMENSION);
-    size_t *lPrime = calloc(sizeof(size_t), 1L << DIMENSION);
-    innerPermutation(functionF, functionG, basis, l2, lPrime);
+    truthTable l2;
+    l2.dimension = DIMENSION;
+    l2.elements = calloc(sizeof(size_t), 1L << DIMENSION);
+    truthTable lPrime;
+    lPrime.dimension = DIMENSION;
+    lPrime.elements = calloc(sizeof(size_t), 1L << DIMENSION);
+    innerPermutation(&functionF, &functionG, basis, &l2, &lPrime);
     printf("L2: ");
-    for (size_t i = 0; i < 1L << DIMENSION; ++i) {
-        printf("%zu ", l2[i]);
-    }
-    printf("\n");
+    printTruthTable(l2);
     printf("L': ");
-    for (size_t i = 0; i < 1L << DIMENSION; ++i) {
-        printf("%zu ", lPrime[i]);
-    }
-    printf("\n");
+    printTruthTable(lPrime);
 
     freeTruthTable(functionF);
     freeTruthTable(functionG);

@@ -4,7 +4,6 @@
 
 typedef struct vbfTruthTable {
     size_t dimension;
-    size_t size;
     size_t *elements;
 } truthTable;
 
