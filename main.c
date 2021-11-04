@@ -73,6 +73,8 @@ int main(int argc, char *argv[]) {
     freePermutations(outerPerm);
     freePartition(partitionF);
     freePartition(partitionG);
+    freeTruthTable(l2);
+    freeTruthTable(lPrime);
 
     printf("Time spent parsing: %f seconds \n", timeSpentParsing);
     printf("Time spent partitioning: %f seconds \n", timeSpentPartition);

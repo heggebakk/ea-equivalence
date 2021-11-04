@@ -5,7 +5,7 @@
 #include "../utils/freeMemory.h"
 
 void innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable *lPrime) {
-    struct Node **restrictedDomains = calloc(sizeof(struct Node*), f->dimension); // A list of Linked Lists
+    struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
         bool *map = computeSetOfTs(f, g, basis[i]);
