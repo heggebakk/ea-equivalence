@@ -5,8 +5,8 @@
 permutations outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis) {
     size_t n = dimension;
     basis = createBasis(n);
-    size_t *images = malloc(sizeof(size_t) * 1L << n);
-    size_t *generated = malloc(sizeof(size_t) * 1L << n); // TODO: What is generated?
+    size_t *images = calloc(sizeof(size_t), 1L << n);
+    size_t *generated = calloc(sizeof(size_t), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
         generated[i] = 0;
     }
@@ -16,7 +16,7 @@ permutations outerPermutation(partitions f, partitions g, size_t dimension, size
     }
     generated_images[0] = true;
     permutations permutation;
-    permutation.permutations = malloc(sizeof(size_t) * 1L << n << n);
+    permutation.permutations = calloc(sizeof(size_t), 1L << n << n);
     permutation.numPermutations = 0;
 
     size_t *fBucketPosition = correspondingBucket(f, dimension);
@@ -33,7 +33,7 @@ permutations outerPermutation(partitions f, partitions g, size_t dimension, size
 }
 
 size_t *correspondingBucket(partitions function, size_t dimension) {
-    size_t *list = (size_t *) malloc(sizeof(size_t) * 1L << dimension);
+    size_t *list = (size_t *) calloc(sizeof(size_t), 1L << dimension);
     for (size_t i = 0; i < 1L << dimension; ++i) {
         for (size_t j = 0; j < function.numBuckets; ++j) {
             size_t *bucket = function.buckets[j];
@@ -53,7 +53,7 @@ recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, 
           bool *generatedImages, permutations *permutation, const size_t *fBucketPosition, const size_t *gBucketPosition) {
     if (k == n) {
         size_t numPermutations = permutation->numPermutations;
-        permutation->permutations[numPermutations] = malloc(sizeof(size_t) * 1L << n);
+        permutation->permutations[numPermutations] = calloc(sizeof(size_t), 1L << n);
         for (int i = 0; i < 1L << n; ++i) {
             permutation->permutations[numPermutations][i] = generated[i];
         }

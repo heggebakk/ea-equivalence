@@ -55,17 +55,24 @@ int main(int argc, char *argv[]) {
     printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
     printf("\n");
 
-    truthTable l2;
-    l2.dimension = DIMENSION;
-    l2.elements = calloc(sizeof(size_t), 1L << DIMENSION);
-    truthTable lPrime;
-    lPrime.dimension = DIMENSION;
-    lPrime.elements = calloc(sizeof(size_t), 1L << DIMENSION);
-    innerPermutation(&functionF, &functionG, basis, &l2, &lPrime);
-    printf("L2: ");
-    printTruthTable(l2);
+    truthTable innerPerm;
+    innerPerm.dimension = DIMENSION;
+    innerPerm.elements = calloc(sizeof(size_t), 1L << DIMENSION);
+    innerPermutation(&functionF, &functionG, basis, &innerPerm);
+    printf("Inner permutation: \n");
+    printTruthTable(innerPerm);
+
+    // Compute L' = G + F composed L2
+    truthTable lPrime = composeFunctions(&functionF, &innerPerm);
+    addFunctionsTogether(&lPrime, &functionG);
     printf("L': ");
     printTruthTable(lPrime);
+
+    // Check if F composed L2 + L' = G
+    truthTable gTest = composeFunctions(&functionF, &innerPerm);
+    addFunctionsTogether(&gTest, &lPrime);
+    printTruthTable(gTest);
+    printTruthTable(functionG);
 
     freeTruthTable(functionF);
     freeTruthTable(functionG);
@@ -73,7 +80,7 @@ int main(int argc, char *argv[]) {
     freePermutations(outerPerm);
     freePartition(partitionF);
     freePartition(partitionG);
-    freeTruthTable(l2);
+    freeTruthTable(innerPerm);
     freeTruthTable(lPrime);
 
     printf("Time spent parsing: %f seconds \n", timeSpentParsing);
