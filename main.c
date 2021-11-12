@@ -18,12 +18,6 @@ int main(int argc, char *argv[]) {
     char *truthTable1 = argv[1];
     char *truthTable2 = argv[2];
 
-
-    struct Node *head = NULL;
-    struct Node *tail = NULL;
-    addNode(head, tail, 10);
-    displayLinkedList(head);
-
     double timeSpentParsing = 0.0;
     clock_t startParsing = clock();
     truthTable functionF = parseTruthTable(truthTable1);
@@ -75,10 +69,6 @@ int main(int argc, char *argv[]) {
         truthTable l1Inverse = inverse(*outerPerm[i]);
         truthTable gPrime = composeFunctions(&l1Inverse, &functionG);
 
-        if( outerPerm[i]->elements[0] == 0 && outerPerm[i]->elements[1] == 39 && outerPerm[i]->elements[2] == 6 && outerPerm[i]->elements[3] == 33 && outerPerm[i]->elements[4] == 41) {
-            printf("We are here!!! \n");
-            printTruthTable(*outerPerm[i]);
-        }
         if (innerPermutation(&functionF, &gPrime, basis, &innerPerm, NULL)) {
             printf("SUCCESS!\n");
             // have lprime and l2, compute l1,l2,l (l = l1 comp. lprime)

@@ -116,10 +116,6 @@ dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTabl
     truthTable *lPrime) {
     if (k >= dimension) {
         reconstructTruthTable(values, l2);
-        if(l2->elements[1] == 10 && l2->elements[2] == 44 && l2->elements[3] == 38 && l2->elements[63] == 21) {
-            printf("FOund it!!!");
-            printTruthTable(*l2);
-        }
         truthTable composed = composeFunctions(f, l2); // UPDATE TO lPrime
         addFunctionsTogether(&composed, g);
         if(isLinear(&composed)) {
