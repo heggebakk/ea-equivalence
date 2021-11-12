@@ -1,4 +1,7 @@
+#include <malloc.h>
 #include "linkedList.h"
+
+typedef struct ttNode ttNode;
 
 void displayLinkedList(struct Node *head) {
     struct Node *current = head;
@@ -25,3 +28,22 @@ size_t countNodes(struct Node *head) {
 
     return count;
 }
+
+void addNode(struct ttNode *head, truthTable *data) {
+    if (head->data == NULL) {
+        head->data = data;
+        return;
+    }
+    struct ttNode *newNode = malloc(sizeof(ttNode));
+    newNode->data = data;
+    newNode->next = head->next;
+    head->next = newNode;
+}
+
+struct ttNode initNode() {
+    struct ttNode newNode;
+    newNode.next = NULL;
+    newNode.data = NULL;
+    return newNode;
+}
+

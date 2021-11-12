@@ -3,7 +3,6 @@
 #include "innerPermutation.h"
 #include "../utils/linkedList.h"
 #include "../utils/freeMemory.h"
-#include "../utils/parser.h"
 
 bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable *lPrime) {
     struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
@@ -116,18 +115,17 @@ dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTabl
     truthTable *lPrime) {
     if (k >= dimension) {
         reconstructTruthTable(values, l2);
-        truthTable composed = composeFunctions(f, l2); // UPDATE TO lPrime
-        addFunctionsTogether(&composed, g);
-        if(isLinear(&composed)) {
-            freeTruthTable(composed);
+        *lPrime = composeFunctions(f, l2);
+        addFunctionsTogether(lPrime, g);
+        if(isLinear(lPrime)) {
             return true;
         }
-        freeTruthTable(composed);
+        freeTruthTable(*lPrime);
     }
     struct Node *current = domains[k];
     while (current != NULL) {
         values[k] = current->data;
-        bool linear = dfs(domains, dimension, k + 1, values, f, g, l2, NULL);
+        bool linear = dfs(domains, dimension, k + 1, values, f, g, l2, lPrime);
         if (linear) return true;
         current = current->next;
     }
