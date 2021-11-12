@@ -3,17 +3,18 @@
 
 #include "../utils/structs.h"
 
-void innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2);
+bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable *lPrime);
 
 bool * computeSetOfTs(truthTable *f, truthTable *g, size_t x);
 
 struct Node * computeDomain(const bool *listOfTs, truthTable *f);
 
-void
-reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2);
+bool
+reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2, truthTable *lPrime);
 
 bool
-dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2);
+dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
+    truthTable *lPrime);
 
 void reconstructTruthTable(const size_t *basisValues, truthTable *l2);
 

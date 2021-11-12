@@ -3,8 +3,9 @@
 #include "innerPermutation.h"
 #include "../utils/linkedList.h"
 #include "../utils/freeMemory.h"
+#include "../utils/parser.h"
 
-void innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2) {
+bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable *lPrime) {
     struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
@@ -12,16 +13,14 @@ void innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTa
         restrictedDomains[i] = computeDomain(map, f);
         free(map);
     }
-    for (size_t i = 0; i < f->dimension; ++i) {
-        displayLinkedList(restrictedDomains[i]);
-    }
 
-    reconstructInnerPermutation(restrictedDomains, f, g, l2);
+    bool result = reconstructInnerPermutation(restrictedDomains, f, g, l2, lPrime);
 
     for (size_t i = 0; i < f->dimension; ++i) {
         freeLinkedList(restrictedDomains[i]);
     }
     free(restrictedDomains);
+    return result;
 }
 
 bool * computeSetOfTs(truthTable *f, truthTable *g, size_t x) {
@@ -96,11 +95,12 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
  * @param domains
  * @param dimension
  */
-void
-reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2) {
+bool
+reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2, truthTable *lPrime) {
     size_t *values = calloc(sizeof(size_t), f->dimension);
-    dfs(domains, f->dimension, 0, values, f, g, l2);
+    bool result = dfs(domains, f->dimension, 0, values, f, g, l2, lPrime);
     free(values);
+    return result;
 }
 
 /**
@@ -112,10 +112,15 @@ reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g,
   * @return True if the reconstructed truth table is linear, false otherwise.
   */
 bool
-dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2) {
+dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
+    truthTable *lPrime) {
     if (k >= dimension) {
         reconstructTruthTable(values, l2);
-        truthTable composed = composeFunctions(l2, f);
+        if(l2->elements[1] == 10 && l2->elements[2] == 44 && l2->elements[3] == 38 && l2->elements[63] == 21) {
+            printf("FOund it!!!");
+            printTruthTable(*l2);
+        }
+        truthTable composed = composeFunctions(f, l2); // UPDATE TO lPrime
         addFunctionsTogether(&composed, g);
         if(isLinear(&composed)) {
             freeTruthTable(composed);
@@ -126,7 +131,7 @@ dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTabl
     struct Node *current = domains[k];
     while (current != NULL) {
         values[k] = current->data;
-        bool linear = dfs(domains, dimension, k + 1, values, f, g, l2);
+        bool linear = dfs(domains, dimension, k + 1, values, f, g, l2, NULL);
         if (linear) return true;
         current = current->next;
     }

@@ -8,6 +8,7 @@
 #include "utils/freeMemory.h"
 #include "functions/outerPermutation.h"
 #include "functions/innerPermutation.h"
+#include "utils/inverse.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -16,6 +17,12 @@ int main(int argc, char *argv[]) {
     }
     char *truthTable1 = argv[1];
     char *truthTable2 = argv[2];
+
+
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    addNode(head, tail, 10);
+    displayLinkedList(head);
 
     double timeSpentParsing = 0.0;
     clock_t startParsing = clock();
@@ -34,6 +41,8 @@ int main(int argc, char *argv[]) {
     clock_t startPartition = clock();
     partitions partitionF = partitionFunction(&functionF, k, target);
     partitions partitionG = partitionFunction(&functionG, k, target);
+    // TODO: Check if partition f and g is compatible
+
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;
 
@@ -46,42 +55,47 @@ int main(int argc, char *argv[]) {
     size_t *basis = createBasis(DIMENSION); // Standard basis
     double timeSpentPermutation = 0.0;
     clock_t startPermutation = clock();
-    permutations outerPerm = outerPermutation(partitionF, partitionG, DIMENSION, basis);
+
+    size_t NUMBER_OF_TRUTH_TABLES = 1L << DIMENSION << DIMENSION;
+    truthTable **outerPerm = calloc(sizeof (truthTable *), NUMBER_OF_TRUTH_TABLES);
+    for(size_t i = 0 ; i < NUMBER_OF_TRUTH_TABLES; ++i) {
+        outerPerm[i] = malloc(sizeof(truthTable));
+        outerPerm[i]->elements = calloc(sizeof(size_t), 1L << DIMENSION);
+        outerPerm[i]->dimension = DIMENSION;
+    }
+    size_t numPerm = outerPermutation(partitionF, partitionG, DIMENSION, basis, outerPerm);
     clock_t endPermutation = clock();
     timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
-    printf("Number of permutations: %zu \n", outerPerm.numPermutations);
+    printf("Number of permutations: %zu \n", numPerm);
 
-    bool bijective = isBijective(outerPerm, outerPerm);
-    printf("The permutations is bijective: %s \n", bijective ? "true" : "false");
-    printf("\n");
+    for (size_t i = 0; i < numPerm; ++i) {
+        truthTable innerPerm;
+        innerPerm.dimension = DIMENSION;
+        innerPerm.elements = calloc(sizeof(size_t), 1L << DIMENSION);
+        truthTable l1Inverse = inverse(*outerPerm[i]);
+        truthTable gPrime = composeFunctions(&l1Inverse, &functionG);
 
-    truthTable innerPerm;
-    innerPerm.dimension = DIMENSION;
-    innerPerm.elements = calloc(sizeof(size_t), 1L << DIMENSION);
-    innerPermutation(&functionF, &functionG, basis, &innerPerm);
-    printf("Inner permutation: \n");
-    printTruthTable(innerPerm);
-
-    // Compute L' = G + F composed L2
-    truthTable lPrime = composeFunctions(&functionF, &innerPerm);
-    addFunctionsTogether(&lPrime, &functionG);
-    printf("L': ");
-    printTruthTable(lPrime);
-
-    // Check if F composed L2 + L' = G
-    truthTable gTest = composeFunctions(&functionF, &innerPerm);
-    addFunctionsTogether(&gTest, &lPrime);
-    printTruthTable(gTest);
-    printTruthTable(functionG);
+        if( outerPerm[i]->elements[0] == 0 && outerPerm[i]->elements[1] == 39 && outerPerm[i]->elements[2] == 6 && outerPerm[i]->elements[3] == 33 && outerPerm[i]->elements[4] == 41) {
+            printf("We are here!!! \n");
+            printTruthTable(*outerPerm[i]);
+        }
+        if (innerPermutation(&functionF, &gPrime, basis, &innerPerm, NULL)) {
+            printf("SUCCESS!\n");
+            // have lprime and l2, compute l1,l2,l (l = l1 comp. lprime)
+            break;
+        }
+        freeTruthTable(l1Inverse);
+        freeTruthTable(innerPerm);
+    }
 
     freeTruthTable(functionF);
     freeTruthTable(functionG);
     free(basis);
-    freePermutations(outerPerm);
+    for (size_t i = 0; i < numPerm; ++i) {
+        freeTruthTable(*outerPerm[i]);
+    }
     freePartition(partitionF);
     freePartition(partitionG);
-    freeTruthTable(innerPerm);
-    freeTruthTable(lPrime);
 
     printf("Time spent parsing: %f seconds \n", timeSpentParsing);
     printf("Time spent partitioning: %f seconds \n", timeSpentPartition);

@@ -3,15 +3,15 @@
 
 #include "../utils/structs.h"
 
-permutations outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis);
+size_t outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis, truthTable **outerPerm);
 
 size_t *createBasis(size_t dimension);
 
 size_t *correspondingBucket(partitions function, size_t dimension);
 
-permutations *
-recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
-          bool *generatedImages, permutations *permutation, const size_t *fBucketPosition, const size_t *gBucketPosition);
+size_t recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, partitions partitionG, size_t n,
+                 size_t *generated, bool *generatedImages, truthTable **permutations, const size_t *fBucketPosition,
+                 const size_t *gBucketPosition, size_t *numPermutations);
 
 //size_t *getBucket(size_t k, const size_t *bucketPositions, partitions function);
 

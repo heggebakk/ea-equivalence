@@ -1,6 +1,11 @@
 #include <stdlib.h>
 #include "structs.h"
 
+/**
+ * Create the inverse function
+ * @param function The function to create the inverse of
+ * @return The inverse
+ */
 truthTable inverse(truthTable function) {
     truthTable result;
     result.dimension = function.dimension;

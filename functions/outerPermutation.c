@@ -1,8 +1,10 @@
 #include <stdbool.h>
+#include <string.h>
 #include "stdlib.h"
 #include "outerPermutation.h"
+#include "../utils/linkedList.h"
 
-permutations outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis) {
+size_t outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis, truthTable **outerPerm) {
     size_t n = dimension;
     basis = createBasis(n);
     size_t *images = calloc(sizeof(size_t), 1L << n);
@@ -15,13 +17,12 @@ permutations outerPermutation(partitions f, partitions g, size_t dimension, size
         generated_images[i] = false;
     }
     generated_images[0] = true;
-    permutations permutation;
-    permutation.permutations = calloc(sizeof(size_t), 1L << n << n);
-    permutation.numPermutations = 0;
+    // TODO: Change to a linked list of truth tables!
+    size_t numPermutations = 0; // Num of nodes in linked list
 
     size_t *fBucketPosition = correspondingBucket(f, dimension);
     size_t *gBucketPosition = correspondingBucket(g, dimension);
-    recursive(0, basis, images, f, g, n, generated, generated_images, &permutation, fBucketPosition, gBucketPosition);
+    numPermutations = recursive(0, basis, images, f, g, n, generated, generated_images, outerPerm, fBucketPosition, gBucketPosition, &numPermutations);
 
     free(images);
     free(basis);
@@ -29,7 +30,7 @@ permutations outerPermutation(partitions f, partitions g, size_t dimension, size
     free(fBucketPosition);
     free(gBucketPosition);
 
-    return permutation;
+    return numPermutations;
 }
 
 size_t *correspondingBucket(partitions function, size_t dimension) {
@@ -48,17 +49,17 @@ size_t *correspondingBucket(partitions function, size_t dimension) {
     return list;
 }
 
-permutations *
-recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, partitions partitionG, size_t n, size_t *generated,
-          bool *generatedImages, permutations *permutation, const size_t *fBucketPosition, const size_t *gBucketPosition) {
+/**
+ *
+ * @return number of permutations we find
+ */
+size_t recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, partitions partitionG, size_t n,
+                 size_t *generated, bool *generatedImages, truthTable **permutations, const size_t *fBucketPosition,
+                 const size_t *gBucketPosition, size_t *numPermutations) {
     if (k == n) {
-        size_t numPermutations = permutation->numPermutations;
-        permutation->permutations[numPermutations] = calloc(sizeof(size_t), 1L << n);
-        for (int i = 0; i < 1L << n; ++i) {
-            permutation->permutations[numPermutations][i] = generated[i];
-        }
-        permutation->numPermutations += 1;
-        return permutation;
+        memcpy(permutations[*numPermutations]->elements, generated, sizeof(size_t) * (1L << n));
+        *numPermutations += 1;
+        return *numPermutations;
     }
 
     size_t bf = partitionF.bucketSizes[fBucketPosition[basis[k]]];
@@ -93,8 +94,8 @@ recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, 
         }
         if (!problem) {
             images[k] = ck;
-            recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, permutation,
-                      fBucketPosition, gBucketPosition);
+            recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, permutations,
+                      fBucketPosition, gBucketPosition, numPermutations);
         }
 
         for (size_t linearCombinations = 0; linearCombinations < LIMIT; ++linearCombinations) {
@@ -109,7 +110,7 @@ recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, 
             generatedImages[y] = false;
         }
     }
-    return permutation;
+    return *numPermutations;
 }
 
 size_t findCorrespondingBucket(size_t bucketSizeF, partitions g) {
