@@ -29,6 +29,22 @@ size_t countNodes(struct Node *head) {
     return count;
 }
 
+/**
+ * Initialize a new Linked list of type Truth Table Node
+ * @return The new node created
+ */
+struct ttNode initNode() {
+    struct ttNode newNode;
+    newNode.next = NULL;
+    newNode.data = NULL;
+    return newNode;
+}
+
+/**
+ * Add a node to the linked list.
+ * @param head The pointer to the head of the linked list
+ * @param data The data to add to the list
+ */
 void addNode(struct ttNode *head, truthTable *data) {
     if (head->data == NULL) {
         head->data = data;
@@ -40,10 +56,17 @@ void addNode(struct ttNode *head, truthTable *data) {
     head->next = newNode;
 }
 
-struct ttNode initNode() {
-    struct ttNode newNode;
-    newNode.next = NULL;
-    newNode.data = NULL;
-    return newNode;
+/**
+ * Count the number of nodes in the linked list
+ * @param head The pointer to the head of the linked list
+ * @return The number of nodes in the linked list
+ */
+size_t countTtNodes(struct ttNode *head) {
+    size_t count = 0;
+    struct ttNode *current = head;
+    while (current->next != NULL) {
+        count += 1;
+        current = current->next;
+    }
+    return count;
 }
-
