@@ -29,3 +29,13 @@ void freeLinkedList(struct Node *head) {
         free(current);
     }
 }
+
+void freeTtLinkedList(struct ttNode *head) {
+    struct ttNode *current = NULL;
+    while (head != NULL) {
+        current = head;
+        head = head->next;
+        freeTruthTable(*current->data);
+        free(current);
+    }
+}

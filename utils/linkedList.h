@@ -25,6 +25,8 @@ struct ttNode initNode();
 
 void addNode(struct ttNode *head, truthTable *data);
 
+truthTable getNode(struct ttNode *head, size_t index);
+
 size_t countTtNodes(struct ttNode *head);
 
 #endif //EA_EQUIVALENCE_LINKEDLIST_H

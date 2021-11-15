@@ -2,35 +2,30 @@
 #include <string.h>
 #include "stdlib.h"
 #include "outerPermutation.h"
-#include "../utils/linkedList.h"
 
-size_t outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis, truthTable **outerPerm) {
-    size_t n = dimension;
-    basis = createBasis(n);
-    size_t *images = calloc(sizeof(size_t), 1L << n);
-    size_t *generated = calloc(sizeof(size_t), 1L << n);
-    for (size_t i = 0; i < 1L << n; ++i) {
+void outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis, struct ttNode *l1) {
+    basis = createBasis(dimension);
+    size_t *images = calloc(sizeof(size_t), 1L << dimension);
+    size_t *generated = calloc(sizeof(size_t), 1L << dimension);
+    for (size_t i = 0; i < 1L << dimension; ++i) {
         generated[i] = 0;
     }
-    bool generated_images[1L << n];
-    for (size_t i = 0; i < 1L << n; ++i) {
+    bool generated_images[1L << dimension];
+    for (size_t i = 0; i < 1L << dimension; ++i) {
         generated_images[i] = false;
     }
     generated_images[0] = true;
-    // TODO: Change to a linked list of truth tables!
-    size_t numPermutations = 0; // Num of nodes in linked list
 
     size_t *fBucketPosition = correspondingBucket(f, dimension);
     size_t *gBucketPosition = correspondingBucket(g, dimension);
-    numPermutations = recursive(0, basis, images, f, g, n, generated, generated_images, outerPerm, fBucketPosition, gBucketPosition, &numPermutations);
+    recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fBucketPosition,
+              gBucketPosition);
 
     free(images);
     free(basis);
     free(generated);
     free(fBucketPosition);
     free(gBucketPosition);
-
-    return numPermutations;
 }
 
 size_t *correspondingBucket(partitions function, size_t dimension) {
@@ -49,17 +44,16 @@ size_t *correspondingBucket(partitions function, size_t dimension) {
     return list;
 }
 
-/**
- *
- * @return number of permutations we find
- */
-size_t recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, partitions partitionG, size_t n,
-                 size_t *generated, bool *generatedImages, truthTable **permutations, const size_t *fBucketPosition,
-                 const size_t *gBucketPosition, size_t *numPermutations) {
+void recursive(size_t k, const size_t *basis, size_t *images, partitions partitionF, partitions partitionG, size_t n,
+               size_t *generated, bool *generatedImages, struct ttNode *l1, const size_t *fBucketPosition,
+               const size_t *gBucketPosition) {
     if (k == n) {
-        memcpy(permutations[*numPermutations]->elements, generated, sizeof(size_t) * (1L << n));
-        *numPermutations += 1;
-        return *numPermutations;
+        truthTable new;
+        new.dimension = n;
+        new.elements = calloc(sizeof(size_t), 1L << n);
+        new.elements = generated;
+        addNode(l1, &new);
+        return;
     }
 
     size_t bf = partitionF.bucketSizes[fBucketPosition[basis[k]]];
@@ -94,8 +88,8 @@ size_t recursive(size_t k, const size_t *basis, size_t *images, partitions parti
         }
         if (!problem) {
             images[k] = ck;
-            recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, permutations,
-                      fBucketPosition, gBucketPosition, numPermutations);
+            recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, l1,
+                      fBucketPosition, gBucketPosition);
         }
 
         for (size_t linearCombinations = 0; linearCombinations < LIMIT; ++linearCombinations) {
@@ -110,7 +104,6 @@ size_t recursive(size_t k, const size_t *basis, size_t *images, partitions parti
             generatedImages[y] = false;
         }
     }
-    return *numPermutations;
 }
 
 size_t findCorrespondingBucket(size_t bucketSizeF, partitions g) {
@@ -119,7 +112,7 @@ size_t findCorrespondingBucket(size_t bucketSizeF, partitions g) {
             return i;
         }
     }
-    printf("Couldn't find a corresponding bucket with size %zu", bucketSizeF);
+    printf("Couldn't find a corresponding bucket with size %zu\n", bucketSizeF);
     exit(1);
 }
 

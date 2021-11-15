@@ -12,4 +12,6 @@ void freePermutations(permutations p);
 
 void freeLinkedList(struct Node *head);
 
+void freeTtLinkedList(struct ttNode *head);
+
 #endif //EA_EQUIVALENCE_FREEMEMORY_H
