@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include "time.h"
 #include "utils/structs.h"
@@ -49,73 +48,77 @@ int main(int argc, char *argv[]) {
     double timeSpentPermutation = 0.0;
     clock_t startPermutation = clock();
 
-    size_t NUMBER_OF_TRUTH_TABLES = 1L << DIMENSION << DIMENSION;
-    truthTable **outerPerm = calloc(sizeof (truthTable *), NUMBER_OF_TRUTH_TABLES); // TODO: linked list
-    for(size_t i = 0 ; i < NUMBER_OF_TRUTH_TABLES; ++i) {
-        outerPerm[i] = malloc(sizeof(truthTable));
-        outerPerm[i]->elements = calloc(sizeof(size_t), 1L << DIMENSION);
-        outerPerm[i]->dimension = DIMENSION;
-    }
-    size_t numPerm = outerPermutation(partitionF, partitionG, DIMENSION, basis, outerPerm);
+    struct ttNode * l1 = initNode();
+    outerPermutation(partitionF, partitionG, DIMENSION, basis, l1);
+    printf("\n l1 data: \n");
+    printTruthTable(*l1->data);
+    size_t numPerm = countTtNodes(l1);
     clock_t endPermutation = clock();
     timeSpentPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
     printf("Number of permutations: %zu \n", numPerm);
 
     for (size_t i = 0; i < numPerm; ++i) {
+        truthTable l1Prime = getNode(l1, i);
+        printf("l1 prime: \n");
+        printTruthTable(l1Prime);
+        truthTable l1Inverse = inverse(l1Prime);
+        printf("l1 inverse: \n");
+        printTruthTable(l1Inverse);
+        truthTable * gPrime = composeFunctions(&l1Inverse, &functionG);
+        truthTable * lPrime;
+
         truthTable innerPerm;
         innerPerm.dimension = DIMENSION;
         innerPerm.elements = calloc(sizeof(size_t), 1L << DIMENSION);
-        truthTable l1Inverse = inverse(*outerPerm[i]);
-        truthTable gPrime = composeFunctions(&l1Inverse, &functionG);
-        truthTable lPrime;
-
-        if (innerPermutation(&functionF, &gPrime, basis, &innerPerm, &lPrime)) {
+        if (innerPermutation(&functionF, gPrime, basis, &innerPerm, &lPrime)) {
             printf("SUCCESS!\n\n");
             // have lprime and l2, compute l1,l2,l (l = l1 comp. lprime)
-            truthTable l = composeFunctions(outerPerm[i], &lPrime);
-            printTruthTable(l);
+            truthTable * l = composeFunctions(&l1Prime, lPrime);
+            printTruthTable(*l);
 
-            truthTable test = composeFunctions(&functionF, &innerPerm);
-            test = composeFunctions(*outerPerm, &test);
-            addFunctionsTogether(&test, &functionG);
-            printf("Test function is linear: %s\n", isLinear(&test) ? "true" : "false");
+            truthTable * test = composeFunctions(&functionF, &innerPerm);
+            truthTable *oldtest = test; //for freedom purposes
+            test = composeFunctions(&l1Prime, test);
+            addFunctionsTogether(test, &functionG);
+            printf("Test function is linear: %s\n", isLinear(test) ? "true" : "false");
             freeTruthTable(test);
+            freeTruthTable(oldtest);
 
             // Check if l' is correct:
-            truthTable x = composeFunctions(&functionF, &innerPerm);
-            addFunctionsTogether(&x, &gPrime);
-            printf("g' is = to l' %s\n", compareTruthTable(x, lPrime) ? "true" : "false");
+            truthTable * x = composeFunctions(&functionF, &innerPerm);
+            addFunctionsTogether(x, gPrime);
+            printf("g' is = to l' %s\n", compareTruthTable(*x, *lPrime) ? "true" : "false");
             freeTruthTable(x);
 
             // This is a test! :)
-            truthTable t = composeFunctions(&functionF, &innerPerm);
-            t = composeFunctions(*outerPerm, &t);
-            addFunctionsTogether(&t, &l);
-            printf("Functions is equal: %s\n",compareTruthTable(t, functionG) ? "true" : "false");
+            truthTable * t = composeFunctions(&functionF, &innerPerm);
+            truthTable *t2 = t; //freedom!!!
+            t = composeFunctions(&l1Prime, t);
+            addFunctionsTogether(t, l);
+            printf("Functions is equal: %s\n",compareTruthTable(*t, functionG) ? "true" : "false");
             printf("\n");
             freeTruthTable(t);
+            freeTruthTable(t2);
 
             freeTruthTable(l);
-            freeTruthTable(l1Inverse);
-            freeTruthTable(innerPerm);
+            free(l1Inverse.elements);
+            free(innerPerm.elements);
             freeTruthTable(lPrime);
             freeTruthTable(gPrime);
             break;
         }
-        freeTruthTable(l1Inverse);
-        freeTruthTable(innerPerm);
-        freeTruthTable(lPrime);
+        free(l1Inverse.elements);
+        free(innerPerm.elements);
+//        freeTruthTable(lPrime);
         freeTruthTable(gPrime);
     }
 
-    freeTruthTable(functionF);
-    freeTruthTable(functionG);
+    free(functionF.elements);
+    free(functionG.elements);
     free(basis);
-    for (size_t i = 0; i < numPerm; ++i) {
-        freeTruthTable(*outerPerm[i]);
-    }
     freePartition(partitionF);
     freePartition(partitionG);
+    freeTtLinkedList(l1);
 
     printf("Time spent parsing: %f seconds \n", timeSpentParsing);
     printf("Time spent partitioning: %f seconds \n", timeSpentPartition);

@@ -12,16 +12,21 @@ struct Node {
     struct Node *next;
 };
 
+void displayLinkedList(struct Node *head);
+
+size_t countNodes(struct Node *head);
+
 struct ttNode {
     truthTable *data;
     struct ttNode *next;
 };
 
-struct ttNode initNode();
+struct ttNode * initNode();
+
 void addNode(struct ttNode *head, truthTable *data);
 
-void displayLinkedList(struct Node *head);
+truthTable getNode(struct ttNode *head, size_t index);
 
-size_t countNodes(struct Node *head);
+size_t countTtNodes(struct ttNode *head);
 
 #endif //EA_EQUIVALENCE_LINKEDLIST_H
