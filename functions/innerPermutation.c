@@ -4,7 +4,7 @@
 #include "../utils/linkedList.h"
 #include "../utils/freeMemory.h"
 
-bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable *lPrime) {
+bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime) {
     struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
@@ -95,7 +95,7 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
  * @param dimension
  */
 bool
-reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2, truthTable *lPrime) {
+reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime) {
     size_t *values = calloc(sizeof(size_t), f->dimension);
     bool result = dfs(domains, f->dimension, 0, values, f, g, l2, lPrime);
     free(values);
@@ -112,12 +112,12 @@ reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g,
   */
 bool
 dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
-    truthTable *lPrime) {
+    truthTable **lPrime) {
     if (k >= dimension) {
         reconstructTruthTable(values, l2);
         *lPrime = composeFunctions(f, l2);
-        addFunctionsTogether(lPrime, g);
-        if(isLinear(lPrime)) {
+        addFunctionsTogether(*lPrime, g);
+        if(isLinear(*lPrime)) {
             return true;
         }
         freeTruthTable(*lPrime);
@@ -154,12 +154,12 @@ void reconstructTruthTable(const size_t *basisValues, truthTable *l2) {
  * @param f Function that is f be composed
  * @param g Function that is composed with
  */
-truthTable composeFunctions(truthTable *f, truthTable *g) {
-    truthTable result;
-    result.dimension = f->dimension;
-    result.elements = calloc(sizeof(size_t), 1L << f->dimension);
+truthTable * composeFunctions(truthTable *f, truthTable *g) {
+    truthTable * result = malloc(sizeof(truthTable));
+    result->dimension = f->dimension;
+    result->elements = calloc(sizeof(size_t), 1L << f->dimension);
     for (size_t x = 0; x < 1L << f->dimension; ++x) {
-        result.elements[x] = f->elements[g->elements[x]];
+        result->elements[x] = f->elements[g->elements[x]];
     }
     return result;
 }

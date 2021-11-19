@@ -4,7 +4,7 @@
 #include "structs.h"
 #include "linkedList.h"
 
-void freeTruthTable(truthTable tt);
+void freeTruthTable(truthTable *tt);
 
 void freePartition(partitions p);
 

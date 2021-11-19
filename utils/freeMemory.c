@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include "freeMemory.h"
+#include "parser.h"
 
-void freeTruthTable(truthTable tt) {
-    free(tt.elements);
+void freeTruthTable(truthTable *tt) {
+    free(tt->elements);
+    free(tt);
 }
 
 void freePartition(partitions p) {
@@ -35,7 +37,7 @@ void freeTtLinkedList(struct ttNode *head) {
     while (head != NULL) {
         current = head;
         head = head->next;
-        freeTruthTable(*current->data);
+        freeTruthTable(current->data);
         free(current);
     }
 }

@@ -48,11 +48,11 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions partiti
                size_t *generated, bool *generatedImages, struct ttNode *l1, const size_t *fBucketPosition,
                const size_t *gBucketPosition) {
     if (k == n) {
-        truthTable new;
-        new.dimension = n;
-        new.elements = calloc(sizeof(size_t), 1L << n);
-        new.elements = generated;
-        addNode(l1, &new);
+        truthTable * new = malloc(sizeof(truthTable));
+        new->dimension = n;
+        new->elements = calloc(sizeof(size_t), 1L << n);
+        memcpy(new->elements, generated, sizeof(size_t) * 1L << n);
+        addNode(l1, new);
         return;
     }
 

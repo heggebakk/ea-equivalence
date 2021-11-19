@@ -21,7 +21,7 @@ struct ttNode {
     struct ttNode *next;
 };
 
-struct ttNode initNode();
+struct ttNode * initNode();
 
 void addNode(struct ttNode *head, truthTable *data);
 

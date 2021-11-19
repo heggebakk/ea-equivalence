@@ -3,6 +3,7 @@
 
 #include "../utils/structs.h"
 #include "../utils/linkedList.h"
+#include "stdbool.h"
 
 void outerPermutation(partitions f, partitions g, size_t dimension, size_t *basis, struct ttNode *l1);
 

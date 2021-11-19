@@ -36,11 +36,11 @@ size_t countNodes(struct Node *head) {
  * Initialize a new Linked list of type Truth Table Node
  * @return The new node created
  */
-struct ttNode initNode() {
+struct ttNode * initNode() {
     struct ttNode *newNode = (struct ttNode*) malloc(sizeof(ttNode));
     newNode->next = NULL;
     newNode->data = NULL;
-    return *newNode;
+    return newNode;
 }
 
 /**
@@ -49,6 +49,7 @@ struct ttNode initNode() {
  * @param data The data to add to the list
  */
 void addNode(struct ttNode *head, truthTable *data) {
+    // head.data should be the same right? Why is it different?
     if (head->data == NULL) {
         head->data = data;
         return;
@@ -76,14 +77,13 @@ size_t countTtNodes(struct ttNode *head) {
 }
 
 truthTable getNode(struct ttNode *head, size_t index) {
-    size_t listSize = countTtNodes(head);
-    if (index > listSize) {
+    if (index > countTtNodes(head)) {
         printf("The node is out of bounds\n");
         exit(1);
     }
-    struct ttNode current = *head;
+    struct ttNode *current = head;
     for (int i = 0; i < index; ++i) {
-        current = *current.next;
+        current = current->next;
     }
-    return *current.data;
+    return *current->data;
 }
