@@ -16,6 +16,10 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    double totalRunTime = 0.0;
+    clock_t startRunTime = clock();
+
+    // Parse files to truth tables
     double timeSpentParsing = 0.0;
     clock_t startParsing = clock();
     truthTable *functionF = parseTruthTable(argv[1]);
@@ -53,22 +57,17 @@ int main(int argc, char *argv[]) {
     clock_t startPermutation = clock();
     struct ttNode * l1 = initNode();
     outerPermutation(partitionF, partitionG, DIMENSION, basis, l1);
-    printf("\n l1 data: \n");
-    printTruthTable(*l1->data);
     size_t numPerm = countTtNodes(l1);
     clock_t endPermutation = clock();
     timeSpentOuterPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
 
     printf("Number of permutations: %zu \n", numPerm);
 
+    double timeSpentInnerPermutation = 0.0;
     for (size_t i = 0; i < numPerm; ++i) {
-        truthTable l1Prime = getNode(l1, i);
-        printf("l1 prime: \n");
-        printTruthTable(l1Prime);
-        truthTable l1Inverse = inverse(l1Prime);
-        printf("l1 inverse: \n");
-        printTruthTable(l1Inverse);
-        truthTable * gPrime = composeFunctions(&l1Inverse, &functionG);
+        truthTable *l1Prime = getNode(l1, i);
+        truthTable l1Inverse = inverse(*l1Prime);
+        truthTable * gPrime = composeFunctions(&l1Inverse, functionG);
         truthTable * lPrime;
 
         clock_t startInnerPermutation = clock();
@@ -117,9 +116,14 @@ int main(int argc, char *argv[]) {
     freePartition(partitionG);
     freeTtLinkedList(l1);
 
+    clock_t stopTotalRunTime = clock();
+    totalRunTime += (double) (stopTotalRunTime - startRunTime) / CLOCKS_PER_SEC;
+
     printf("Time spent parsing: %f seconds \n", timeSpentParsing);
     printf("Time spent partitioning: %f seconds \n", timeSpentPartition);
-    printf("Time spent outer permutation: %f seconds\n", timeSpentPermutation);
+    printf("Time spent outer permutation: %f seconds \n", timeSpentOuterPermutation);
+    printf("Time spent inner permutation: %f seconds \n", timeSpentInnerPermutation);
+    printf("Total time spent: %f seconds \n", totalRunTime);
 
     return 0;
 }
