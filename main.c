@@ -18,29 +18,31 @@ int main(int argc, char *argv[]) {
 
     double timeSpentParsing = 0.0;
     clock_t startParsing = clock();
-    truthTable functionF = parseTruthTable(argv[1]);
-    truthTable functionG = parseTruthTable(argv[2]);
+    truthTable *functionF = parseTruthTable(argv[1]);
+    truthTable *functionG = parseTruthTable(argv[2]);
     clock_t endParsing = clock();
     timeSpentParsing += (double) (endParsing - startParsing) / CLOCKS_PER_SEC;
+
     printTruthTable(functionF);
     printTruthTable(functionG);
     printf("\n");
-    size_t DIMENSION = functionF.dimension;
+    size_t DIMENSION = functionF->dimension;
 
+    // TODO: Take in k from input variable
     size_t k = 4;
     size_t target = 0;
+    // Partition function F and G
     double timeSpentPartition = 0.0;
     clock_t startPartition = clock();
-    partitions partitionF = partitionFunction(&functionF, k, target);
-    partitions partitionG = partitionFunction(&functionG, k, target);
+    partitions partitionF = partitionFunction(functionF, k, target);
+    partitions partitionG = partitionFunction(functionG, k, target);
     // TODO: Check if partition f and g is compatible
-
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;
 
-    printf("Results from partition function F: \n");
+    printf("Results from partitioning function F: \n");
     printPartitionInfo(partitionF);
-    printf("Results from partition function G: \n");
+    printf("Results from partitioning function G: \n");
     printPartitionInfo(partitionG);
     printf("\n");
 
@@ -113,8 +115,8 @@ int main(int argc, char *argv[]) {
         freeTruthTable(gPrime);
     }
 
-    free(functionF.elements);
-    free(functionG.elements);
+    freeTruthTable(functionF);
+    freeTruthTable(functionG);
     free(basis);
     freePartition(partitionF);
     freePartition(partitionG);
