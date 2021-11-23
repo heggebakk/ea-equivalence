@@ -38,8 +38,8 @@ int main(int argc, char *argv[]) {
     // Partition function F and G
     double timeSpentPartition = 0.0;
     clock_t startPartition = clock();
-    partitions partitionF = partitionFunction(functionF, k, target);
-    partitions partitionG = partitionFunction(functionG, k, target);
+    partitions *partitionF = partitionFunction(functionF, k, target);
+    partitions *partitionG = partitionFunction(functionG, k, target);
     // TODO: Check if partition f and g is compatible
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;

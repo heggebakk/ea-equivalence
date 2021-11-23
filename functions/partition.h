@@ -10,7 +10,7 @@
  * @param target An element of F2^n
  * @return Partitions
  */
-partitions partitionFunction(truthTable *function, size_t k, size_t target);
+partitions * partitionFunction(truthTable *function, size_t k, size_t target);
 
 /**
  * A recursive function that find the multiplicities from k by xor'ing the elements from a function
@@ -28,6 +28,6 @@ void findAllMultiplicities(size_t k, int i, size_t *multiplicities, truthTable *
  * bucket and the elements in the bucket.
  * @param p A partition
  */
-void printPartitionInfo(partitions p);
+void printPartitionInfo(partitions *p);
 
 #endif //EA_EQUIVALENCE_PARTITION_H

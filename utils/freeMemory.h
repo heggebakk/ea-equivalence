@@ -6,7 +6,7 @@
 
 void freeTruthTable(truthTable *tt);
 
-void freePartition(partitions p);
+void freePartition(partitions *p);
 
 void freeLinkedList(struct Node *head);
 
