@@ -19,6 +19,6 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions partiti
 
 size_t findCorrespondingBucket(size_t bucketSizeF, partitions g);
 
-bool isBijective(permutations outerPermutation, permutations innerPermutation);
+bool isBijective(truthTable *outerPermutation, truthTable *innerPermutation);
 
 #endif //EA_EQUIVALENCE_OUTERPERMUTATION_H

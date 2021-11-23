@@ -8,8 +8,6 @@ void freeTruthTable(truthTable *tt);
 
 void freePartition(partitions p);
 
-void freePermutations(permutations p);
-
 void freeLinkedList(struct Node *head);
 
 void freeTtLinkedList(struct ttNode *head);
