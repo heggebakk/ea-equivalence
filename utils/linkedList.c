@@ -76,7 +76,7 @@ size_t countTtNodes(struct ttNode *head) {
     return count;
 }
 
-truthTable getNode(struct ttNode *head, size_t index) {
+truthTable * getNode(struct ttNode *head, size_t index) {
     if (index > countTtNodes(head)) {
         printf("The node is out of bounds\n");
         exit(1);
@@ -85,5 +85,5 @@ truthTable getNode(struct ttNode *head, size_t index) {
     for (int i = 0; i < index; ++i) {
         current = current->next;
     }
-    return *current->data;
+    return current->data;
 }

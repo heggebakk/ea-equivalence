@@ -16,13 +16,6 @@ void freePartition(partitions p) {
     free(p.buckets);
 }
 
-void freePermutations(permutations p) {
-    for (size_t i = 0; i < p.numPermutations; ++i) {
-        free(p.permutations[i]);
-    }
-    free(p.permutations);
-}
-
 void freeLinkedList(struct Node *head) {
     struct Node *current = NULL;
     while (head != NULL) {
