@@ -2,14 +2,6 @@
 #include <stdbool.h>
 #include "partition.h"
 
-/**
- * Partition bucket size where k = even
- * Works only for k = 4
- * @param function The function to be partitioned
- * @param k The size of the tuple T
- * @param target An element of F2^n
- * @return Partitions
- */
 partitions partitionFunction(truthTable *function, size_t k, size_t target) {
     if (k % 2 != 0) {
         printf("k is odd, the function partitionFunction works only for even numbers.");
@@ -19,17 +11,7 @@ partitions partitionFunction(truthTable *function, size_t k, size_t target) {
     size_t *multiplicities = calloc(sizeof(size_t), 1L << function->dimension);
 
     for (size_t i = 0; i < 1L << function->dimension; ++i) multiplicities[i] = 0;
-    // TODO: Make this a recursive function that work for all k = even
-    for (size_t x1 = 0; x1 < 1L << function->dimension; ++x1) {
-        for (size_t x2 = 0; x2 < 1L << function->dimension; ++x2) {
-            for (size_t x3 = 0; x3 < 1L << function->dimension; ++x3) {
-                size_t x4 = x1 ^ x2 ^ x3;
-                size_t value = function->elements[x1] ^ function->elements[x2] ^ function->elements[x3] ^
-                               function->elements[x4];
-                multiplicities[value] += 1;
-            }
-        }
-    }
+    findAllMultiplicities(k, 0, multiplicities, function, 0, 0);
 
     partitions partition;
     partition.numBuckets = 0;
@@ -62,6 +44,19 @@ partitions partitionFunction(truthTable *function, size_t k, size_t target) {
     free(multiplicities);
 
     return partition;
+}
+
+void findAllMultiplicities(size_t k, int i, size_t *multiplicities, truthTable *function, size_t x, size_t value) {
+    if (i == k - 1) {
+        size_t newValue = value ^ function->elements[x];
+        multiplicities[newValue] += 1;
+        return;
+    }
+    for (int y = 0; y < 1L << function->dimension; ++y) {
+        size_t newX = x ^ y;
+        size_t newValue = value ^ function->elements[y];
+        findAllMultiplicities(k, i + 1, multiplicities, function, newX, newValue);
+    }
 }
 
 void printPartitionInfo(partitions p) {
