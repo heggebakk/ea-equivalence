@@ -2,6 +2,7 @@
 #define EA_EQUIVALENCE_INNERPERMUTATION_H
 
 #include "../utils/structs.h"
+#include "stdbool.h"
 
 bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime);
 
