@@ -18,8 +18,7 @@ void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *ba
 
     size_t *fBucketPosition = correspondingBucket(f, dimension);
     size_t *gBucketPosition = correspondingBucket(g, dimension);
-    recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fBucketPosition,
-              gBucketPosition);
+    recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fBucketPosition, gBucketPosition);
 
     free(images);
     free(basis);
@@ -36,12 +35,19 @@ size_t *createBasis(size_t dimension) {
     return basis;
 }
 
-size_t *correspondingBucket(partitions *function, size_t dimension) {
+/**
+ * // TODO: Add description
+ * @param partition
+ * @param dimension
+ * @return
+ */
+size_t *correspondingBucket(partitions *partition, size_t dimension) {
     size_t *list = (size_t *) calloc(sizeof(size_t), 1L << dimension);
+
     for (size_t i = 0; i < 1L << dimension; ++i) {
-        for (size_t j = 0; j < function->numBuckets; ++j) {
-            size_t *bucket = function->buckets[j];
-            for (size_t k = 0; k < function->bucketSizes[j]; ++k) {
+        for (size_t j = 0; j < partition->numBuckets; ++j) {
+            size_t *bucket = partition->buckets[j];
+            for (size_t k = 0; k < partition->bucketSizes[j]; ++k) {
                 if (bucket[k] == i) {
                     list[i] = j;
                     break;
