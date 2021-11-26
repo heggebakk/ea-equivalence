@@ -12,8 +12,9 @@ bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTa
         restrictedDomains[i] = computeDomain(map, f);
         free(map);
     }
-
-    bool result = reconstructInnerPermutation(restrictedDomains, f, g, l2, lPrime);
+    size_t *values = malloc(sizeof(size_t) * f->dimension);
+    bool result = dfs(restrictedDomains, f->dimension, 0, values, f, g, l2, lPrime);
+    free(values);
 
     for (size_t i = 0; i < f->dimension; ++i) {
         freeLinkedList(restrictedDomains[i]);
@@ -87,19 +88,6 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
     }
     free(domain);
     return head;
-}
-
-/**
- *
- * @param domains
- * @param dimension
- */
-bool
-reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime) {
-    size_t *values = calloc(sizeof(size_t), f->dimension);
-    bool result = dfs(domains, f->dimension, 0, values, f, g, l2, lPrime);
-    free(values);
-    return result;
 }
 
 /**

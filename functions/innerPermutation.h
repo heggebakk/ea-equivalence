@@ -11,9 +11,6 @@ bool * computeSetOfTs(truthTable *f, truthTable *g, size_t x);
 struct Node * computeDomain(const bool *listOfTs, truthTable *f);
 
 bool
-reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime);
-
-bool
 dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
     truthTable **lPrime);
 
