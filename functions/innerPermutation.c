@@ -8,7 +8,7 @@ bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTa
     struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
-        bool *map = computeSetOfTs(f, g, basis[i]);
+        bool *map = computeSetOfTs(g, basis[i]);
         restrictedDomains[i] = computeDomain(map, f);
         free(map);
     }
@@ -23,12 +23,12 @@ bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTa
     return result;
 }
 
-bool * computeSetOfTs(truthTable *f, truthTable *g, size_t x) {
+bool *computeSetOfTs(truthTable *f, size_t x) {
     size_t n = f->dimension;
     bool *map = calloc(sizeof(bool), 1L << n);
 
     for (size_t y = 0; y < 1L << n; ++y) {
-        size_t t = g->elements[x] ^ g->elements[y] ^ g->elements[x ^ y];
+        size_t t = f->elements[x] ^ f->elements[y] ^ f->elements[x ^ y];
         map[t] = true;
     }
     return map;

@@ -6,7 +6,13 @@
 
 bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime);
 
-bool * computeSetOfTs(truthTable *f, truthTable *g, size_t x);
+/**
+ * Compute the set of t's where t = f[x] + f[y] + f[x + y]
+ * @param f The function containing the elements to compute the sets over
+ * @param x A fixed x to compute with
+ * @return The set of t's from the computation
+ */
+bool *computeSetOfTs(truthTable *f, size_t x);
 
 struct Node * computeDomain(const bool *listOfTs, truthTable *f);
 
