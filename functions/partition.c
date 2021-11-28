@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "partition.h"
 
-partitions * partitionFunction(truthTable *function, size_t k, size_t target) {
+partitions *partitionFunction(truthTable *function, size_t k) {
     if (k % 2 != 0) {
         printf("k is odd, the function partitionFunction works only for even numbers.");
         exit(1);

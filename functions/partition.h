@@ -7,10 +7,9 @@
  * Works only for k = 4
  * @param function The function to be partitioned
  * @param k The size of the tuple T
- * @param target An element of F2^n
  * @return Partitions
  */
-partitions * partitionFunction(truthTable *function, size_t k, size_t target);
+partitions *partitionFunction(truthTable *function, size_t k);
 
 /**
  * A recursive function that find the multiplicities from k by xor'ing the elements from a function
