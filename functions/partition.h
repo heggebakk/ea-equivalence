@@ -1,6 +1,13 @@
 #ifndef EA_EQUIVALENCE_PARTITION_H
 #define EA_EQUIVALENCE_PARTITION_H
-#include "../utils/structs.h"
+#include "../utils/truthTable.h"
+
+typedef struct vbfPartitions {
+    size_t numBuckets;
+    size_t *multiplicities;
+    size_t *bucketSizes;
+    size_t **buckets;
+} partitions;
 
 /**
  * Partition bucket size where k = even

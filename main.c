@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "time.h"
-#include "utils/structs.h"
+#include "utils/truthTable.h"
 #include "utils/parser.h"
 #include "functions/partition.h"
 #include "utils/freeMemory.h"

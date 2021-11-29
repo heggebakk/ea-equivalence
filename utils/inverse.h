@@ -1,6 +1,6 @@
 #ifndef EA_EQUIVALENCE_INVERSE_H
 #define EA_EQUIVALENCE_INVERSE_H
-#include "structs.h"
+#include "truthTable.h"
 
 truthTable inverse(truthTable function);
 

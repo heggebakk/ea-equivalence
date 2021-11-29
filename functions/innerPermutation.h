@@ -1,7 +1,7 @@
 #ifndef EA_EQUIVALENCE_INNERPERMUTATION_H
 #define EA_EQUIVALENCE_INNERPERMUTATION_H
 
-#include "../utils/structs.h"
+#include "../utils/truthTable.h"
 #include "stdbool.h"
 
 /**

@@ -2,7 +2,7 @@
 #define EA_EQUIVALENCE_COMPARETRUTHTABLE_H
 
 #include <stdbool.h>
-#include "structs.h"
+#include "truthTable.h"
 
 bool compareTruthTable(truthTable f, truthTable g);
 #endif //EA_EQUIVALENCE_COMPARETRUTHTABLE_H

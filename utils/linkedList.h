@@ -2,7 +2,7 @@
 #define EA_EQUIVALENCE_LINKEDLIST_H
 
 #include "stdio.h"
-#include "structs.h"
+#include "truthTable.h"
 
 /**
  * Represent a node of a linked list

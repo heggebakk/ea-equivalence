@@ -1,7 +1,7 @@
 #ifndef EA_EQUIVALENCE_FREEMEMORY_H
 #define EA_EQUIVALENCE_FREEMEMORY_H
 
-#include "structs.h"
+#include "truthTable.h"
 #include "linkedList.h"
 
 void freeTruthTable(truthTable *tt);

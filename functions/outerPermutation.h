@@ -1,7 +1,7 @@
 #ifndef EA_EQUIVALENCE_OUTERPERMUTATION_H
 #define EA_EQUIVALENCE_OUTERPERMUTATION_H
 
-#include "../utils/structs.h"
+#include "../utils/truthTable.h"
 #include "../utils/linkedList.h"
 #include "stdbool.h"
 
