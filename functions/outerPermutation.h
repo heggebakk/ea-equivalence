@@ -4,6 +4,7 @@
 #include "../utils/truthTable.h"
 #include "../utils/linkedList.h"
 #include "stdbool.h"
+#include "partition.h"
 
 void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, struct ttNode *l1);
 

@@ -3,6 +3,7 @@
 
 #include "truthTable.h"
 #include "linkedList.h"
+#include "../functions/partition.h"
 
 void freeTruthTable(truthTable *tt);
 
