@@ -71,8 +71,8 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
         return;
     }
 
-    size_t bf = partitionF->bucketSizes[fBucketPosition[basis[k]]];
-    size_t posBg = findCorrespondingBucket(bf, partitionG);
+    size_t bucketF = partitionF->bucketSizes[fBucketPosition[basis[k]]];
+    size_t posBg = findCorrespondingBucket(bucketF, partitionG);
     for (size_t ick = 0; ick < partitionG->bucketSizes[posBg]; ++ick) {
         size_t ck = partitionG->buckets[posBg][ick];
         if (generatedImages[ck] == true) {
@@ -84,12 +84,12 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
          * (1L << (k-1)) == MAX_INT, and it loops figuratively forever */
         size_t LIMIT = k ? 1L << k : 1;
 
-        for (size_t linearCombinations = 0; linearCombinations < LIMIT; ++linearCombinations) {
-            size_t x = linearCombinations ^ basis[k];
+        for (size_t linearCombination = 0; linearCombination < LIMIT; ++linearCombination) {
+            size_t x = linearCombination ^ basis[k];
             size_t y = ck;
             if (k) {
                 for (size_t i = 0; i < k; ++i) {
-                    if (1L << i & linearCombinations) {
+                    if (1L << i & linearCombination) {
                         y ^= generated[basis[i]];
                     }
                 }
