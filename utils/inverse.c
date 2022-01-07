@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "structs.h"
+#include "truthTable.h"
 
 /**
  * Create the inverse function

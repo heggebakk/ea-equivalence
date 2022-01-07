@@ -8,12 +8,13 @@ bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTa
     struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
-        bool *map = computeSetOfTs(f, g, basis[i]);
+        bool *map = computeSetOfTs(g, basis[i]);
         restrictedDomains[i] = computeDomain(map, f);
         free(map);
     }
-
-    bool result = reconstructInnerPermutation(restrictedDomains, f, g, l2, lPrime);
+    size_t *values = malloc(sizeof(size_t) * f->dimension);
+    bool result = dfs(restrictedDomains, 0, values, f, g, l2, lPrime);
+    free(values);
 
     for (size_t i = 0; i < f->dimension; ++i) {
         freeLinkedList(restrictedDomains[i]);
@@ -22,24 +23,17 @@ bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTa
     return result;
 }
 
-bool * computeSetOfTs(truthTable *f, truthTable *g, size_t x) {
+bool *computeSetOfTs(truthTable *f, size_t x) {
     size_t n = f->dimension;
     bool *map = calloc(sizeof(bool), 1L << n);
 
     for (size_t y = 0; y < 1L << n; ++y) {
-        size_t t = g->elements[x] ^ g->elements[y] ^ g->elements[x ^ y];
+        size_t t = f->elements[x] ^ f->elements[y] ^ f->elements[x ^ y];
         map[t] = true;
     }
     return map;
 }
 
-/**
- * Compute the restricted domain for the given list of T's.
- * The domain is represented with a linked list.
- * @param listOfTs A set of T's that we want to compute the domain for
- * @param f A function F
- * @return The restricted domain represented as a linked list.
- */
 struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
     size_t n = f->dimension;
     bool *domain = calloc(sizeof(bool), 1L << n);
@@ -89,54 +83,28 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
     return head;
 }
 
-/**
- *
- * @param domains
- * @param dimension
- */
 bool
-reconstructInnerPermutation(struct Node **domains, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime) {
-    size_t *values = calloc(sizeof(size_t), f->dimension);
-    bool result = dfs(domains, f->dimension, 0, values, f, g, l2, lPrime);
-    free(values);
-    return result;
-}
-
-/**
- * A depth first search over a array containing linked lists.
-  * @param domains A array containing linked list of domains
-  * @param dimension The dimension of the function
-  * @param k
-  * @param values
-  * @return True if the reconstructed truth table is linear, false otherwise.
-  */
-bool
-dfs(struct Node **domains, size_t dimension, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
+dfs(struct Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
     truthTable **lPrime) {
-    if (k >= dimension) {
+    if (k >= f->dimension) {
         reconstructTruthTable(values, l2);
         *lPrime = composeFunctions(f, l2);
         addFunctionsTogether(*lPrime, g);
-        if(isLinear(*lPrime)) {
+        if (isLinear(*lPrime)) {
             return true;
         }
-        freeTruthTable(*lPrime);
+        freeTruthTable(*lPrime); // Not the right l'
     }
     struct Node *current = domains[k];
     while (current != NULL) {
         values[k] = current->data;
-        bool linear = dfs(domains, dimension, k + 1, values, f, g, l2, lPrime);
+        bool linear = dfs(domains, k + 1, values, f, g, l2, lPrime);
         if (linear) return true;
         current = current->next;
     }
     return false;
 }
 
-/**
- * Reconstruction of a truth table
- * @param basisValues A standard basisValues, powers of 2
- * @param dimension Dimension of the Function
- */
 void reconstructTruthTable(const size_t *basisValues, truthTable *l2) {
     for (size_t coordinate = 0; coordinate < 1L << l2->dimension; ++coordinate) {
         size_t result = 0;
@@ -149,13 +117,8 @@ void reconstructTruthTable(const size_t *basisValues, truthTable *l2) {
     }
 }
 
-/**
- * Compose function F with function G
- * @param f Function that is f be composed
- * @param g Function that is composed with
- */
-truthTable * composeFunctions(truthTable *f, truthTable *g) {
-    truthTable * result = malloc(sizeof(truthTable));
+truthTable *composeFunctions(truthTable *f, truthTable *g) {
+    truthTable *result = malloc(sizeof(truthTable));
     result->dimension = f->dimension;
     result->elements = calloc(sizeof(size_t), 1L << f->dimension);
     for (size_t x = 0; x < 1L << f->dimension; ++x) {
@@ -164,25 +127,12 @@ truthTable * composeFunctions(truthTable *f, truthTable *g) {
     return result;
 }
 
-/**
- * Add function F with function G
-  * @param to
-  * @param from
-  * @param dimension
-  * @return
-  */
 void addFunctionsTogether(truthTable *to, truthTable *from) {
     for (size_t i = 0; i < 1L << to->dimension; ++i) {
         to->elements[i] ^= from->elements[i];
     }
 }
 
-/**
- * Check if a function is linear or not
- * @param f The function to check
- * @param dimension The dimension of the function
- * @return True if the function is linear, false otherwise
- */
 bool isLinear(truthTable *f) {
     for (size_t a = 1; a < 1L << f->dimension; ++a) {
         for (size_t b = a + 1; b < 1L << f->dimension; ++b) {

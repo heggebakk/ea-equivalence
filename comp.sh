@@ -1,1 +1,1 @@
-gcc main.c -lm functions/innerPermutation.c utils/parser.c functions/partition.c utils/freeMemory.c -lm functions/outerPermutation.c utils/linkedList.c utils/basis.c -o main.out
+gcc -lm -o main.out main.c utils/parser.c utils/parser.h functions/partition.c functions/partition.h utils/freeMemory.c utils/freeMemory.h functions/outerPermutation.c functions/outerPermutation.h functions/innerPermutation.c functions/innerPermutation.h utils/linkedList.h utils/linkedList.c utils/inverse.c utils/inverse.h utils/compareTruthTable.c utils/compareTruthTable.h)

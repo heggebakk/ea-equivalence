@@ -1,12 +1,13 @@
 #ifndef EA_EQUIVALENCE_FREEMEMORY_H
 #define EA_EQUIVALENCE_FREEMEMORY_H
 
-#include "structs.h"
+#include "truthTable.h"
 #include "linkedList.h"
+#include "../functions/partition.h"
 
 void freeTruthTable(truthTable *tt);
 
-void freePartition(partitions p);
+void freePartition(partitions *p);
 
 void freeLinkedList(struct Node *head);
 

@@ -1,6 +1,6 @@
 #ifndef EA_EQUIVALENCE_PARSER_H
 #define EA_EQUIVALENCE_PARSER_H
-#include "structs.h"
+#include "truthTable.h"
 
 truthTable * parseTruthTable(const char filename[64]);
 

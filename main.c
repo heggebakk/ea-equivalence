@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "time.h"
-#include "utils/structs.h"
+#include "utils/truthTable.h"
 #include "utils/parser.h"
 #include "functions/partition.h"
 #include "utils/freeMemory.h"
@@ -11,9 +12,21 @@
 #include "utils/compareTruthTable.h"
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Expected 2 truth table files");
+    if (argc < 3) {
+        printf("Expected at least 2 arguments!");
         return 1;
+    }
+
+    long k = 4;
+    if (argv[3] != NULL) {
+        char* p;
+        errno = 0;
+        k = strtol(argv[3], &p, 10);
+        if (*p != '\0' || errno != 0) {
+            printf("Conversion went wrong!\n");
+            return 1;
+        }
+        printf("k = %ld\n", k);
     }
 
     double totalRunTime = 0.0;
@@ -32,14 +45,12 @@ int main(int argc, char *argv[]) {
     printf("\n");
     size_t DIMENSION = functionF->dimension;
 
-    // TODO: Take in k from input variable
-    size_t k = 4;
     size_t target = 0;
     // Partition function F and G
     double timeSpentPartition = 0.0;
     clock_t startPartition = clock();
-    partitions partitionF = partitionFunction(functionF, k, target);
-    partitions partitionG = partitionFunction(functionG, k, target);
+    partitions *partitionF = partitionFunction(functionF, k);
+    partitions *partitionG = partitionFunction(functionG, k);
     // TODO: Check if partition f and g is compatible
     clock_t endPartition = clock();
     timeSpentPartition += (double) (endPartition - startPartition) / CLOCKS_PER_SEC;
@@ -86,6 +97,7 @@ int main(int argc, char *argv[]) {
             addFunctionsTogether(x, gPrime);
             if (!compareTruthTable(*x, *lPrime)) {
                 printf("l' is not correct! Something is wrong!\n");
+                return 1;
             }
             freeTruthTable(x);
 
@@ -119,11 +131,11 @@ int main(int argc, char *argv[]) {
     clock_t stopTotalRunTime = clock();
     totalRunTime += (double) (stopTotalRunTime - startRunTime) / CLOCKS_PER_SEC;
 
-    printf("Time spent parsing: %f seconds \n", timeSpentParsing);
-    printf("Time spent partitioning: %f seconds \n", timeSpentPartition);
-    printf("Time spent outer permutation: %f seconds \n", timeSpentOuterPermutation);
-    printf("Time spent inner permutation: %f seconds \n", timeSpentInnerPermutation);
-    printf("Total time spent: %f seconds \n", totalRunTime);
+    printf("Time spent parsing: %f \n", timeSpentParsing);
+    printf("Time spent partitioning: %f \n", timeSpentPartition);
+    printf("Time spent outer permutation: %f \n", timeSpentOuterPermutation);
+    printf("Time spent inner permutation: %f \n", timeSpentInnerPermutation);
+    printf("Total time spent: %f \n", totalRunTime);
 
     return 0;
 }
