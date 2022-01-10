@@ -8,12 +8,12 @@ void freeTruthTable(truthTable *tt) {
 }
 
 void freePartition(partitions *p) {
-    for (size_t i = 0; i < p->numBuckets; ++i) {
-        free(p->buckets[i]);
+    for (size_t i = 0; i < p->dimension; ++i) {
+        free(p->classes[i]);
     }
-    free(p->bucketSizes);
+    free(p->classSizes);
     free(p->multiplicities);
-    free(p->buckets);
+    free(p->classes);
     free(p);
 }
 

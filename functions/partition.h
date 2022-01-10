@@ -3,10 +3,10 @@
 #include "../utils/truthTable.h"
 
 typedef struct vbfPartitions {
-    size_t numBuckets;
+    size_t dimension;
     size_t *multiplicities;
-    size_t *bucketSizes;
-    size_t **buckets;
+    size_t *classSizes;
+    size_t **classes;
 } partitions;
 
 /**

@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #include "stdlib.h"
 #include "outerPermutation.h"
 #include "partition.h"
@@ -17,8 +18,8 @@ void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *ba
     }
     generated_images[0] = true;
 
-    size_t *fBucketPosition = correspondingBucket(f, dimension);
-    size_t *gBucketPosition = correspondingBucket(g, dimension);
+    size_t *fBucketPosition = correspondingPermutationClass(f, dimension);
+    size_t *gBucketPosition = correspondingPermutationClass(g, dimension);
     recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fBucketPosition, gBucketPosition);
 
     free(images);
@@ -42,21 +43,21 @@ size_t *createBasis(size_t dimension) {
  * @param dimension
  * @return
  */
-size_t *correspondingBucket(partitions *partition, size_t dimension) {
-    size_t *list = (size_t *) calloc(sizeof(size_t), 1L << dimension);
+size_t *correspondingPermutationClass(partitions *partition, size_t dimension) {
+    size_t *correspondingClass = (size_t *) calloc(sizeof(size_t), 1L << dimension);
 
     for (size_t i = 0; i < 1L << dimension; ++i) {
-        for (size_t j = 0; j < partition->numBuckets; ++j) {
-            size_t *bucket = partition->buckets[j];
-            for (size_t k = 0; k < partition->bucketSizes[j]; ++k) {
-                if (bucket[k] == i) {
-                    list[i] = j;
+        for (size_t j = 0; j < partition->dimension; ++j) {
+            size_t *partitionClass = partition->classes[j];
+            for (size_t k = 0; k < partition->classSizes[j]; ++k) {
+                if (partitionClass[k] == i) {
+                    correspondingClass[i] = j;
                     break;
                 }
             }
         }
     }
-    return list;
+    return correspondingClass;
 }
 
 void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
@@ -71,10 +72,10 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
         return;
     }
 
-    size_t bucketF = partitionF->bucketSizes[fBucketPosition[basis[k]]];
+    size_t bucketF = partitionF->classSizes[fBucketPosition[basis[k]]];
     size_t posBg = findCorrespondingBucket(bucketF, partitionG);
-    for (size_t ick = 0; ick < partitionG->bucketSizes[posBg]; ++ick) {
-        size_t ck = partitionG->buckets[posBg][ick];
+    for (size_t ick = 0; ick < partitionG->classSizes[posBg]; ++ick) {
+        size_t ck = partitionG->classes[posBg][ick];
         if (generatedImages[ck] == true) {
             continue;
         }
@@ -94,7 +95,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
                     }
                 }
             }
-            if (partitionF->bucketSizes[fBucketPosition[x]] != partitionG->bucketSizes[gBucketPosition[y]]) {
+            if (partitionF->classSizes[fBucketPosition[x]] != partitionG->classSizes[gBucketPosition[y]]) {
                 problem = true;
                 break;
             }
@@ -122,8 +123,8 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
 }
 
 size_t findCorrespondingBucket(size_t bucketSizeF, partitions *g) {
-    for (size_t i = 0; i < g->numBuckets; ++i) {
-        if (bucketSizeF == g->bucketSizes[i]) {
+    for (size_t i = 0; i < g->dimension; ++i) {
+        if (bucketSizeF == g->classSizes[i]) {
             return i;
         }
     }
