@@ -4,6 +4,7 @@
 #include "time.h"
 #include "utils/truthTable.h"
 #include "utils/parser.h"
+#include "functions/walshTransform.h"
 #include "functions/partition.h"
 #include "utils/freeMemory.h"
 #include "functions/outerPermutation.h"
@@ -44,8 +45,24 @@ int main(int argc, char *argv[]) {
     printTruthTable(functionG);
     printf("\n");
     size_t DIMENSION = functionF->dimension;
+    size_t *basis = createBasis(DIMENSION); // Standard basis
 
-    size_t target = 0;
+    // Solve with Walsh transform first:
+    double timeSpentWalshTransform = 0.0;
+    clock_t startWalshTransform = clock();
+    walshTransform wtF = truthTableToWalshTransform(*functionF);
+    walshTransform wtG = truthTableToWalshTransform(*functionG);
+    printWalshTransformTable(wtF);
+    printWalshTransformTable(wtG);
+    partitions *wtPartitionF = eaPartitionWalsh(wtF, k);
+    partitions *wtPartitionG = eaPartitionWalsh(wtG, k);
+    clock_t endWalshTransform = clock();
+    // Outer Permutation, L_1
+    double timeSpentWTOuterPermutation;
+    struct ttNode *l1WT;
+    size_t numPermWT;
+    findOuterPermutation(DIMENSION, wtPartitionF, wtPartitionG, basis, &timeSpentWTOuterPermutation, &l1WT, &numPermWT);
+
     // Partition function F and G
     double timeSpentPartition = 0.0;
     clock_t startPartition = clock();
@@ -61,18 +78,12 @@ int main(int argc, char *argv[]) {
     printPartitionInfo(partitionG);
     printf("\n");
 
-    size_t *basis = createBasis(DIMENSION); // Standard basis
 
     // Outer Permutation, L_1
-    double timeSpentOuterPermutation = 0.0;
-    clock_t startPermutation = clock();
-    struct ttNode * l1 = initNode();
-    outerPermutation(partitionF, partitionG, DIMENSION, basis, l1);
-    size_t numPerm = countTtNodes(l1);
-    clock_t endPermutation = clock();
-    timeSpentOuterPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
-
-    printf("Number of permutations: %zu \n", numPerm);
+    double timeSpentOuterPermutation;
+    struct ttNode *l1;
+    size_t numPerm;
+    findOuterPermutation(DIMENSION, partitionF, partitionG, basis, &timeSpentOuterPermutation, &l1, &numPerm);
 
     double timeSpentInnerPermutation = 0.0;
     for (size_t i = 0; i < numPerm; ++i) {
