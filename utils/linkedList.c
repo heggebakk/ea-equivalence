@@ -87,3 +87,17 @@ truthTable * getNode(struct ttNode *head, size_t index) {
     }
     return current->data;
 }
+void displayTtLinkedList(struct ttNode *head) {
+    struct ttNode *current = head;
+    if (head == NULL) {
+        printf("Linked list is empty. \n");
+        return;
+    }
+    printf("Nodes of linked list: ");
+    while (current != NULL) {
+        printf("%zu", (size_t)current);
+        current = current->next;
+    }
+    printf("\n");
+}
+

@@ -58,10 +58,11 @@ int main(int argc, char *argv[]) {
     partitions *wtPartitionG = eaPartitionWalsh(wtG, k);
     clock_t endWalshTransform = clock();
     // Outer Permutation, L_1
-    double timeSpentWTOuterPermutation;
+    double timeSpentWTOuterPermutation = 0.0;
     struct ttNode *l1WT;
-    size_t numPermWT;
-    findOuterPermutation(DIMENSION, wtPartitionF, wtPartitionG, basis, &timeSpentWTOuterPermutation, &l1WT, &numPermWT);
+    l1WT = initNode();
+    size_t numPermWT = findOuterPermutation(DIMENSION, wtPartitionF, wtPartitionG, basis, timeSpentWTOuterPermutation, l1WT);
+    freeTtLinkedList(l1WT);
 
     // Partition function F and G
     double timeSpentPartition = 0.0;
@@ -80,11 +81,10 @@ int main(int argc, char *argv[]) {
 
 
     // Outer Permutation, L_1
-    double timeSpentOuterPermutation;
+    double timeSpentOuterPermutation = 0.0;
     struct ttNode *l1;
-    size_t numPerm;
-    findOuterPermutation(DIMENSION, partitionF, partitionG, basis, &timeSpentOuterPermutation, &l1, &numPerm);
-
+    l1 = initNode();
+    size_t numPerm = findOuterPermutation(DIMENSION, partitionF, partitionG, basis, timeSpentOuterPermutation, l1);
     double timeSpentInnerPermutation = 0.0;
     for (size_t i = 0; i < numPerm; ++i) {
         truthTable *l1Prime = getNode(l1, i);

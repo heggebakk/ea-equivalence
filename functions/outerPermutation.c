@@ -122,17 +122,16 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
     }
 }
 
-void findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis,
-                          double *timeSpentOuterPermutation, struct ttNode **l1, size_t *numPerm) {
-    (*timeSpentOuterPermutation) = 0.0;
-    (*l1) = initNode();
-    (*numPerm) = countTtNodes(*l1);
+size_t findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis,
+                                   double timeSpentOuterPermutation, struct ttNode *l1) {
     clock_t startPermutation = clock();
-    outerPermutation(partitionF, partitionG, DIMENSION, basis, (*l1));
+    outerPermutation(partitionF, partitionG, DIMENSION, basis, l1);
+    size_t numPerm = countTtNodes(l1);
     clock_t endPermutation = clock();
-    (*timeSpentOuterPermutation) += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
+    timeSpentOuterPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
 
-    printf("Number of permutations: %zu \n", (*numPerm));
+    printf("Number of permutations: %zu \n", numPerm);
+    return numPerm;
 }
 
 size_t findCorrespondingBucket(size_t bucketSizeF, partitions *g) {
