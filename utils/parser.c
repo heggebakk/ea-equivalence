@@ -3,7 +3,7 @@
 
 /**
  * Parse a file to a Truth Table Struct
- * The first line of the file must be the dimension, the next line should be all the elements seperated with white space
+ * The first line of the file must be the numberOfClasses, the next line should be all the elements seperated with white space
  *
  * Example:
  * 6

@@ -3,7 +3,7 @@
 #include "../utils/truthTable.h"
 
 typedef struct vbfPartitions {
-    size_t dimension;
+    size_t numberOfClasses;
     size_t *multiplicities;
     size_t *classSizes;
     size_t **classes;

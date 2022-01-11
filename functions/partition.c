@@ -14,13 +14,13 @@ partitions *partitionFunction(truthTable *function, size_t k) {
     findAllMultiplicities(k, 0, multiplicities, function, 0, 0);
 
     partitions *partition = malloc(sizeof(partitions));
-    partition->dimension = 0;
+    partition->numberOfClasses = 0;
     partition->multiplicities = calloc(sizeof(size_t), 1L << function->dimension);
     partition->classSizes = calloc(sizeof(size_t), 1L << function->dimension);
     partition->classes = calloc(sizeof(size_t *), 1L << function->dimension);
 
     for (size_t i = 0; i < 1L << function->dimension; ++i) {
-        size_t numBuckets = partition->dimension;
+        size_t numBuckets = partition->numberOfClasses;
         size_t multiplicity = multiplicities[i];
         // Check if multiplicity is in bucket, if false; add multiplicity to bucket
         bool multiplicityInBuckets = false;
@@ -38,7 +38,7 @@ partitions *partitionFunction(truthTable *function, size_t k) {
             partition->classSizes[numBuckets] = 1;
             partition->multiplicities[numBuckets] = multiplicity;
             partition->classes[numBuckets][0] = i;
-            partition->dimension += 1;
+            partition->numberOfClasses += 1;
         }
     }
     free(multiplicities);
@@ -60,7 +60,7 @@ void findAllMultiplicities(size_t k, int i, size_t *multiplicities, truthTable *
 }
 
 void printPartitionInfo(partitions *p) {
-    for (int i = 0; i < p->dimension; ++i) {
+    for (int i = 0; i < p->numberOfClasses; ++i) {
         printf("%zu, %zu, ", p->multiplicities[i], p->classSizes[i]);
         for (int j = 0; j < p->classSizes[i]; ++j) {
             printf("%zu ", p->classes[i][j]);

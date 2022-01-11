@@ -64,6 +64,7 @@ partitions * eaPartitionWalsh(walshTransform wt, size_t k) {
         size_t walsh = walshTransformPowerMoment(wt, k, 0, s);
         // Note that the value of the power moment is 2^(2*n) times the multiplicity
         size_t multiplicity = walsh >> (2 * wt.dimension);
+        multiplicities[s] = multiplicity;
         // Try to find this multiplicity in the list of recorded multiplicities. If it's note there, add a new entry.
         size_t k2 = 0;
         for (; k2 < currentPossibleValue; ++k2) {
@@ -78,7 +79,7 @@ partitions * eaPartitionWalsh(walshTransform wt, size_t k) {
 
     // At this point, we know what exact multiplicities define the partition, and can construct the structure
     partitions *p = malloc(sizeof(partitions));
-    p->dimension = wt.dimension;
+    p->numberOfClasses = currentPossibleValue;
     p->classSizes = malloc(sizeof(size_t) * currentPossibleValue);
     p->classes = malloc(sizeof(size_t *) * currentPossibleValue);
 
@@ -90,7 +91,6 @@ partitions * eaPartitionWalsh(walshTransform wt, size_t k) {
         for (size_t s = 0; s < 1L << wt.dimension; ++s) {
             if (multiplicities[s] == possibleValues[classIndex]) {
                 currentClass[currentClassIndex++] = s;
-                printf("\nCLASS SIZE: %zu\n", currentClassIndex);
             }
         }
         p->classSizes[classIndex] = currentClassIndex;

@@ -8,7 +8,7 @@ void freeTruthTable(truthTable *tt) {
 }
 
 void freePartition(partitions *p) {
-    for (size_t i = 0; i < p->dimension; ++i) {
+    for (size_t i = 0; i < p->numberOfClasses; ++i) {
         free(p->classes[i]);
     }
     free(p->classSizes);

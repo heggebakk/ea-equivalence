@@ -47,7 +47,7 @@ size_t *correspondingPermutationClass(partitions *partition, size_t dimension) {
     size_t *correspondingClass = (size_t *) calloc(sizeof(size_t), 1L << dimension);
 
     for (size_t i = 0; i < 1L << dimension; ++i) {
-        for (size_t j = 0; j < partition->dimension; ++j) {
+        for (size_t j = 0; j < partition->numberOfClasses; ++j) {
             size_t *partitionClass = partition->classes[j];
             for (size_t k = 0; k < partition->classSizes[j]; ++k) {
                 if (partitionClass[k] == i) {
@@ -136,7 +136,7 @@ void findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *
 }
 
 size_t findCorrespondingBucket(size_t bucketSizeF, partitions *g) {
-    for (size_t i = 0; i < g->dimension; ++i) {
+    for (size_t i = 0; i < g->numberOfClasses; ++i) {
         if (bucketSizeF == g->classSizes[i]) {
             return i;
         }
