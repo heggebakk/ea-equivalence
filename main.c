@@ -4,13 +4,13 @@
 #include "time.h"
 #include "utils/truthTable.h"
 #include "utils/parser.h"
-#include "functions/walshTransform.h"
 #include "functions/partition.h"
 #include "utils/freeMemory.h"
 #include "functions/outerPermutation.h"
 #include "functions/innerPermutation.h"
 #include "utils/inverse.h"
 #include "utils/compareTruthTable.h"
+#include "newMain.h"
 
 int main(int argc, char *argv[]) {
     if (argc < 3) {
@@ -48,21 +48,7 @@ int main(int argc, char *argv[]) {
     size_t *basis = createBasis(DIMENSION); // Standard basis
 
     // Solve with Walsh transform first:
-    double timeSpentWalshTransform = 0.0;
-    clock_t startWalshTransform = clock();
-    walshTransform wtF = truthTableToWalshTransform(*functionF);
-    walshTransform wtG = truthTableToWalshTransform(*functionG);
-    printWalshTransformTable(wtF);
-    printWalshTransformTable(wtG);
-    partitions *wtPartitionF = eaPartitionWalsh(wtF, k);
-    partitions *wtPartitionG = eaPartitionWalsh(wtG, k);
-    clock_t endWalshTransform = clock();
-    // Outer Permutation, L_1
-    double timeSpentWTOuterPermutation = 0.0;
-    struct ttNode *l1WT;
-    l1WT = initNode();
-    size_t numPermWT = findOuterPermutation(DIMENSION, wtPartitionF, wtPartitionG, basis, timeSpentWTOuterPermutation, l1WT);
-    freeTtLinkedList(l1WT);
+    runWalshTransform(functionF, functionG, k, DIMENSION, basis);
 
     // Partition function F and G
     double timeSpentPartition = 0.0;
@@ -79,12 +65,15 @@ int main(int argc, char *argv[]) {
     printPartitionInfo(partitionG);
     printf("\n");
 
-
     // Outer Permutation, L_1
     double timeSpentOuterPermutation = 0.0;
+    clock_t startPermutation = clock();
     struct ttNode *l1;
     l1 = initNode();
-    size_t numPerm = findOuterPermutation(DIMENSION, partitionF, partitionG, basis, timeSpentOuterPermutation, l1);
+    size_t numPerm = findOuterPermutation(DIMENSION, partitionF, partitionG, basis, l1);
+    clock_t endPermutation = clock();
+    timeSpentOuterPermutation += (double) (endPermutation - startPermutation) / CLOCKS_PER_SEC;
+
     double timeSpentInnerPermutation = 0.0;
     for (size_t i = 0; i < numPerm; ++i) {
         truthTable *l1Prime = getNode(l1, i);
@@ -142,11 +131,13 @@ int main(int argc, char *argv[]) {
     clock_t stopTotalRunTime = clock();
     totalRunTime += (double) (stopTotalRunTime - startRunTime) / CLOCKS_PER_SEC;
 
+    printf("\nNew algorithm: \n");
     printf("Time spent parsing: %f \n", timeSpentParsing);
     printf("Time spent partitioning: %f \n", timeSpentPartition);
     printf("Time spent outer permutation: %f \n", timeSpentOuterPermutation);
     printf("Time spent inner permutation: %f \n", timeSpentInnerPermutation);
-    printf("Total time spent: %f \n", totalRunTime);
+
+    printf("\nTotal time spent: %f \n", totalRunTime);
 
     return 0;
 }

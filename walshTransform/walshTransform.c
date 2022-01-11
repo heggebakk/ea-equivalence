@@ -14,15 +14,15 @@ size_t truthTableWalshTransform(truthTable tt, size_t a, size_t b) {
     return sum;
 }
 
-walshTransform truthTableToWalshTransform(truthTable tt) {
-    walshTransform wt;
+walshTransform * truthTableToWalshTransform(truthTable tt) {
+    walshTransform *wt = malloc(sizeof(walshTransform));
     size_t dimension = tt.dimension;
-    wt.dimension = dimension;
-    wt.elements = malloc(sizeof(size_t) * 1L << dimension);
+    wt->dimension = dimension;
+    wt->elements = malloc(sizeof(size_t) * 1L << dimension);
     for (size_t a = 0; a < 1L << dimension; ++a) {
-        wt.elements[a] = malloc(sizeof(size_t) * 1L << dimension);
+        wt->elements[a] = malloc(sizeof(size_t) * 1L << dimension);
         for (size_t b = 0; b < 1L << dimension; ++b) {
-            wt.elements[a][b] = (size_t) truthTableWalshTransform(tt, a, b);
+            wt->elements[a][b] = (size_t) truthTableWalshTransform(tt, a, b);
         }
     }
     return wt;
@@ -55,15 +55,15 @@ size_t walshTransformPowerMoment(walshTransform wt, size_t k, size_t shiftA, siz
     return sum;
 }
 
-partitions * eaPartitionWalsh(walshTransform wt, size_t k) {
-    size_t multiplicities [1L << wt.dimension];
-    size_t possibleValues [1L << wt.dimension];
+partitions * eaPartitionWalsh(walshTransform *wt, size_t k) {
+    size_t *multiplicities = malloc(sizeof(size_t) * 1L << wt->dimension);
+    size_t possibleValues [1L << wt->dimension];
     size_t currentPossibleValue = 0;
 
-    for (size_t s = 0; s < 1L << wt.dimension; ++s) {
-        size_t walsh = walshTransformPowerMoment(wt, k, 0, s);
+    for (size_t s = 0; s < 1L << wt->dimension; ++s) {
+        size_t walsh = walshTransformPowerMoment(*wt, k, 0, s);
         // Note that the value of the power moment is 2^(2*n) times the multiplicity
-        size_t multiplicity = walsh >> (2 * wt.dimension);
+        size_t multiplicity = walsh >> (2 * wt->dimension);
         multiplicities[s] = multiplicity;
         // Try to find this multiplicity in the list of recorded multiplicities. If it's note there, add a new entry.
         size_t k2 = 0;
@@ -82,13 +82,14 @@ partitions * eaPartitionWalsh(walshTransform wt, size_t k) {
     p->numberOfClasses = currentPossibleValue;
     p->classSizes = malloc(sizeof(size_t) * currentPossibleValue);
     p->classes = malloc(sizeof(size_t *) * currentPossibleValue);
+    p->multiplicities = multiplicities;
 
-    size_t currentClass[1L << wt.dimension];
+    size_t currentClass[1L << wt->dimension];
     size_t currentClassIndex;
 
     for (size_t classIndex = 0; classIndex < currentPossibleValue; ++classIndex) {
         currentClassIndex = 0;
-        for (size_t s = 0; s < 1L << wt.dimension; ++s) {
+        for (size_t s = 0; s < 1L << wt->dimension; ++s) {
             if (multiplicities[s] == possibleValues[classIndex]) {
                 currentClass[currentClassIndex++] = s;
             }

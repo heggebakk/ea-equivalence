@@ -28,6 +28,6 @@ size_t findCorrespondingBucket(size_t bucketSizeF, partitions *g);
 bool isBijective(truthTable *outerPermutation, truthTable *innerPermutation);
 
 size_t findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis,
-                                   double timeSpentOuterPermutation, struct ttNode *l1);
+                            struct ttNode *l1);
 
 #endif //EA_EQUIVALENCE_OUTERPERMUTATION_H
