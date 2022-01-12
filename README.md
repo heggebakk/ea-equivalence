@@ -4,14 +4,15 @@ ea-equivalence is an implementation from the paper `Deciding EA-equivalence via 
 ## Build and run project:
 To build the project, run `comp.sh` at the command line in the current directory, which will generate an executable called `main.out` by default.
 
-The program expects two arguments, function f and function g. To run the program with function
-f = `resources/TT_library/dim6/q_6_1.tt` and function g = `resources/TT_library/dim6/q_6_1.tt`
+The program expects at least one argument, function f. If you want to test with a different `k` than `k = 4`, add this
+as the second argument. To run the program with function
+f = `resources/TT_library/dim6/q_6_1.tt` and k = `6`
 
 ```shell
-./main.out resources/TT_library/dim6/q_6_1.tt resources/TT_library/dim6/q_6_1.tt
+./main.out resources/TT_library/dim6/q_6_1.tt 6
 ```
 
-The two files f and g expect to be in this current format:
+The file f is expected to be in the format:
 
 ```text
 6
@@ -19,3 +20,5 @@ The two files f and g expect to be in this current format:
 ```
 
 The first line is the dimension, and the second is the truth table.
+
+The result of the run is written to `result.txt` in the root directory.
