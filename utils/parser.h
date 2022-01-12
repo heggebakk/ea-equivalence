@@ -6,4 +6,6 @@ truthTable * parseTruthTable(const char filename[64]);
 
 void printTruthTable(truthTable *tt);
 
+void writeTruthTable(truthTable *tt, FILE *fp, char *ttName);
+
 #endif //EA_EQUIVALENCE_PARSER_H

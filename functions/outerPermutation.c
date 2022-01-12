@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <string.h>
-#include <time.h>
 #include "stdlib.h"
 #include "outerPermutation.h"
 #include "partition.h"
@@ -123,10 +122,10 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
 }
 
 size_t findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis,
-                            struct ttNode *l1) {
+                            struct ttNode *l1, FILE *fp) {
     outerPermutation(partitionF, partitionG, DIMENSION, basis, l1);
     size_t numPerm = countTtNodes(l1);
-    printf("Number of permutations: %zu \n", numPerm);
+    fprintf(fp, "// Number of permutations:\n%zu \n", numPerm);
     return numPerm;
 }
 

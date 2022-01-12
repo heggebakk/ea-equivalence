@@ -10,7 +10,8 @@
 #include "utils/freeMemory.h"
 #include "stddef.h"
 
-int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis) {
+int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp) {
+    fprintf(fp, "\n** WALSH TRANSFORM **\n");
     // Start time
     double totalTime = 0.0;
     clock_t startTotalTime = clock();
@@ -31,7 +32,7 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutationTime = clock();
     struct ttNode *l1 = initNode();
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1);
+    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp);
     clock_t endOuterPermutationTime = clock();
     outerPermutationTime += (double) (endOuterPermutationTime - startOuterPermutationTime) / CLOCKS_PER_SEC;
 
@@ -53,13 +54,9 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
 
             // Find l
             truthTable *l = composeFunctions(l1Prime, lPrime);
-            printf("l1: \n");
-            printTruthTable(l1[i].data);
-            printf("l2: \n");
-            printTruthTable(l2);
-            printf("l: \n");
-            printTruthTable(l);
-            printf("\n");
+            writeTruthTable(l1[i].data, fp, "l1");
+            writeTruthTable(l2, fp, "l2");
+            writeTruthTable(l, fp, "l");
 
             // Free memory
             freeTruthTable(l);
@@ -92,10 +89,18 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     printf("Time spent inner permutation: %f \n", innerPermutationTime);
     printf("Total time spent: %f \n", totalTime);
 
+
+    fprintf(fp, "\nWalsh Transform:\n");
+    fprintf(fp, "Time spent partitioning: %f \n", partitionTime);
+    fprintf(fp, "Time spent outer permutation: %f \n", outerPermutationTime);
+    fprintf(fp, "Time spent inner permutation: %f \n", innerPermutationTime);
+    fprintf(fp, "Total time spent: %f \n", totalTime);
+
     return 0;
 }
 
-int newAlgorithm(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis) {
+int newAlgorithm(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp) {
+    fprintf(fp, "\n** NEW ALGORITHM **\n");
     // Start time
     double totalTime = 0.0;
     clock_t startTotalTime = clock();
@@ -113,7 +118,7 @@ int newAlgorithm(truthTable *f, truthTable *g, size_t k, size_t dimension, size_
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutation = clock();
     struct ttNode *l1 = initNode();
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1);
+    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp);
     clock_t endOuterPermutation = clock();
     outerPermutationTime += (double) (endOuterPermutation - startOuterPermutation) / CLOCKS_PER_SEC;
 
@@ -136,13 +141,9 @@ int newAlgorithm(truthTable *f, truthTable *g, size_t k, size_t dimension, size_
             // Find l
             truthTable *l = composeFunctions(l1Prime, lPrime);
 
-            printf("l1: \n");
-            printTruthTable(l1[i].data);
-            printf("l2: \n");
-            printTruthTable(l2);
-            printf("l: \n");
-            printTruthTable(l);
-            printf("\n");
+            writeTruthTable(l1[i].data, fp, "l1");
+            writeTruthTable(l2, fp, "l2");
+            writeTruthTable(l, fp, "l");
 
             freeTruthTable(l);
             freeTruthTable(l1Inverse);
@@ -171,6 +172,12 @@ int newAlgorithm(truthTable *f, truthTable *g, size_t k, size_t dimension, size_
     printf("Time spent outer permutation: %f \n", outerPermutationTime);
     printf("Time spent inner permutation: %f \n", innerPermutationTime);
     printf("Total time spent: %f \n", totalTime);
+
+    fprintf(fp, "\nNew algorithm:\n");
+    fprintf(fp, "Time spent partitioning: %f \n", partitionTime);
+    fprintf(fp, "Time spent outer permutation: %f \n", outerPermutationTime);
+    fprintf(fp, "Time spent inner permutation: %f \n", innerPermutationTime);
+    fprintf(fp, "Total time spent: %f \n", totalTime);
 
     return 0;
 }

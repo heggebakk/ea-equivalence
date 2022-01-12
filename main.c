@@ -25,7 +25,6 @@ int main(int argc, char *argv[]) {
         }
         printf("k = %ld\n", k);
     }
-
     // Parse files to truth tables
     double timeSpentParsing = 0.0;
     clock_t startParsing = clock();
@@ -34,21 +33,30 @@ int main(int argc, char *argv[]) {
     truthTable *functionG = getFunctionG(functionF);
     clock_t endParsing = clock();
     timeSpentParsing += (double) (endParsing - startParsing) / CLOCKS_PER_SEC;
+
+    char *filename = "result.txt";
+    FILE *fp = fopen(filename, "w+");
+    fprintf(fp, "%s\n", argv[1]);
+
     printTruthTable(functionF);
     printTruthTable(functionG);
-    printf("Time spent parsing files: %f\n", timeSpentParsing);
-    printf("\n");
+    fprintf(fp, "// Dimension:\n%zu\n", functionF->dimension);
+    writeTruthTable(functionF, fp, "F");
+    writeTruthTable(functionG, fp, "G");
     size_t DIMENSION = functionF->dimension;
     size_t *basis = createBasis(DIMENSION); // Standard basis
 
     // Solve with Walsh transform first:
-//    runWalshTransform(functionF, functionG, k, DIMENSION, basis);
-//
-//    printf("\n");
+    runWalshTransform(functionF, functionG, k, DIMENSION, basis, fp);
+
+    printf("\n");
 
     // Solve with new algorithm:
-    newAlgorithm(functionF, functionG, k, DIMENSION, basis);
+    newAlgorithm(functionF, functionG, k, DIMENSION, basis, fp);
+    printf("Time spent parsing files: %f\n", timeSpentParsing);
+    printf("\n");
 
+    fclose(fp);
     free(basis);
 
     return 0;
