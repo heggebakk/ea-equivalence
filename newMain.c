@@ -8,6 +8,7 @@
 #include "functions/innerPermutation.h"
 #include "utils/parser.h"
 #include "utils/freeMemory.h"
+#include "stddef.h"
 
 int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis) {
     // Start time
