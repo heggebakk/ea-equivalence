@@ -79,7 +79,6 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     // Change function f and g from a truth table to a walsh transform table
     walshTransform *functionF = truthTableToWalshTransform(*f);
     walshTransform *functionG = truthTableToWalshTransform(*g);
-    printf("Finished tt to wt\n");
 
     // Partition function f and g
     double partitionTime = 0.0;
