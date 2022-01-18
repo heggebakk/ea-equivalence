@@ -171,7 +171,10 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     clock_t startPartitionTime = clock();
     partitions *partitionF = partitionFunction(f, k);
     partitions *partitionG = partitionFunction(g, k);
-    // TODO: Check if partition f and g is compatible
+    if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
+        printf("Partition of function F and G is not compatible!\n");
+        exit(1);
+    }
     clock_t endPartitionTime = clock();
     partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
 
