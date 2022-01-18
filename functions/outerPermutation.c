@@ -17,15 +17,15 @@ void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *ba
     }
     generated_images[0] = true;
 
-    size_t *fBucketPosition = correspondingPermutationClass(f, dimension);
-    size_t *gBucketPosition = correspondingPermutationClass(g, dimension);
-    recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fBucketPosition, gBucketPosition);
+    size_t *fClassPosition = correspondingPermutationClass(f, dimension);
+    size_t *gClassPosition = correspondingPermutationClass(g, dimension);
+    recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fClassPosition, gClassPosition);
 
     free(images);
     free(basis);
     free(generated);
-    free(fBucketPosition);
-    free(gBucketPosition);
+    free(fClassPosition);
+    free(gClassPosition);
 }
 
 size_t *createBasis(size_t dimension) {
@@ -60,8 +60,8 @@ size_t *correspondingPermutationClass(partitions *partition, size_t dimension) {
 }
 
 void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
-               size_t *generated, bool *generatedImages, struct ttNode *l1, const size_t *fBucketPosition,
-               const size_t *gBucketPosition) {
+               size_t *generated, bool *generatedImages, struct ttNode *l1, const size_t *fClassPosition,
+               const size_t *gClassPosition) {
     if (k == n) {
         truthTable * new = malloc(sizeof(truthTable));
         new->dimension = n;
@@ -71,8 +71,8 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
         return;
     }
 
-    size_t bucketF = partitionF->classSizes[fBucketPosition[basis[k]]];
-    size_t posBg = findCorrespondingBucket(bucketF, partitionG);
+    size_t classF = partitionF->classSizes[fClassPosition[basis[k]]];
+    size_t posBg = findCorrespondingClass(classF, partitionG);
     for (size_t ick = 0; ick < partitionG->classSizes[posBg]; ++ick) {
         size_t ck = partitionG->classes[posBg][ick];
         if (generatedImages[ck] == true) {
@@ -94,7 +94,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
                     }
                 }
             }
-            if (partitionF->classSizes[fBucketPosition[x]] != partitionG->classSizes[gBucketPosition[y]]) {
+            if (partitionF->classSizes[fClassPosition[x]] != partitionG->classSizes[gClassPosition[y]]) {
                 problem = true;
                 break;
             }
@@ -104,7 +104,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
         if (!problem) {
             images[k] = ck;
             recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, l1,
-                      fBucketPosition, gBucketPosition);
+                      fClassPosition, gClassPosition);
         }
 
         for (size_t linearCombinations = 0; linearCombinations < LIMIT; ++linearCombinations) {
@@ -129,13 +129,13 @@ size_t findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions
     return numPerm;
 }
 
-size_t findCorrespondingBucket(size_t bucketSizeF, partitions *g) {
+size_t findCorrespondingClass(size_t classSizeF, partitions *g) {
     for (size_t i = 0; i < g->numberOfClasses; ++i) {
-        if (bucketSizeF == g->classSizes[i]) {
+        if (classSizeF == g->classSizes[i]) {
             return i;
         }
     }
-    printf("Couldn't find a corresponding bucket with size %zu\n", bucketSizeF);
+    printf("Couldn't find a corresponding bucket with size %zu\n", classSizeF);
     exit(1);
 }
 
