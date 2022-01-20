@@ -15,6 +15,12 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
 
 int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
 
+void mapPartitionClasses(partitions *partitionF, partitions *partitionG);
+
+size_t *sort(size_t *arr, int i, int i1);
+
+void merge(size_t *arr, int lo, int mid, int hi);
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         printf("Expected at least 2 arguments!");
@@ -170,6 +176,9 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     clock_t startPartitionTime = clock();
     partitions *partitionF = partitionFunction(f, k);
     partitions *partitionG = partitionFunction(g, k);
+    // TODO: Map partition classes
+    mapPartitionClasses(partitionF, partitionG);
+
     if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
         printf("Partition of function F and G is not compatible!\n");
         exit(1);
@@ -243,4 +252,74 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     fprintf(fp, "Total time spent: %f \n", totalTime);
 
     return 0;
+}
+
+void mapPartitionClasses(partitions *partitionF, partitions *partitionG) {
+    // Check if the partitions has the same number of classes
+    if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
+        printf("The partition of function F and G is not compatible!\n");
+        printf("Partition F has %zu number of classes and partition G has %zu number of classes.\n",
+               partitionF->numberOfClasses, partitionG->numberOfClasses);
+        exit(1);
+    }
+
+    // Check if the partitions has the same sizes in the partition classes
+    size_t *arr = partitionF->classSizes;
+    sort(arr, 0, (int) partitionF->numberOfClasses);
+}
+
+/**
+ * Use merge sort to sort a list of numbers
+ * @param arr The array to be sorted
+ * @return A sorted array in descending order
+ */
+
+void merge(size_t *arr, int lo, int mid, int hi) {
+    int n1 = mid - lo + 1;
+    int n2 = hi - mid;
+
+    int left[n1], right[n2];
+
+    for (int i = 0; i < n1; ++i) {
+        left[i] = arr[lo + i];
+    }
+    for (int i = 0; i < n2; i++) {
+        right[i] = arr[mid + 1 + i];
+    }
+    int i = 0;
+    int j = 0;
+    int k = lo;
+
+    while (i < n1 && j < n2) {
+        if (left[i] <= right[j]) {
+            arr[k] = left[i];
+            i++;
+        } else {
+            arr[k] = right[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = left[i];
+        i++;
+        k++;
+    }
+    while (j < n2) {
+        arr[k] = right[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(size_t *arr, int lo, int hi) {
+    if (lo < hi) {
+        int m = lo + (hi - lo) / 2;
+
+        mergeSort(arr, lo, m);
+        mergeSort(arr, m + 1, hi);
+
+        merge(arr, lo, m, hi);
+    }
 }
