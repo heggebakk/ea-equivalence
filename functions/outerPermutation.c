@@ -4,21 +4,29 @@
 #include "outerPermutation.h"
 #include "partition.h"
 
+/* Find all linear permutations L respecting two given partitions f and g, i.e. such that L maps all elements from a given
+ * class in the partition under f to its corresponding class in the partition under g.
+ */
 void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, struct ttNode *l1) {
-    basis = createBasis(dimension);
-    size_t *images = calloc(sizeof(size_t), 1L << dimension);
-    size_t *generated = calloc(sizeof(size_t), 1L << dimension);
+    basis = createBasis(dimension); /* We will guess the values of L on a linear basis */
+    size_t *images = calloc(sizeof(size_t), 1L << dimension); /* the images of the basis elements under L */
+    size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
     for (size_t i = 0; i < 1L << dimension; ++i) {
         generated[i] = 0;
     }
-    bool generated_images[1L << dimension];
+    bool generated_images[1L << dimension]; /* a Boolean map showing which elements are among the images of the partially defined L */
     for (size_t i = 0; i < 1L << dimension; ++i) {
         generated_images[i] = false;
     }
     generated_images[0] = true;
 
+    /* Fix some particular arrangement of the partition classes so that a class under f always corresponds to a class
+     * of the same size under g
+     */
     size_t *fClassPosition = correspondingPermutationClass(f, dimension);
     size_t *gClassPosition = correspondingPermutationClass(g, dimension);
+
+    /* Recursively guess the values of L on the basis (essentially, a DFS with backtracking upon contradiction) */
     recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fClassPosition, gClassPosition);
 
     free(images);
