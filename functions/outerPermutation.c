@@ -122,9 +122,9 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
         for (size_t linearCombination = 0; linearCombination < LIMIT; ++linearCombination) {
             size_t x = linearCombination ^ basis[k];
             size_t y = ck;
-	    /* The following loop simply XOR's all images corresponding to the linear combination, so that
-	     * we get its image by linearity.
-	     */
+            /* The following loop simply XOR's all images corresponding to the linear combination, so that
+             * we get its image by linearity.
+             */
             if (k) {
                 for (size_t i = 0; i < k; ++i) {
                     if (1L << i & linearCombination) {
@@ -132,16 +132,16 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
                     }
                 }
             }
-	    /* Check for contradiction as described above. */
+            /* Check for contradiction as described above. */
             if (partitionF->classSizes[fClassPosition[x]] != partitionG->classSizes[gClassPosition[y]]) {
                 problem = true;
                 break;
             }
-	    /* Add the new preimage-image pair to the partial truth table of the function */
+            /* Add the new preimage-image pair to the partial truth table of the function */
             generated[x] = y;
-	    /* We also indicate that the image belongs to the set of generated images */
+            /* We also indicate that the image belongs to the set of generated images */
             generatedImages[y] = true;
-        }* 
+        }
 	/* If no contradiction is encountered, we go to the next basis element. */
         if (!problem) {
             images[k] = ck;
