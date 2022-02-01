@@ -20,8 +20,8 @@ void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *ba
     }
     generated_images[0] = true;
 
-    /* Fix some particular arrangement of the partition classes so that a class under f always corresponds to a class
-     * of the same size under g
+    /* Create dictionaries indexing buckets by elements (for instance, fClassPosition[i] would be
+     * the index of the bucket w.r.t. f containing the element i)
      */
     size_t *fClassPosition = correspondingPermutationClass(f, dimension);
     size_t *gClassPosition = correspondingPermutationClass(g, dimension);
