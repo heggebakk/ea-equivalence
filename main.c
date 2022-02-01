@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 #include "time.h"
 #include "utils/truthTable.h"
 #include "utils/parser.h"
@@ -11,15 +12,20 @@
 #include "functions/innerPermutation.h"
 #include "utils/freeMemory.h"
 
+typedef struct HashMap {
+    size_t key;
+    size_t value;
+} HashMap;
+
 int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
 
 int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
 
 void mapPartitionClasses(partitions *partitionF, partitions *partitionG);
 
-size_t *sort(size_t *arr, int i, int i1);
+void merge(size_t *arr, size_t lo, size_t mid, size_t hi);
 
-void merge(size_t *arr, int lo, int mid, int hi);
+void mergeSort(size_t *arr, size_t lo, size_t hi);
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -254,8 +260,18 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     return 0;
 }
 
+/**
+ * To avoid recalculating which permutation class maps to which, we'll create a map. This map will tell us which class
+ * in partition F maps to a class in partition G. We can end up in a scenario where we have two classes in a permutation
+ * with the same size. Then we need to find out which class of these maps to the corresponding class in G.
+ * @param partitionF A partition of function F
+ * @param partitionG A partition of function G
+ */
 void mapPartitionClasses(partitions *partitionF, partitions *partitionG) {
+    HashMap *hMap = malloc(sizeof(HashMap) * partitionF->numberOfClasses); // The map where key maps to value in f and g
     // Check if the partitions has the same number of classes
+    printPartitionInfo(partitionF);
+    printPartitionInfo(partitionG);
     if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
         printf("The partition of function F and G is not compatible!\n");
         printf("Partition F has %zu number of classes and partition G has %zu number of classes.\n",
@@ -264,31 +280,72 @@ void mapPartitionClasses(partitions *partitionF, partitions *partitionG) {
     }
 
     // Check if the partitions has the same sizes in the partition classes
-    size_t *arr = partitionF->classSizes;
-    sort(arr, 0, (int) partitionF->numberOfClasses);
+    size_t *fClassSizes = malloc(sizeof(size_t) * partitionF->numberOfClasses);
+    size_t *gClassSizes = malloc(sizeof(size_t) * partitionG->numberOfClasses);
+    memcpy(fClassSizes, partitionF->classSizes, sizeof(size_t) * partitionF->numberOfClasses);
+    memcpy(gClassSizes, partitionG->classSizes, sizeof(size_t) * partitionG->numberOfClasses);
+    mergeSort(fClassSizes, (size_t) 0, partitionF->numberOfClasses - 1);
+    mergeSort(gClassSizes, (size_t) 0, partitionG->numberOfClasses - 1);
+    printf("\n");
+    for (size_t i = 0; i < partitionF->numberOfClasses; ++i) {
+        // Check if the sizes of the classes is the same for both partitions
+        if (fClassSizes[i] != gClassSizes[i]) {
+            printf("Partition F and G does not have the same class sizes!");
+            exit(1);
+        }
+    }
+
+    // Check if partition classes has the same size
+    size_t *duplicates = malloc(sizeof(size_t) * partitionF->numberOfClasses);
+    int numOfDuplicates = 0;
+    for (int i = 0; i < partitionF->numberOfClasses; ++i) {
+        for (size_t j = i + 1; j < partitionF->numberOfClasses; ++j) {
+            if (fClassSizes[i] == fClassSizes[j]) {
+                duplicates[numOfDuplicates] = fClassSizes[i];
+                numOfDuplicates++;
+            }
+        }
+    }
+
+    // If there is no duplicates, we can easily map
+    for (int i = 0; i < partitionF->numberOfClasses; ++i) {
+        for (int j = 0; j < partitionG->numberOfClasses; ++j) {
+            if (partitionF->classSizes[i] == partitionG->classSizes[j]) {
+                hMap[i].key = i;
+                hMap[i].value = j;
+                break;
+            }
+        }
+    }
+
+    // If there is duplicates, we need to find out which class maps to which.
+    if (numOfDuplicates > 0) {
+        int k = 0;
+        size_t currentDuplicate = duplicates[k];
+        for (int j = 0; j < partitionF->numberOfClasses; ++j) {
+            if (partitionF->classSizes[j] == currentDuplicate) {
+
+            }
+        }
+    }
+
 }
 
-/**
- * Use merge sort to sort a list of numbers
- * @param arr The array to be sorted
- * @return A sorted array in descending order
- */
+void merge(size_t *arr, size_t lo, size_t mid, size_t hi) {
+    size_t n1 = mid - lo + 1;
+    size_t n2 = hi - mid;
 
-void merge(size_t *arr, int lo, int mid, int hi) {
-    int n1 = mid - lo + 1;
-    int n2 = hi - mid;
+    size_t left[n1], right[n2];
 
-    int left[n1], right[n2];
-
-    for (int i = 0; i < n1; ++i) {
+    for (size_t i = 0; i < n1; ++i) {
         left[i] = arr[lo + i];
     }
-    for (int i = 0; i < n2; i++) {
+    for (size_t i = 0; i < n2; i++) {
         right[i] = arr[mid + 1 + i];
     }
-    int i = 0;
-    int j = 0;
-    int k = lo;
+    size_t i = 0;
+    size_t j = 0;
+    size_t k = lo;
 
     while (i < n1 && j < n2) {
         if (left[i] <= right[j]) {
@@ -313,9 +370,9 @@ void merge(size_t *arr, int lo, int mid, int hi) {
     }
 }
 
-void mergeSort(size_t *arr, int lo, int hi) {
+void mergeSort(size_t *arr, size_t lo, size_t hi) {
     if (lo < hi) {
-        int m = lo + (hi - lo) / 2;
+        size_t m = lo + (hi - lo) / 2;
 
         mergeSort(arr, lo, m);
         mergeSort(arr, m + 1, hi);

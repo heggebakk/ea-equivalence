@@ -64,6 +64,12 @@ size_t *correspondingPermutationClass(partitions *partition, size_t dimension) {
             }
         }
     }
+    printf("Corresponding class: \n");
+    for (int i = 0; i < 1L << dimension; ++i) {
+        printf("%zu ", correspondingClass[i]);
+    }
+    printf("\n");
+    printPartitionInfo(partition);
     return correspondingClass;
 }
 
@@ -172,6 +178,7 @@ size_t findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions
     return numPerm;
 }
 
+// TODO: Make this a hash map so you just need to do the calculations one time.
 size_t findCorrespondingClass(size_t classSizeF, partitions *g) {
     for (size_t i = 0; i < g->numberOfClasses; ++i) {
         if (classSizeF == g->classSizes[i]) {
