@@ -141,7 +141,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
             generated[x] = y;
 	    /* We also indicate that the image belongs to the set of generated images */
             generatedImages[y] = true;
-        }* 
+        } 
 	/* If no contradiction is encountered, we go to the next basis element. */
         if (!problem) {
             images[k] = ck;
