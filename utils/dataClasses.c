@@ -2,6 +2,43 @@
 #include <stdbool.h>
 #include "dataClasses.h"
 
+/**********
+ * HASH MAP
+ *********/
+HashMap *initHashMap(size_t size) {
+    HashMap *newHashMap = malloc(sizeof(HashMap));
+    newHashMap->length = 0;
+    newHashMap->value = malloc(sizeof(size_t) * size);
+    newHashMap->key = malloc(sizeof(size_t) * size);
+    return newHashMap;
+}
+
+bool isEmptyHashMap(HashMap *hashMap) {
+    return hashMap->length == 0;
+}
+
+void insertHashMap(HashMap *hashMap, size_t key, size_t value) {
+    hashMap->key[hashMap->length] = key;
+    hashMap->value[hashMap->length] = value;
+    hashMap->length += 1;
+}
+
+void printHashMap(HashMap *hashMap) {
+    for (int i = 0; i < hashMap->length; ++i) {
+        if ( i == hashMap->length - 1) {
+            printf("(%zu, %zu)", hashMap->key[i], hashMap->value[i]);
+        } else {
+            printf("(%zu, %zu), ", hashMap->key[i], hashMap->value[i]);
+        }
+    }
+}
+
+void destroyHashMap(HashMap *hashMap) {
+    free(hashMap->key);
+    free(hashMap->value);
+    free(hashMap);
+}
+
 /*********
  * SET
  ********/

@@ -12,11 +12,6 @@
 #include "functions/innerPermutation.h"
 #include "utils/freeMemory.h"
 
-typedef struct HashMap {
-    size_t key;
-    size_t value;
-} HashMap;
-
 int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
 
 int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);

@@ -3,17 +3,47 @@
 
 #include <stddef.h>
 
-/**
+/**********
  * Hash Map
- */
+ *********/
 typedef struct {
-    size_t key;
-    size_t value;
+    size_t *key;
+    size_t *value;
+    size_t length;
 } HashMap;
 
 /**
- * Set
+ * Initialize a new Hash Map
+ * @param size The size of the Hash Map
+ * @return A new empty Hash Map
  */
+HashMap *initHashMap(size_t size);
+
+/**
+ * Check if a hash map is empty
+ * @param hashMap The hash map to check
+ * @return True if empty, false otherwise
+ */
+bool isEmptyHashMap(HashMap *hashMap);
+
+/**
+ * Insert a new element to the hash map
+ * @param hashMap The hash map to insert into
+ * @param key The key of the element
+ * @param value The value of the element
+ */
+void insertHashMap(HashMap *hashMap, size_t key, size_t value);
+
+/**
+ * Destroy a hash map
+ * @param hashMap
+ */
+void destroyHashMap(HashMap *hashMap);
+
+
+/*******
+ * Set
+ ******/
 typedef struct {
     size_t *elements;
     size_t length;
