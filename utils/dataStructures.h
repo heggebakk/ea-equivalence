@@ -1,5 +1,5 @@
-#ifndef EA_EQUIVALENCE_DATACLASSES_H
-#define EA_EQUIVALENCE_DATACLASSES_H
+#ifndef EA_EQUIVALENCE_DATASTRUCTURES_H
+#define EA_EQUIVALENCE_DATASTRUCTURES_H
 
 #include <stddef.h>
 
@@ -33,6 +33,12 @@ bool isEmptyHashMap(HashMap *hashMap);
  * @param value The value of the element
  */
 void insertHashMap(HashMap *hashMap, size_t key, size_t value);
+
+/**
+ * Print hash map to console
+ * @param hashMap The hashmap
+ */
+void printHashMap(HashMap *hashMap);
 
 /**
  * Destroy a hash map
@@ -81,4 +87,4 @@ void printSet(Set *set);
  */
 void destroySet(Set *set);
 
-#endif //EA_EQUIVALENCE_DATACLASSES_H
+#endif //EA_EQUIVALENCE_DATASTRUCTURES_H

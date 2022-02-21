@@ -1,6 +1,10 @@
 #include <malloc.h>
 #include <stdbool.h>
-#include "dataClasses.h"
+#include "dataStructures.h"
+
+/***********
+ * Partition
+ **********/
 
 /**********
  * HASH MAP
@@ -24,6 +28,7 @@ void insertHashMap(HashMap *hashMap, size_t key, size_t value) {
 }
 
 void printHashMap(HashMap *hashMap) {
+    printf("[");
     for (int i = 0; i < hashMap->length; ++i) {
         if ( i == hashMap->length - 1) {
             printf("(%zu, %zu)", hashMap->key[i], hashMap->value[i]);
@@ -31,6 +36,7 @@ void printHashMap(HashMap *hashMap) {
             printf("(%zu, %zu), ", hashMap->key[i], hashMap->value[i]);
         }
     }
+    printf("]\n");
 }
 
 void destroyHashMap(HashMap *hashMap) {

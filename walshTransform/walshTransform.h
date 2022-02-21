@@ -13,7 +13,7 @@ _Bool dot(size_t a, size_t b);
 
 size_t truthTableWalshTransform(truthTable tt, size_t a, size_t b);
 
-walshTransform * truthTableToWalshTransform(truthTable tt);
+walshTransform *truthTableToWalshTransform(truthTable tt);
 
 void printWalshTransformTable(walshTransform wt);
 

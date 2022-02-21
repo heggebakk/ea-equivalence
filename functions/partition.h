@@ -36,4 +36,18 @@ void findAllMultiplicities(size_t k, int i, size_t *multiplicities, truthTable *
  */
 void printPartitionInfo(partitions *p);
 
+/**
+ * To avoid recalculating which permutation class maps to which, we'll create a map. This map will tell us which class
+ * in partition F maps to a class in partition G. We can end up in a scenario where we have two classes in a permutation
+ * with the same size. Then we have to try different mappings. If we get a result, then the mapping is correct, otherwise
+ * we need to try a different mapping.
+ * @param partitionF A partition of function F
+ * @param partitionG A partition of function G
+ */
+void mapPartitionClasses(partitions *partitionF, partitions *partitionG);
+
+void merge(size_t *arr, size_t lo, size_t mid, size_t hi);
+
+void mergeSort(size_t *arr, size_t lo, size_t hi);
+
 #endif //EA_EQUIVALENCE_PARTITION_H

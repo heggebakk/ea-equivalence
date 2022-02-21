@@ -9,6 +9,7 @@
  */
 void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, struct ttNode *l1) {
     basis = createBasis(dimension); /* We will guess the values of L on a linear basis */
+    // TODO: Allocate the memory for the images for size dimension, that should be sufficient.
     size_t *images = calloc(sizeof(size_t), 1L << dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
     for (size_t i = 0; i < 1L << dimension; ++i) {
