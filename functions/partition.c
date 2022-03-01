@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "partition.h"
-#include "../utils/dataStructures.h"
+#include "../utils/linkedList.h"
 
 partitions *initPartition(size_t size) {
     partitions *newPartition = malloc(sizeof(partitions));

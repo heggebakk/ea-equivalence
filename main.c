@@ -11,7 +11,6 @@
 #include "utils/inverse.h"
 #include "functions/innerPermutation.h"
 #include "utils/freeMemory.h"
-#include "utils/dataStructures.h"
 
 int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
 
