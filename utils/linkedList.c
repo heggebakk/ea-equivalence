@@ -2,9 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 #include "linkedList.h"
-#include "parser.h"
+#include "freeMemory.h"
 
 typedef struct ttNode ttNode;
+
+struct Node *initLinkedList() {
+    struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
+    newNode->next = NULL;
+    newNode->data = (size_t) NULL;
+    return newNode;
+}
+
+void addToLinkedList(struct Node *head, size_t data) {
+    if ((void *) head->data == NULL) {
+        head->data = data;
+        return;
+    }
+    struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = head->next;
+    head->next = newNode;
+}
+
 
 void displayLinkedList(struct Node *head) {
     struct Node *current = head;

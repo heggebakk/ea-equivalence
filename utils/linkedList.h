@@ -12,6 +12,10 @@ struct Node {
     struct Node *next;
 };
 
+struct Node *initLinkedList();
+
+void addToLinkedList(struct Node *head, size_t data);
+
 void displayLinkedList(struct Node *head);
 
 size_t countNodes(struct Node *head);
