@@ -16,6 +16,8 @@ void displayLinkedList(struct Node *head);
 
 size_t countNodes(struct Node *head);
 
+void freeLinkedList(struct Node *head);
+
 struct ttNode {
     truthTable *data;
     struct ttNode *next;
@@ -30,5 +32,7 @@ truthTable * getNode(struct ttNode *head, size_t index);
 size_t countTtNodes(struct ttNode *head);
 
 void displayTtLinkedList(struct ttNode *head);
+
+void freeTtLinkedList(struct ttNode *head);
 
 #endif //EA_EQUIVALENCE_LINKEDLIST_H

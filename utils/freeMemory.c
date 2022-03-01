@@ -24,22 +24,3 @@ void freePartition(partitions *p) {
     free(p->classes);
     free(p);
 }
-
-void freeLinkedList(struct Node *head) {
-    struct Node *current = NULL;
-    while (head != NULL) {
-        current = head;
-        head = head->next;
-        free(current);
-    }
-}
-
-void freeTtLinkedList(struct ttNode *head) {
-    struct ttNode *current = NULL;
-    while (head != NULL) {
-        current = head;
-        head = head->next;
-        freeTruthTable(current->data);
-        free(current);
-    }
-}

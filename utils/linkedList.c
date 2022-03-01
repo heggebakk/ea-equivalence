@@ -32,6 +32,15 @@ size_t countNodes(struct Node *head) {
     return count;
 }
 
+void freeLinkedList(struct Node *head) {
+    struct Node *current = NULL;
+    while (head != NULL) {
+        current = head;
+        head = head->next;
+        free(current);
+    }
+}
+
 /**
  * Initialize a new Linked list of type Truth Table Node
  * @return The new node created
@@ -87,6 +96,7 @@ truthTable * getNode(struct ttNode *head, size_t index) {
     }
     return current->data;
 }
+
 void displayTtLinkedList(struct ttNode *head) {
     struct ttNode *current = head;
     if (head == NULL) {
@@ -95,9 +105,18 @@ void displayTtLinkedList(struct ttNode *head) {
     }
     printf("Nodes of linked list: ");
     while (current != NULL) {
-        printf("%zu", (size_t)current);
+        printf("%zu ", (size_t)current);
         current = current->next;
     }
     printf("\n");
 }
 
+void freeTtLinkedList(struct ttNode *head) {
+    struct ttNode *current = NULL;
+    while (head != NULL) {
+        current = head;
+        head = head->next;
+        freeTruthTable(current->data);
+        free(current);
+    }
+}
