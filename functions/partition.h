@@ -1,6 +1,9 @@
 #ifndef EA_EQUIVALENCE_PARTITION_H
 #define EA_EQUIVALENCE_PARTITION_H
+
+#include <stdbool.h>
 #include "../utils/truthTable.h"
+#include "../utils/linkedList.h"
 
 typedef struct vbfPartitions {
     size_t numberOfClasses;
@@ -44,10 +47,12 @@ void printPartitionInfo(partitions *p);
  * @param partitionF A partition of function F
  * @param partitionG A partition of function G
  */
-void mapPartitionClasses(partitions *partitionF, partitions *partitionG);
+size_t ** mapPartitionClasses(partitions *partitionF, partitions *partitionG);
 
-void merge(size_t *arr, size_t lo, size_t mid, size_t hi);
+void createMappings(size_t **mappings, struct Node **domains, partitions *partitionG, size_t numOfMappings);
 
-void mergeSort(size_t *arr, size_t lo, size_t hi);
+void selectRecursive(size_t i, size_t *newList, bool *chosen, struct Node **domains, partitions *partitionG);
+
+size_t factorial(size_t value);
 
 #endif //EA_EQUIVALENCE_PARTITION_H

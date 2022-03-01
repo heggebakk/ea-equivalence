@@ -1,8 +1,6 @@
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include "partition.h"
-#include "../utils/linkedList.h"
 
 partitions *initPartition(size_t size) {
     partitions *newPartition = malloc(sizeof(partitions));
@@ -75,11 +73,7 @@ void printPartitionInfo(partitions *p) {
     }
 }
 
-void mapPartitionClasses(partitions *partitionF, partitions *partitionG) {
-    printPartitionInfo(partitionF);
-    printPartitionInfo(partitionG);
-    printf("\n");
-
+size_t ** mapPartitionClasses(partitions *partitionF, partitions *partitionG) {
     // Check if the Partition has the same number of classes. If the sizes of the classes is different,
     // we have an invalid solution.
     if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
@@ -88,105 +82,81 @@ void mapPartitionClasses(partitions *partitionF, partitions *partitionG) {
                partitionF->numberOfClasses, partitionG->numberOfClasses);
         exit(1);
     }
-    // Check if the Partition has the same sizes in the partition classes
-    size_t *sortedClassesF = malloc(sizeof(size_t) * partitionF->numberOfClasses);
-    size_t *sortedClassesG = malloc(sizeof(size_t) * partitionG->numberOfClasses);
-    memcpy(sortedClassesF, partitionF->classSizes, sizeof(size_t) * partitionF->numberOfClasses);
-    memcpy(sortedClassesG, partitionG->classSizes, sizeof(size_t) * partitionG->numberOfClasses);
-    mergeSort(sortedClassesF, (size_t) 0, partitionF->numberOfClasses - 1);
-    mergeSort(sortedClassesG, (size_t) 0, partitionG->numberOfClasses - 1);
-    printf("\n");
-    for (size_t i = 0; i < partitionF->numberOfClasses; ++i) {
-        // Check if the sizes of the classes is the same for both Partition
-        if (sortedClassesF[i] != sortedClassesG[i]) {
+
+    // Find all the domains for the different classes.
+    // Example where we have several mappings:
+    // [(0,2),(1),(0,2),(3,4),(3,4),(5)]
+    struct Node **domains = malloc(sizeof(struct Node) * partitionF->numberOfClasses);
+    for (int i = 0; i < partitionF->numberOfClasses; ++i) {
+        domains[i] = initLinkedList();
+    }
+    for (int i = 0; i < partitionF->numberOfClasses; ++i) {
+        bool sameSizes = false;
+        for (int j = 0; j < partitionG->numberOfClasses; ++j) {
+            if (partitionF->classSizes[i] == partitionG->classSizes[j]) {
+                addToLinkedList(domains[i], j);
+                sameSizes = true;
+            }
+        }
+        if (!sameSizes) {
             printf("Partition F and G does not have the same class sizes!");
             exit(1);
         }
     }
-    free(sortedClassesF);
-    free(sortedClassesG);
 
-
-    Set *fSet = initSet(partitionF->numberOfClasses);
-    Set *gSet = initSet(partitionG->numberOfClasses);
+    // Find out how many mappings there is
+    size_t numberOfMappings = 1; // There is always at least one mapping
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
-        insertSet(fSet, partitionF->classSizes[i]);
-        insertSet(gSet, partitionG->classSizes[i]);
+        numberOfMappings *= factorial(countNodes(domains[i]));
     }
 
-    size_t numOfMappings = partitionF->numberOfClasses - fSet->length + 1;
-    HashMap *hashMap = malloc(sizeof(HashMap *) * numOfMappings);
-    hashMap[0] = *initHashMap(partitionF->numberOfClasses);
+    // Recursive part.
+    size_t **mappings = malloc(sizeof(size_t *) * numberOfMappings);
+    createMappings(mappings, domains, partitionG, numberOfMappings);
 
-    // Create the first mapping of the Partition for F and G
-    for (size_t i = 0; i < partitionF->numberOfClasses; ++i) {
-        for (size_t j = 0; j < partitionG->numberOfClasses; ++j) {
-            if (partitionF->classSizes[i] == partitionG->classSizes[j]) {
-                insertHashMap(&hashMap[0], i, j);
-                break;
-            }
-        }
+    // Free domains
+    for (int i = 0; i < partitionF->numberOfClasses; ++i) {
+        freeLinkedList(domains[i]);
     }
-    printHashMap(&hashMap[0]);
-
-    // Recursively find all mappings that is valid
-    for (int i = 1; i < numOfMappings; ++i) {
-        hashMap[i] = *initHashMap(partitionF->numberOfClasses);
-        for (int j = 0; j < partitionF->numberOfClasses; ++j) {
-            for (int k = 0; k < partitionG->numberOfClasses; ++k) {
-                if (partitionF->classSizes[j] == partitionG->classSizes[k]) {
-                    insertHashMap(&hashMap[i], j, k);
-                }
-            }
-        }
+    free(domains);
+    for (int i = 0; i < numberOfMappings; ++i) {
+        free(mappings[i]);
     }
-
-    destroySet(fSet);
-    destroySet(gSet);
+    free(mappings);
 }
 
-void merge(size_t *arr, size_t lo, size_t mid, size_t hi) {
-    size_t n1 = mid - lo + 1;
-    size_t n2 = hi - mid;
-
-    size_t left[n1], right[n2];
-
-    for (size_t i = 0; i < n1; ++i) left[i] = arr[lo + i];
-    for (size_t i = 0; i < n2; i++) right[i] = arr[mid + 1 + i];
-    size_t i = 0;
-    size_t j = 0;
-    size_t k = lo;
-
-    while (i < n1 && j < n2) {
-        if (left[i] <= right[j]) {
-            arr[k] = left[i];
-            i++;
-        } else {
-            arr[k] = right[j];
-            j++;
+void createMappings(size_t **mappings, struct Node **domains, partitions *partitionG, size_t numOfMappings) {
+    for (int i = 0; i < numOfMappings; ++i) {
+        size_t *newList = malloc(sizeof(size_t) * partitionG->numberOfClasses);
+        bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses);
+        for (int j = 0; j < partitionG->numberOfClasses; ++j) {
+            chosen[j] = false;
         }
-        k++;
-    }
-
-    while (i < n1) {
-        arr[k] = left[i];
-        i++;
-        k++;
-    }
-    while (j < n2) {
-        arr[k] = right[j];
-        j++;
-        k++;
+        selectRecursive(0, newList, chosen, domains, partitionG);
+        mappings[i] = newList;
+        free(chosen);
     }
 }
 
-void mergeSort(size_t *arr, size_t lo, size_t hi) {
-    if (lo < hi) {
-        size_t m = lo + (hi - lo) / 2;
-
-        mergeSort(arr, lo, m);
-        mergeSort(arr, m + 1, hi);
-
-        merge(arr, lo, m, hi);
+void selectRecursive(size_t i, size_t *newList, bool *chosen, struct Node **domains, partitions *partitionG) {
+    if (i >= partitionG->numberOfClasses) {
+        return;
     }
+    struct Node *current = domains[i];
+    while (current != NULL) {
+        if (chosen[current->data] == false) {
+            newList[i] = current->data;
+            chosen[current->data] = true;
+            selectRecursive(i + 1, newList, chosen, domains, partitionG);
+        }
+        current = current->next;
+    }
+}
+
+size_t factorial(size_t value) {
+    size_t fact = 1;
+    for (int i = 1; i < value; ++i) {
+        fact *= i;
+    }
+    return fact;
 }
