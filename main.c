@@ -84,13 +84,15 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     partitions *partitionF = eaPartitionWalsh(functionF, k);
     partitions *partitionG = eaPartitionWalsh(functionG, k);
 
+    clock_t endPartitionTime = clock();
+    partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
+
+    /* Walsh Transform specific part done */
+
     // We might end up in a situation where we have more than one mapping of the partitions from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
     MappingsOfClasses *mappingsOfClasses = initMappingsOfClasses();
     mapPartitionClasses(partitionF, partitionG, dimension, mappingsOfClasses);
-
-    clock_t endPartitionTime = clock();
-    partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
 
     // Calculate Outer Permutation
     double outerPermutationTime = 0.0;

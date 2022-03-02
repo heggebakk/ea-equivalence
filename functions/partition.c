@@ -4,8 +4,8 @@
 
 MappingsOfClasses *initMappingsOfClasses() {
     MappingsOfClasses *newMap = malloc(sizeof(MappingsOfClasses));
-    newMap->mappings = malloc(sizeof(size_t **));
-    newMap->domains = malloc(sizeof(size_t **));
+    newMap->mappings = malloc(sizeof(size_t *));
+    newMap->domains = malloc(sizeof(size_t *));
     newMap->numOfMappings = 0;
 }
 
