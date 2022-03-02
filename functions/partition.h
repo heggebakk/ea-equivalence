@@ -5,6 +5,14 @@
 #include "../utils/truthTable.h"
 #include "../utils/linkedList.h"
 
+typedef struct {
+    size_t **mappings;
+    size_t **domains;
+    size_t numOfMappings;
+} MappingsOfClasses;
+
+MappingsOfClasses *initMappingsOfClasses();
+
 typedef struct vbfPartitions {
     size_t numberOfClasses;
     size_t *multiplicities;
@@ -47,11 +55,10 @@ void printPartitionInfo(partitions *p);
  * @param partitionF A partition of function F
  * @param partitionG A partition of function G
  */
-void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, size_t **mappings,
-                           size_t **domainMappings);
+void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingsOfClasses *mappingOfClasses);
 
-void createMappings(size_t **mappings, size_t **domainMappings, struct Node **domains, partitions *partitionG,
-                    size_t numOfMappings, size_t dimension);
+void
+createMappings(MappingsOfClasses *mappingOfClasses, struct Node **domains, partitions *partitionG, size_t dimension);
 
 void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, struct Node **domains,
                      partitions *partitionG, size_t dimension);

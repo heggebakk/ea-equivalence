@@ -2,6 +2,13 @@
 #include <string.h>
 #include "partition.h"
 
+MappingsOfClasses *initMappingsOfClasses() {
+    MappingsOfClasses *newMap = malloc(sizeof(MappingsOfClasses));
+    newMap->mappings = malloc(sizeof(size_t **));
+    newMap->domains = malloc(sizeof(size_t **));
+    newMap->numOfMappings = 0;
+}
+
 partitions *initPartition(size_t size) {
     partitions *newPartition = malloc(sizeof(partitions));
     newPartition->numberOfClasses = 0;
@@ -73,8 +80,7 @@ void printPartitionInfo(partitions *p) {
     }
 }
 
-void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, size_t **mappings,
-                           size_t **domainMappings) {
+void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingsOfClasses *mappingOfClasses) {
     // Check if the Partition has the same number of classes. If the sizes of the classes is different,
     // we have an invalid solution.
     if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
@@ -106,17 +112,17 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
     }
 
     // Find out how many mappings there is
-    size_t numberOfMappings = 1; // There is always at least one mapping
+    mappingOfClasses->numOfMappings = 1; // There is always at least one mapping
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
-        numberOfMappings *= factorial(countNodes(domains[i]));
+        mappingOfClasses->numOfMappings *= factorial(countNodes(domains[i]));
     }
 
     // Create a list of different domain mappings
-    *domainMappings = malloc(sizeof(size_t *) * numberOfMappings);
+    *mappingOfClasses->domains = malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
 
     // Recursive part.
-    *mappings = malloc(sizeof(size_t *) * numberOfMappings);
-    createMappings(mappings, domainMappings, domains, partitionG, numberOfMappings, dimension);
+    *mappingOfClasses->mappings= malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
+    createMappings(mappingOfClasses, domains, partitionG, dimension);
     // Free domains
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
         freeLinkedList(domains[i]);
@@ -124,9 +130,9 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
     free(domains);
 }
 
-void createMappings(size_t **mappings, size_t **domainMappings, struct Node **domains, partitions *partitionG,
-                    size_t numOfMappings, size_t dimension) {
-    for (size_t i = 0; i < numOfMappings; ++i) {
+void
+createMappings(MappingsOfClasses *mappingOfClasses, struct Node **domains, partitions *partitionG, size_t dimension) {
+    for (size_t i = 0; i < mappingOfClasses->numOfMappings; ++i) {
         size_t *newList = malloc(sizeof(size_t) * 1L << dimension);
         bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses); // A boolean map with the size of number of classes
         size_t *currentDomain = malloc(sizeof(size_t) * partitionG->numberOfClasses);
@@ -134,8 +140,8 @@ void createMappings(size_t **mappings, size_t **domainMappings, struct Node **do
             chosen[j] = false;
         }
         selectRecursive(0, newList, currentDomain, chosen, domains, partitionG, dimension);
-        mappings[i] = newList;
-        domainMappings[i] = currentDomain;
+        mappingOfClasses->mappings[i] = newList;
+        mappingOfClasses->domains[i] = currentDomain;
         free(chosen);
     }
 }

@@ -37,7 +37,6 @@ int main(int argc, char *argv[]) {
     double timeSpentParsing = 0.0;
     clock_t startParsing = clock();
     truthTable *functionF = parseTruthTable(argv[1]);
-//    truthTable *functionG = parseTruthTable(argv[2]);
     truthTable *functionG = getFunctionG(functionF);
     clock_t endParsing = clock();
     timeSpentParsing += (double) (endParsing - startParsing) / CLOCKS_PER_SEC;
@@ -88,11 +87,8 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
 
     // We might end up in a situation where we have more than one mapping of the partitions from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
-    // TODO: These 3 things might be better as a structure
-    size_t **mappings = malloc(sizeof(size_t **));
-    size_t **domainMappings = malloc(sizeof(size_t **));
-
-    mapPartitionClasses(partitionF, partitionG, dimension, mappings, domainMappings);
+    MappingsOfClasses *mappingsOfClasses = initMappingsOfClasses();
+    mapPartitionClasses(partitionF, partitionG, dimension, mappingsOfClasses);
 
     clock_t endPartitionTime = clock();
     partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
@@ -101,7 +97,8 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutationTime = clock();
     struct ttNode *l1 = initNode();
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp, mappings[0], domainMappings[0]);
+    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp,
+                                                  mappingsOfClasses->mappings[0], mappingsOfClasses->domains[0]);
     clock_t endOuterPermutationTime = clock();
     outerPermutationTime += (double) (endOuterPermutationTime - startOuterPermutationTime) / CLOCKS_PER_SEC;
 
@@ -182,11 +179,9 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
 
     // We might end up in a situation where we have more than one mapping of the partitions from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
-    // TODO: These 3 things might be better as a structure
-    size_t **mappings = malloc(sizeof(size_t **));
-    size_t **domainMappings = malloc(sizeof(size_t **));
+    MappingsOfClasses *mappingsOfClasses = initMappingsOfClasses();
 
-    mapPartitionClasses(partitionF, partitionG, dimension, mappings, domainMappings);
+    mapPartitionClasses(partitionF, partitionG, dimension, mappingsOfClasses);
     clock_t endPartitionTime = clock();
     partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
 
@@ -200,7 +195,7 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     struct ttNode *l1 = initNode();
 
     size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, writeToFile,
-                                                  mappings[0], domainMappings[0]); // TODO: Fix this to be a for loop
+                                                  mappingsOfClasses->mappings[0], mappingsOfClasses->domains[0]); // TODO: Fix this to be a for loop
     clock_t endOuterPermutation = clock();
     outerPermutationTime += (double) (endOuterPermutation - startOuterPermutation) / CLOCKS_PER_SEC;
 
