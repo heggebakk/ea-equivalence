@@ -10,7 +10,6 @@
 #include "walshTransform/walshTransform.h"
 #include "utils/inverse.h"
 #include "functions/innerPermutation.h"
-#include "utils/freeMemory.h"
 
 int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *writeToFile);
 
@@ -125,23 +124,24 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
             writeTruthTable(l, fp, "l");
 
             // Free memory
-            freeTruthTable(l);
-            freeTruthTable(l1Inverse);
-            freeTruthTable(l2);
-            freeTruthTable(lPrime);
-            freeTruthTable(gPrime);
+            destroyTruthTable(l);
+            destroyTruthTable(l1Inverse);
+            destroyTruthTable(l2);
+            destroyTruthTable(lPrime);
+            destroyTruthTable(gPrime);
 
             break;
         }
-        freeTruthTable(l1Inverse);
-        freeTruthTable(l2);
-        freeTruthTable(gPrime);
+        destroyTruthTable(l1Inverse);
+        destroyTruthTable(l2);
+        destroyTruthTable(gPrime);
     }
 
-    freeTtWt(functionF);
-    freeTtWt(functionG);
-    freePartition(partitionF);
-    freePartition(partitionG);
+    destroyWalshTransform(functionF);
+    destroyWalshTransform(functionG);
+    destroyPartitions(partitionF);
+    destroyPartitions(partitionG);
+    destroyMappingOfClasses(mappingsOfClasses);
     freeTtLinkedList(l1);
 
     // End time
@@ -167,6 +167,7 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
 
 int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *writeToFile) {
     fprintf(writeToFile, "\n** NEW ALGORITHM **\n");
+    printf("New algorithm\n");
     // Start time
     double totalTime = 0.0;
     clock_t startTotalTime = clock();
@@ -222,22 +223,23 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
             writeTruthTable(l2, writeToFile, "l2");
             writeTruthTable(l, writeToFile, "l");
 
-            freeTruthTable(l);
-            freeTruthTable(l1Inverse);
-            freeTruthTable(l2);
-            freeTruthTable(lPrime);
-            freeTruthTable(gPrime);
+            destroyTruthTable(l);
+            destroyTruthTable(l1Inverse);
+            destroyTruthTable(l2);
+            destroyTruthTable(lPrime);
+            destroyTruthTable(gPrime);
             break;
         }
-        freeTruthTable(l1Inverse);
-        freeTruthTable(l2);
-        freeTruthTable(gPrime);
+        destroyTruthTable(l1Inverse);
+        destroyTruthTable(l2);
+        destroyTruthTable(gPrime);
     }
 
-    freeTruthTable(f);
-    freeTruthTable(g);
-    freePartition(partitionF);
-    freePartition(partitionG);
+    destroyTruthTable(f);
+    destroyTruthTable(g);
+    destroyPartitions(partitionF);
+    destroyPartitions(partitionG);
+    destroyMappingOfClasses(mappingsOfClasses);
     freeTtLinkedList(l1);
 
     // End time

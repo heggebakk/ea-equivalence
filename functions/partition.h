@@ -13,12 +13,16 @@ typedef struct {
 
 MappingsOfClasses *initMappingsOfClasses();
 
+void destroyMappingOfClasses(MappingsOfClasses *mappingsOfClasses);
+
 typedef struct vbfPartitions {
     size_t numberOfClasses;
     size_t *multiplicities;
     size_t *classSizes;
     size_t **classes;
 } partitions;
+
+void destroyPartitions(partitions *p);
 
 /**
  * Partition bucket size where k = even

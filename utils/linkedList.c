@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "linkedList.h"
-#include "freeMemory.h"
+#include "truthTable.h"
 
 typedef struct ttNode ttNode;
 
@@ -135,7 +135,7 @@ void freeTtLinkedList(struct ttNode *head) {
     while (head != NULL) {
         current = head;
         head = head->next;
-        freeTruthTable(current->data);
+        destroyTruthTable(current->data);
         free(current);
     }
 }

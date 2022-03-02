@@ -3,11 +3,14 @@
 
 #include "../utils/truthTable.h"
 #include "../functions/partition.h"
+#include "../walshTransform/walshTransform.h"
 
 typedef struct vbfWalshTransform {
     size_t dimension;
     size_t **elements;
 } walshTransform;
+
+void destroyWalshTransform(walshTransform *wt);
 
 _Bool dot(size_t a, size_t b);
 

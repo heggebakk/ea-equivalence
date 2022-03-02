@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include "innerPermutation.h"
 #include "../utils/linkedList.h"
-#include "../utils/freeMemory.h"
 
 bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime) {
     struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
@@ -93,7 +92,7 @@ dfs(struct Node **domains, size_t k, size_t *values, truthTable *f, truthTable *
         if (isLinear(*lPrime)) {
             return true;
         }
-        freeTruthTable(*lPrime); // Not the right l'
+        destroyTruthTable(*lPrime); // Not the right l'
     }
     struct Node *current = domains[k];
     while (current != NULL) {

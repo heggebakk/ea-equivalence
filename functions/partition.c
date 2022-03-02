@@ -9,6 +9,16 @@ MappingsOfClasses *initMappingsOfClasses() {
     newMap->numOfMappings = 0;
 }
 
+void destroyMappingOfClasses(MappingsOfClasses *mappingsOfClasses) {
+    for (int i = 0; i < mappingsOfClasses->numOfMappings; ++i) {
+        free(mappingsOfClasses->domains[i]);
+        free(mappingsOfClasses->mappings[i]);
+    }
+    free(mappingsOfClasses->domains);
+    free(mappingsOfClasses->mappings);
+    free(mappingsOfClasses);
+}
+
 partitions *initPartition(size_t size) {
     partitions *newPartition = malloc(sizeof(partitions));
     newPartition->numberOfClasses = 0;
@@ -118,10 +128,10 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
     }
 
     // Create a list of different domain mappings
-    *mappingOfClasses->domains = malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
+    mappingOfClasses->domains = malloc(sizeof(size_t) * mappingOfClasses->numOfMappings);
 
     // Recursive part.
-    *mappingOfClasses->mappings= malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
+    mappingOfClasses->mappings = malloc(sizeof(size_t) * mappingOfClasses->numOfMappings);
     createMappings(mappingOfClasses, domains, partitionG, dimension);
     // Free domains
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
@@ -171,4 +181,14 @@ size_t factorial(size_t value) {
         fact *= i;
     }
     return fact;
+}
+
+void destroyPartitions(partitions *p) {
+    for (size_t i = 0; i < p->numberOfClasses; ++i) {
+        free(p->classes[i]);
+    }
+    free(p->classSizes);
+    free(p->multiplicities);
+    free(p->classes);
+    free(p);
 }

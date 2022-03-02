@@ -1,6 +1,15 @@
+#include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
 #include "walshTransform.h"
+
+void destroyWalshTransform(walshTransform *wt) {
+    for (size_t i = 0; i < 1L << wt->dimension; ++i) {
+        free(wt->elements[i]);
+    }
+    free(wt->elements);
+    free(wt);
+}
 
 _Bool dot(size_t a, size_t b) {
     return __builtin_popcountl(a & b) % 2;

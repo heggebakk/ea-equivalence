@@ -2,7 +2,7 @@
 #include <string.h>
 #include "eaTest.h"
 #include "../functions/innerPermutation.h"
-#include "freeMemory.h"
+#include "truthTable.h"
 
 truthTable *randomLinearFunction(size_t dimension) {
     size_t entries = 1L << dimension;
@@ -66,10 +66,10 @@ truthTable * getFunctionG(truthTable *functionF) {
     truthTable *g = composeFunctions(l1, temp);
     addFunctionsTogether(g, l);
 
-    freeTruthTable(l1);
-    freeTruthTable(l2);
-    freeTruthTable(l);
-    freeTruthTable(temp);
+    destroyTruthTable(l1);
+    destroyTruthTable(l2);
+    destroyTruthTable(l);
+    destroyTruthTable(temp);
 
 //    printTruthTable(g);
     return g;
