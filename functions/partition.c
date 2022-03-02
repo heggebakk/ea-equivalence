@@ -4,9 +4,8 @@
 
 MappingsOfClasses *initMappingsOfClasses() {
     MappingsOfClasses *newMap = malloc(sizeof(MappingsOfClasses));
-    newMap->mappings = malloc(sizeof(size_t *));
-    newMap->domains = malloc(sizeof(size_t *));
     newMap->numOfMappings = 0;
+    return newMap;
 }
 
 void destroyMappingOfClasses(MappingsOfClasses *mappingsOfClasses) {
@@ -128,11 +127,12 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
     }
 
     // Create a list of different domain mappings
-    mappingOfClasses->domains = malloc(sizeof(size_t) * mappingOfClasses->numOfMappings);
+    mappingOfClasses->domains = malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
 
     // Recursive part.
-    mappingOfClasses->mappings = malloc(sizeof(size_t) * mappingOfClasses->numOfMappings);
+    mappingOfClasses->mappings = malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
     createMappings(mappingOfClasses, domains, partitionG, dimension);
+
     // Free domains
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
         freeLinkedList(domains[i]);
