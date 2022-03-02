@@ -188,18 +188,3 @@ size_t findCorrespondingClass(size_t classSizeF, partitions *g) {
     printf("Couldn't find a corresponding bucket with size %zu\n", classSizeF);
     exit(1);
 }
-
-bool isBijective(truthTable *outerPermutation, truthTable *innerPermutation) {
-    if (outerPermutation->elements == NULL || innerPermutation->elements == NULL) {
-        printf("There are no permutations to check \n");
-        return false;
-    }
-
-    bool isBijective = true;
-    for (size_t i = 0; i < 1L << outerPermutation->dimension; ++i) {
-        if (outerPermutation->elements[i] != innerPermutation->elements[i]) {
-            return false;
-        }
-    }
-    return isBijective;
-}

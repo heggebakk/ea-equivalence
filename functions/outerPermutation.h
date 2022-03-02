@@ -25,8 +25,6 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
 
 size_t findCorrespondingClass(size_t classSizeF, partitions *g);
 
-bool isBijective(truthTable *outerPermutation, truthTable *innerPermutation);
-
 size_t findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis,
                             struct ttNode *l1, FILE *fp);
 
