@@ -7,7 +7,9 @@
 /* Find all linear permutations L respecting two given partitions f and g, i.e. such that L maps all elements from a given
  * class in the partition under f to its corresponding class in the partition under g.
  */
-void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, struct ttNode *l1) {
+void
+outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, struct ttNode *l1, size_t *partitionMap,
+                 size_t *domainMap) {
     basis = createBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
@@ -27,7 +29,8 @@ void outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *ba
     size_t *gClassPosition = correspondingPermutationClass(g, dimension);
 
     /* Recursively guess the values of L on the basis (essentially, a DFS with backtracking upon contradiction) */
-    recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fClassPosition, gClassPosition);
+    recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fClassPosition, gClassPosition,
+              partitionMap, domainMap);
 
     free(images);
     free(basis);
@@ -78,7 +81,7 @@ size_t *correspondingPermutationClass(partitions *partition, size_t dimension) {
  */
 void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
                size_t *generated, bool *generatedImages, struct ttNode *l1, const size_t *fClassPosition,
-               const size_t *gClassPosition) {
+               const size_t *gClassPosition, size_t *partitionMap, size_t *domainMap) {
     /* If all basis elements have been assigned an image, and no contradictions have occurred, then we have found
      * a linear permutation preserving the partitions. We reconstruct its truth-table, and add it to the linked
      * list containing all permutations found by the search.
@@ -92,16 +95,11 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
         return;
     }
 
-    /* Otherwise, we want to guess the image of basis element number k.
-     * To do this, we first find which bucket with respect to F this 
-     * element belongs.
-     */
-    size_t classF = partitionF->classSizes[fClassPosition[basis[k]]];
     /* We then take the bucket of the same size from the partition with
      * respect to G. We know that the image of the basis element must
      * belong to that bucket.
      */
-    size_t posBg = findCorrespondingClass(classF, partitionG);
+    size_t posBg = domainMap[fClassPosition[basis[k]]];
     /* We now go through all possible choice from the bucket */
     for (size_t ick = 0; ick < partitionG->classSizes[posBg]; ++ick) {
         size_t ck = partitionG->classes[posBg][ick];
@@ -138,6 +136,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
                     }
                 }
             }
+
             /* Check for contradiction as described above. */
             if (partitionF->classSizes[fClassPosition[x]] != partitionG->classSizes[gClassPosition[y]]) {
                 problem = true;
@@ -152,7 +151,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
         if (!problem) {
             images[k] = ck;
             recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, l1,
-                      fClassPosition, gClassPosition);
+                      fClassPosition, gClassPosition, partitionMap, domainMap);
         }
 
 	/* When backtracking, we need to reset the generated image indicators */
@@ -170,21 +169,12 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
     }
 }
 
-size_t findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis,
-                            struct ttNode *l1, FILE *fp) {
-    outerPermutation(partitionF, partitionG, DIMENSION, basis, l1);
+size_t
+findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis, struct ttNode *l1,
+                     FILE *fp, size_t *partitionMap, size_t *domainMap) {
+    outerPermutation(partitionF, partitionG, DIMENSION, basis, l1, partitionMap, domainMap);
+    printf("\n");
     size_t numPerm = countTtNodes(l1);
     fprintf(fp, "// Number of permutations:\n%zu \n", numPerm);
     return numPerm;
-}
-
-// TODO: Make this a hash map so you just need to do the calculations one time.
-size_t findCorrespondingClass(size_t classSizeF, partitions *g) {
-    for (size_t i = 0; i < g->numberOfClasses; ++i) {
-        if (classSizeF == g->classSizes[i]) {
-            return i;
-        }
-    }
-    printf("Couldn't find a corresponding bucket with size %zu\n", classSizeF);
-    exit(1);
 }

@@ -73,7 +73,8 @@ void printPartitionInfo(partitions *p) {
     }
 }
 
-size_t ** mapPartitionClasses(partitions *partitionF, partitions *partitionG) {
+void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, size_t **mappings,
+                           size_t **domainMappings) {
     // Check if the Partition has the same number of classes. If the sizes of the classes is different,
     // we have an invalid solution.
     if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
@@ -110,44 +111,49 @@ size_t ** mapPartitionClasses(partitions *partitionF, partitions *partitionG) {
         numberOfMappings *= factorial(countNodes(domains[i]));
     }
 
-    // Recursive part.
-    size_t **mappings = malloc(sizeof(size_t *) * numberOfMappings);
-    createMappings(mappings, domains, partitionG, numberOfMappings);
+    // Create a list of different domain mappings
+    *domainMappings = malloc(sizeof(size_t *) * numberOfMappings);
 
+    // Recursive part.
+    *mappings = malloc(sizeof(size_t *) * numberOfMappings);
+    createMappings(mappings, domainMappings, domains, partitionG, numberOfMappings, dimension);
     // Free domains
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
         freeLinkedList(domains[i]);
     }
     free(domains);
-    for (int i = 0; i < numberOfMappings; ++i) {
-        free(mappings[i]);
-    }
-    free(mappings);
 }
 
-void createMappings(size_t **mappings, struct Node **domains, partitions *partitionG, size_t numOfMappings) {
-    for (int i = 0; i < numOfMappings; ++i) {
-        size_t *newList = malloc(sizeof(size_t) * partitionG->numberOfClasses);
-        bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses);
+void createMappings(size_t **mappings, size_t **domainMappings, struct Node **domains, partitions *partitionG,
+                    size_t numOfMappings, size_t dimension) {
+    for (size_t i = 0; i < numOfMappings; ++i) {
+        size_t *newList = malloc(sizeof(size_t) * 1L << dimension);
+        bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses); // A boolean map with the size of number of classes
+        size_t *currentDomain = malloc(sizeof(size_t) * partitionG->numberOfClasses);
         for (int j = 0; j < partitionG->numberOfClasses; ++j) {
             chosen[j] = false;
         }
-        selectRecursive(0, newList, chosen, domains, partitionG);
+        selectRecursive(0, newList, currentDomain, chosen, domains, partitionG, dimension);
         mappings[i] = newList;
+        domainMappings[i] = currentDomain;
         free(chosen);
     }
 }
 
-void selectRecursive(size_t i, size_t *newList, bool *chosen, struct Node **domains, partitions *partitionG) {
+void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, struct Node **domains,
+                     partitions *partitionG, size_t dimension) {
     if (i >= partitionG->numberOfClasses) {
         return;
     }
-    struct Node *current = domains[i];
+    struct Node *current = domains[i]; // Tells us which bucket we are going through, starting with the first possible matching
     while (current != NULL) {
         if (chosen[current->data] == false) {
-            newList[i] = current->data;
-            chosen[current->data] = true;
-            selectRecursive(i + 1, newList, chosen, domains, partitionG);
+            currentDomain[i] = current->data;
+            for (int j = 0; j < partitionG->classSizes[current->data]; ++j) {
+                newList[partitionG->classes[current->data][j]] = current->data;
+                chosen[current->data] = true;
+                selectRecursive(i + 1, newList, currentDomain, chosen, domains, partitionG, dimension);
+            }
         }
         current = current->next;
     }

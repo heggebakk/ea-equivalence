@@ -47,11 +47,14 @@ void printPartitionInfo(partitions *p);
  * @param partitionF A partition of function F
  * @param partitionG A partition of function G
  */
-size_t ** mapPartitionClasses(partitions *partitionF, partitions *partitionG);
+void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, size_t **mappings,
+                           size_t **domainMappings);
 
-void createMappings(size_t **mappings, struct Node **domains, partitions *partitionG, size_t numOfMappings);
+void createMappings(size_t **mappings, size_t **domainMappings, struct Node **domains, partitions *partitionG,
+                    size_t numOfMappings, size_t dimension);
 
-void selectRecursive(size_t i, size_t *newList, bool *chosen, struct Node **domains, partitions *partitionG);
+void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, struct Node **domains,
+                     partitions *partitionG, size_t dimension);
 
 size_t factorial(size_t value);
 

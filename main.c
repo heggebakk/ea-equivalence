@@ -12,7 +12,7 @@
 #include "functions/innerPermutation.h"
 #include "utils/freeMemory.h"
 
-int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
+int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *writeToFile);
 
 int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
 
@@ -56,7 +56,6 @@ int main(int argc, char *argv[]) {
 
     // Solve with Walsh transform first:
     runWalshTransform(functionF, functionG, k, DIMENSION, basis, fp);
-
     printf("\n");
 
     // Solve with new algorithm:
@@ -86,6 +85,15 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     clock_t startPartitionTime = clock();
     partitions *partitionF = eaPartitionWalsh(functionF, k);
     partitions *partitionG = eaPartitionWalsh(functionG, k);
+
+    // We might end up in a situation where we have more than one mapping of the partitions from F and G.
+    // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
+    // TODO: These 3 things might be better as a structure
+    size_t **mappings = malloc(sizeof(size_t **));
+    size_t **domainMappings = malloc(sizeof(size_t **));
+
+    mapPartitionClasses(partitionF, partitionG, dimension, mappings, domainMappings);
+
     clock_t endPartitionTime = clock();
     partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
 
@@ -93,7 +101,7 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutationTime = clock();
     struct ttNode *l1 = initNode();
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp);
+    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp, mappings[0], domainMappings[0]);
     clock_t endOuterPermutationTime = clock();
     outerPermutationTime += (double) (endOuterPermutationTime - startOuterPermutationTime) / CLOCKS_PER_SEC;
 
@@ -160,8 +168,8 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     return 0;
 }
 
-int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp) {
-    fprintf(fp, "\n** NEW ALGORITHM **\n");
+int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *writeToFile) {
+    fprintf(writeToFile, "\n** NEW ALGORITHM **\n");
     // Start time
     double totalTime = 0.0;
     clock_t startTotalTime = clock();
@@ -171,18 +179,28 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     clock_t startPartitionTime = clock();
     partitions *partitionF = partitionFunction(f, k);
     partitions *partitionG = partitionFunction(g, k);
-    // TODO: Map partition classes
 
-    mapPartitionClasses(partitionF, partitionG);
+    // We might end up in a situation where we have more than one mapping of the partitions from F and G.
+    // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
+    // TODO: These 3 things might be better as a structure
+    size_t **mappings = malloc(sizeof(size_t **));
+    size_t **domainMappings = malloc(sizeof(size_t **));
 
+    mapPartitionClasses(partitionF, partitionG, dimension, mappings, domainMappings);
     clock_t endPartitionTime = clock();
     partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
 
+    // We need a for loop to go through all the possible mappings. If we succeed, we're finished and breaks out.
+//    for (int map = 0; map < numberOfMappings; ++map) {
+//
+//    }
     // Outer permutation
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutation = clock();
     struct ttNode *l1 = initNode();
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp);
+
+    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, writeToFile,
+                                                  mappings[0], domainMappings[0]); // TODO: Fix this to be a for loop
     clock_t endOuterPermutation = clock();
     outerPermutationTime += (double) (endOuterPermutation - startOuterPermutation) / CLOCKS_PER_SEC;
 
@@ -205,9 +223,9 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
             // Find l
             truthTable *l = composeFunctions(l1Prime, lPrime);
 
-            writeTruthTable(l1[i].data, fp, "l1");
-            writeTruthTable(l2, fp, "l2");
-            writeTruthTable(l, fp, "l");
+            writeTruthTable(l1[i].data, writeToFile, "l1");
+            writeTruthTable(l2, writeToFile, "l2");
+            writeTruthTable(l, writeToFile, "l");
 
             freeTruthTable(l);
             freeTruthTable(l1Inverse);
@@ -237,11 +255,11 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     printf("Time spent inner permutation: %f \n", innerPermutationTime);
     printf("Total time spent: %f \n", totalTime);
 
-    fprintf(fp, "\nOriginal algorithm:\n");
-    fprintf(fp, "Time spent partitioning: %f \n", partitionTime);
-    fprintf(fp, "Time spent outer permutation: %f \n", outerPermutationTime);
-    fprintf(fp, "Time spent inner permutation: %f \n", innerPermutationTime);
-    fprintf(fp, "Total time spent: %f \n", totalTime);
+    fprintf(writeToFile, "\nOriginal algorithm:\n");
+    fprintf(writeToFile, "Time spent partitioning: %f \n", partitionTime);
+    fprintf(writeToFile, "Time spent outer permutation: %f \n", outerPermutationTime);
+    fprintf(writeToFile, "Time spent inner permutation: %f \n", innerPermutationTime);
+    fprintf(writeToFile, "Total time spent: %f \n", totalTime);
 
     return 0;
 }
