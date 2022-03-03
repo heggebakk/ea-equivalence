@@ -2,13 +2,13 @@
 #include <string.h>
 #include "partition.h"
 
-MappingsOfClasses *initMappingsOfClasses() {
-    MappingsOfClasses *newMap = malloc(sizeof(MappingsOfClasses));
+MappingOfClasses *initMappingsOfClasses() {
+    MappingOfClasses *newMap = malloc(sizeof(MappingOfClasses));
     newMap->numOfMappings = 0;
     return newMap;
 }
 
-void destroyMappingOfClasses(MappingsOfClasses *mappingsOfClasses) {
+void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses) {
     for (int i = 0; i < mappingsOfClasses->numOfMappings; ++i) {
         free(mappingsOfClasses->domains[i]);
         free(mappingsOfClasses->mappings[i]);
@@ -89,7 +89,7 @@ void printPartitionInfo(partitions *p) {
     }
 }
 
-void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingsOfClasses *mappingOfClasses) {
+void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingOfClasses *mappingOfClasses) {
     // Check if the Partition has the same number of classes. If the sizes of the classes is different,
     // we have an invalid solution.
     if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
@@ -140,8 +140,7 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
     free(domains);
 }
 
-void
-createMappings(MappingsOfClasses *mappingOfClasses, struct Node **domains, partitions *partitionG, size_t dimension) {
+void createMappings(MappingOfClasses *mappingOfClasses, Node **domains, partitions *partitionG, size_t dimension) {
     for (size_t i = 0; i < mappingOfClasses->numOfMappings; ++i) {
         size_t *newList = malloc(sizeof(size_t) * 1L << dimension);
         bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses); // A boolean map with the size of number of classes

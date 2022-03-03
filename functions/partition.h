@@ -9,11 +9,11 @@ typedef struct {
     size_t **mappings;
     size_t **domains;
     size_t numOfMappings;
-} MappingsOfClasses;
+} MappingOfClasses;
 
-MappingsOfClasses *initMappingsOfClasses();
+MappingOfClasses *initMappingsOfClasses();
 
-void destroyMappingOfClasses(MappingsOfClasses *mappingsOfClasses);
+void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses);
 
 typedef struct vbfPartitions {
     size_t numberOfClasses;
@@ -59,10 +59,10 @@ void printPartitionInfo(partitions *p);
  * @param partitionF A partition of function F
  * @param partitionG A partition of function G
  */
-void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingsOfClasses *mappingOfClasses);
+void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingOfClasses *mappingOfClasses);
 
 void
-createMappings(MappingsOfClasses *mappingOfClasses, struct Node **domains, partitions *partitionG, size_t dimension);
+createMappings(MappingOfClasses *mappingOfClasses, Node **domains, partitions *partitionG, size_t dimension);
 
 void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
                      partitions *partitionG, size_t dimension);
