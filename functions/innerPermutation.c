@@ -3,7 +3,7 @@
 #include "innerPermutation.h"
 
 bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime) {
-    Node **restrictedDomains = malloc(sizeof(Node) * f->dimension); // A list of Linked Lists
+    Node **restrictedDomains = calloc(sizeof(Node **), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
         bool *map = computeSetOfTs(g, basis[i]);
@@ -58,23 +58,11 @@ Node *computeDomain(const bool *listOfTs, truthTable *f) {
     }
 
     // Restricted domain represented as a Linked List
-    Node *head = NULL;
-    Node *tail = NULL;
+    Node *head = initLinkedList();
     for (size_t i = 0; i < 1L << n; ++i) {
         if (domain[i]) {
             // Add a new node to the linked list
-            Node *newNode = initLinkedList();
-            newNode->data = i;
-            newNode->next = NULL;
-
-            // Check if the linked list is empty
-            if (head == NULL) {
-                head = newNode;
-                tail = newNode;
-            } else {
-                tail->next = (struct Node *) newNode;
-                tail = newNode;
-            }
+            addToLinkedList(head, i);
         }
     }
     free(domain);
@@ -90,6 +78,7 @@ bool dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g,
             return true;
         }
         destroyTruthTable(*lPrime);
+        return false;
     }
     Node *current = domains[k];
     while (current != NULL) {
