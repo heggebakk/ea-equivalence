@@ -80,7 +80,7 @@ size_t *correspondingPermutationClass(partitions *partition, size_t dimension) {
  * with respect to F maps to an element from a bucket with the same size corresponding to G.
  */
 void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
-               size_t *generated, bool *generatedImages, struct ttNode *l1, const size_t *fClassPosition,
+               size_t *generated, bool *generatedImages, ttNode *l1, const size_t *fClassPosition,
                const size_t *gClassPosition, size_t *partitionMap, size_t *domainMap) {
     /* If all basis elements have been assigned an image, and no contradictions have occurred, then we have found
      * a linear permutation preserving the partitions. We reconstruct its truth-table, and add it to the linked

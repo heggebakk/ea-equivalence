@@ -1,7 +1,6 @@
 #include <malloc.h>
 #include <stdbool.h>
 #include "innerPermutation.h"
-#include "../utils/linkedList.h"
 
 bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime) {
     Node **restrictedDomains = malloc(sizeof(Node) * f->dimension); // A list of Linked Lists
@@ -33,7 +32,7 @@ bool *computeSetOfTs(truthTable *f, size_t x) {
     return map;
 }
 
-Node * computeDomain(const bool *listOfTs, truthTable *f) {
+Node *computeDomain(const bool *listOfTs, truthTable *f) {
     size_t n = f->dimension;
     bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -82,9 +81,7 @@ Node * computeDomain(const bool *listOfTs, truthTable *f) {
     return head;
 }
 
-bool
-dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
-    truthTable **lPrime) {
+bool dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime) {
     if (k >= f->dimension) {
         reconstructTruthTable(values, l2);
         *lPrime = composeFunctions(f, l2);
@@ -92,14 +89,14 @@ dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, trut
         if (isLinear(*lPrime)) {
             return true;
         }
-        destroyTruthTable(*lPrime); // Not the right l'
+        destroyTruthTable(*lPrime);
     }
     Node *current = domains[k];
     while (current != NULL) {
         values[k] = current->data;
         bool linear = dfs(domains, k + 1, values, f, g, l2, lPrime);
         if (linear) return true;
-        current = current->next;
+        current = (Node *) current->next;
     }
     return false;
 }

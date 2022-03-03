@@ -20,7 +20,7 @@ size_t *createBasis(size_t dimension);
 size_t *correspondingPermutationClass(partitions *partition, size_t dimension);
 
 void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
-               size_t *generated, bool *generatedImages, struct ttNode *l1, const size_t *fClassPosition,
+               size_t *generated, bool *generatedImages, ttNode *l1, const size_t *fClassPosition,
                const size_t *gClassPosition, size_t *partitionMap, size_t *domainMap);
 
 size_t
