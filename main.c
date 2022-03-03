@@ -91,15 +91,15 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
 
     // We might end up in a situation where we have more than one mapping of the partitions from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
-    MappingsOfClasses *mappingsOfClasses = initMappingsOfClasses();
-    mapPartitionClasses(partitionF, partitionG, dimension, mappingsOfClasses);
+    MappingOfClasses *mappingOfClasses = initMappingsOfClasses();
+    mapPartitionClasses(partitionF, partitionG, dimension, mappingOfClasses);
 
     // Calculate Outer Permutation
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutationTime = clock();
     ttNode *l1 = initTtNode();
     size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp,
-                                                  mappingsOfClasses->mappings[0], mappingsOfClasses->domains[0]);
+                                                  mappingOfClasses->mappings[0], mappingOfClasses->domains[0]);
     clock_t endOuterPermutationTime = clock();
     outerPermutationTime += (double) (endOuterPermutationTime - startOuterPermutationTime) / CLOCKS_PER_SEC;
 
@@ -143,7 +143,7 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     destroyWalshTransform(functionG);
     destroyPartitions(partitionF);
     destroyPartitions(partitionG);
-    destroyMappingOfClasses(mappingsOfClasses);
+    destroyMappingOfClasses(mappingOfClasses);
     freeTtLinkedList(l1);
 
     // End time
@@ -182,9 +182,9 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
 
     // We might end up in a situation where we have more than one mapping of the partitions from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
-    MappingsOfClasses *mappingsOfClasses = initMappingsOfClasses();
+    MappingOfClasses *mappingOfClasses = initMappingsOfClasses();
 
-    mapPartitionClasses(partitionF, partitionG, dimension, mappingsOfClasses);
+    mapPartitionClasses(partitionF, partitionG, dimension, mappingOfClasses);
     clock_t endPartitionTime = clock();
     partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
 
@@ -198,7 +198,7 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     ttNode *l1 = initTtNode();
 
     size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, writeToFile,
-                                                  mappingsOfClasses->mappings[0], mappingsOfClasses->domains[0]); // TODO: Fix this to be a for loop
+                                                  mappingOfClasses->mappings[0], mappingOfClasses->domains[0]); // TODO: Fix this to be a for loop
     clock_t endOuterPermutation = clock();
     outerPermutationTime += (double) (endOuterPermutation - startOuterPermutation) / CLOCKS_PER_SEC;
 
@@ -241,7 +241,7 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     destroyTruthTable(g);
     destroyPartitions(partitionF);
     destroyPartitions(partitionG);
-    destroyMappingOfClasses(mappingsOfClasses);
+    destroyMappingOfClasses(mappingOfClasses);
     freeTtLinkedList(l1);
 
     // End time

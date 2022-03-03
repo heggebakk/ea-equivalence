@@ -6,8 +6,8 @@
 
 Node * initLinkedList() {
     Node *newNode = malloc(sizeof(Node));
-    newNode->next = NULL;
     newNode->data = (size_t) NULL;
+    newNode->next = NULL;
     return newNode;
 }
 
@@ -21,7 +21,6 @@ void addToLinkedList(Node *head, size_t data) {
     newNode->next = head->next;
     head->next = (struct Node *) newNode;
 }
-
 
 void displayLinkedList(Node *head) {
     Node *current = head;
