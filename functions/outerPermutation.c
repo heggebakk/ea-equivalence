@@ -7,9 +7,9 @@
 /* Find all linear permutations L respecting two given partitions f and g, i.e. such that L maps all elements from a given
  * class in the partition under f to its corresponding class in the partition under g.
  */
-void
+size_t
 outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *partitionMap,
-                 size_t *domainMap) {
+                 size_t *domainMap, FILE *fp) {
     basis = createBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
@@ -37,6 +37,11 @@ outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, 
     free(generated);
     free(fClassPosition);
     free(gClassPosition);
+
+    printf("\n");
+    size_t numPerm = countTtNodes(l1);
+    fprintf(fp, "// Number of permutations:\n%zu \n", numPerm);
+    return numPerm;
 }
 
 size_t *createBasis(size_t dimension) {
@@ -167,14 +172,4 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
             generatedImages[y] = false;
         }
     }
-}
-
-size_t
-findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis, ttNode *l1,
-                     FILE *fp, size_t *partitionMap, size_t *domainMap) {
-    outerPermutation(partitionF, partitionG, DIMENSION, basis, l1, partitionMap, domainMap);
-    printf("\n");
-    size_t numPerm = countTtNodes(l1);
-    fprintf(fp, "// Number of permutations:\n%zu \n", numPerm);
-    return numPerm;
 }

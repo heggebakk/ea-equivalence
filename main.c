@@ -11,7 +11,7 @@
 #include "utils/inverse.h"
 #include "functions/innerPermutation.h"
 
-int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *writeToFile);
+int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
 
 int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
 
@@ -98,8 +98,7 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutationTime = clock();
     ttNode *l1 = initTtNode();
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp,
-                                                  mappingOfClasses->mappings[0], mappingOfClasses->domains[0]);
+    size_t numPermutations = outerPermutation(partitionF, partitionG, dimension, basis, l1, mappingOfClasses->mappings[0], mappingOfClasses->domains[0], fp);
     clock_t endOuterPermutationTime = clock();
     outerPermutationTime += (double) (endOuterPermutationTime - startOuterPermutationTime) / CLOCKS_PER_SEC;
 
@@ -167,8 +166,8 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     return 0;
 }
 
-int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *writeToFile) {
-    fprintf(writeToFile, "\n** NEW ALGORITHM **\n");
+int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp) {
+    fprintf(fp, "\n** NEW ALGORITHM **\n");
     printf("New algorithm\n");
     // Start time
     double totalTime = 0.0;
@@ -197,8 +196,7 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     clock_t startOuterPermutation = clock();
     ttNode *l1 = initTtNode();
 
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, writeToFile,
-                                                  mappingOfClasses->mappings[0], mappingOfClasses->domains[0]); // TODO: Fix this to be a for loop
+    size_t numPermutations = outerPermutation(partitionF, partitionG, dimension, basis, l1, mappingOfClasses->mappings[0], mappingOfClasses->domains[0], fp); // TODO: Fix this to be a for loop
     clock_t endOuterPermutation = clock();
     outerPermutationTime += (double) (endOuterPermutation - startOuterPermutation) / CLOCKS_PER_SEC;
 
@@ -221,9 +219,9 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
             // Find l
             truthTable *l = composeFunctions(l1Prime, lPrime);
 
-            writeTruthTable(l1[i].data, writeToFile, "l1");
-            writeTruthTable(l2, writeToFile, "l2");
-            writeTruthTable(l, writeToFile, "l");
+            writeTruthTable(l1[i].data, fp, "l1");
+            writeTruthTable(l2, fp, "l2");
+            writeTruthTable(l, fp, "l");
 
             destroyTruthTable(l);
             destroyTruthTable(l1Inverse);
@@ -254,11 +252,11 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     printf("Time spent inner permutation: %f \n", innerPermutationTime);
     printf("Total time spent: %f \n", totalTime);
 
-    fprintf(writeToFile, "\nOriginal algorithm:\n");
-    fprintf(writeToFile, "Time spent partitioning: %f \n", partitionTime);
-    fprintf(writeToFile, "Time spent outer permutation: %f \n", outerPermutationTime);
-    fprintf(writeToFile, "Time spent inner permutation: %f \n", innerPermutationTime);
-    fprintf(writeToFile, "Total time spent: %f \n", totalTime);
+    fprintf(fp, "\nOriginal algorithm:\n");
+    fprintf(fp, "Time spent partitioning: %f \n", partitionTime);
+    fprintf(fp, "Time spent outer permutation: %f \n", outerPermutationTime);
+    fprintf(fp, "Time spent inner permutation: %f \n", innerPermutationTime);
+    fprintf(fp, "Total time spent: %f \n", totalTime);
 
     return 0;
 }
