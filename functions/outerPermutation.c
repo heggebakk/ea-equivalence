@@ -8,7 +8,7 @@
  * class in the partition under f to its corresponding class in the partition under g.
  */
 void
-outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, struct ttNode *l1, size_t *partitionMap,
+outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *partitionMap,
                  size_t *domainMap) {
     basis = createBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
@@ -170,7 +170,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
 }
 
 size_t
-findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis, struct ttNode *l1,
+findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis, ttNode *l1,
                      FILE *fp, size_t *partitionMap, size_t *domainMap) {
     outerPermutation(partitionF, partitionG, DIMENSION, basis, l1, partitionMap, domainMap);
     printf("\n");

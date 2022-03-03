@@ -97,7 +97,7 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     // Calculate Outer Permutation
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutationTime = clock();
-    struct ttNode *l1 = initNode();
+    ttNode *l1 = initTtNode();
     size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp,
                                                   mappingsOfClasses->mappings[0], mappingsOfClasses->domains[0]);
     clock_t endOuterPermutationTime = clock();
@@ -195,7 +195,7 @@ int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t
     // Outer permutation
     double outerPermutationTime = 0.0;
     clock_t startOuterPermutation = clock();
-    struct ttNode *l1 = initNode();
+    ttNode *l1 = initTtNode();
 
     size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, writeToFile,
                                                   mappingsOfClasses->mappings[0], mappingsOfClasses->domains[0]); // TODO: Fix this to be a for loop

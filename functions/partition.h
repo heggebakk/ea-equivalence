@@ -64,7 +64,7 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
 void
 createMappings(MappingsOfClasses *mappingOfClasses, struct Node **domains, partitions *partitionG, size_t dimension);
 
-void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, struct Node **domains,
+void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
                      partitions *partitionG, size_t dimension);
 
 size_t factorial(size_t value);

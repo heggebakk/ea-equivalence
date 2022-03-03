@@ -7,7 +7,7 @@
 #include "partition.h"
 
 void
-outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, struct ttNode *l1, size_t *partitionMap,
+outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *partitionMap,
                  size_t *domainMap);
 
 /**
@@ -24,7 +24,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
                const size_t *gClassPosition, size_t *partitionMap, size_t *domainMap);
 
 size_t
-findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis, struct ttNode *l1,
+findOuterPermutation(size_t DIMENSION, partitions *partitionF, partitions *partitionG, size_t *basis, ttNode *l1,
                      FILE *fp, size_t *partitionMap, size_t *domainMap);
 
 #endif //EA_EQUIVALENCE_OUTERPERMUTATION_H

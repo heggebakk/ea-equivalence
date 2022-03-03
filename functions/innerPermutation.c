@@ -4,7 +4,7 @@
 #include "../utils/linkedList.h"
 
 bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime) {
-    struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
+    Node **restrictedDomains = malloc(sizeof(Node) * f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
         bool *map = computeSetOfTs(g, basis[i]);
@@ -33,7 +33,7 @@ bool *computeSetOfTs(truthTable *f, size_t x) {
     return map;
 }
 
-struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
+Node * computeDomain(const bool *listOfTs, truthTable *f) {
     size_t n = f->dimension;
     bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -59,12 +59,12 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
     }
 
     // Restricted domain represented as a Linked List
-    struct Node *head = NULL;
-    struct Node *tail = NULL;
+    Node *head = NULL;
+    Node *tail = NULL;
     for (size_t i = 0; i < 1L << n; ++i) {
         if (domain[i]) {
             // Add a new node to the linked list
-            struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
+            Node *newNode = initLinkedList();
             newNode->data = i;
             newNode->next = NULL;
 
@@ -73,7 +73,7 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
                 head = newNode;
                 tail = newNode;
             } else {
-                tail->next = newNode;
+                tail->next = (struct Node *) newNode;
                 tail = newNode;
             }
         }
@@ -83,7 +83,7 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
 }
 
 bool
-dfs(struct Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
+dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
     truthTable **lPrime) {
     if (k >= f->dimension) {
         reconstructTruthTable(values, l2);
@@ -94,7 +94,7 @@ dfs(struct Node **domains, size_t k, size_t *values, truthTable *f, truthTable *
         }
         destroyTruthTable(*lPrime); // Not the right l'
     }
-    struct Node *current = domains[k];
+    Node *current = domains[k];
     while (current != NULL) {
         values[k] = current->data;
         bool linear = dfs(domains, k + 1, values, f, g, l2, lPrime);

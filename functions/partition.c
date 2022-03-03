@@ -102,7 +102,7 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
     // Find all the domains for the different classes.
     // Example where we have several mappings:
     // [(0,2),(1),(0,2),(3,4),(3,4),(5)]
-    struct Node **domains = malloc(sizeof(struct Node) * partitionF->numberOfClasses);
+    Node **domains = malloc(sizeof(Node) * partitionF->numberOfClasses);
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
         domains[i] = initLinkedList();
     }
@@ -156,12 +156,12 @@ createMappings(MappingsOfClasses *mappingOfClasses, struct Node **domains, parti
     }
 }
 
-void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, struct Node **domains,
+void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
                      partitions *partitionG, size_t dimension) {
     if (i >= partitionG->numberOfClasses) {
         return;
     }
-    struct Node *current = domains[i]; // Tells us which bucket we are going through, starting with the first possible matching
+    Node *current = domains[i]; // Tells us which bucket we are going through, starting with the first possible matching
     while (current != NULL) {
         if (chosen[current->data] == false) {
             currentDomain[i] = current->data;
@@ -171,7 +171,7 @@ void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *cho
                 selectRecursive(i + 1, newList, currentDomain, chosen, domains, partitionG, dimension);
             }
         }
-        current = current->next;
+        current = (Node *) current->next;
     }
 }
 
