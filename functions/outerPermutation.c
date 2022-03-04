@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #include "stdlib.h"
 #include "outerPermutation.h"
 #include "partition.h"
@@ -10,7 +11,8 @@
 size_t
 outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *gClassPosition,
                  size_t *domainMap, FILE *fp, size_t *fClassPosition) {
-    basis = createBasis(dimension); /* We will guess the values of L on a linear basis */
+
+    basis = createStandardBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
     for (size_t i = 0; i < 1L << dimension; ++i) {
@@ -34,13 +36,12 @@ outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, 
     free(basis);
     free(generated);
 
-    printf("\n");
     size_t numPerm = countTtNodes(l1);
     fprintf(fp, "// Number of permutations:\n%zu \n", numPerm);
     return numPerm;
 }
 
-size_t *createBasis(size_t dimension) {
+size_t *createStandardBasis(size_t dimension) {
     size_t *basis = malloc(sizeof(size_t) * dimension + 1);
     for (size_t i = 0; i < dimension; ++i) {
         basis[i] = 1L << i;
