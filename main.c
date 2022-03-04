@@ -67,6 +67,8 @@ int main(int argc, char *argv[]) {
 
     fclose(fp);
     free(basis);
+    destroyRunTimes(runTimeWalsh);
+    destroyRunTimes(runTime);
 
     return 0;
 }
@@ -97,7 +99,7 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
     mapPartitionClasses(partitionF, partitionG, dimension, mappingOfClassesG);
 
     // Loop over all the mappings, if we find a solution, we break and finish.
-    for (int m = 0; m < mappingOfClassesF->numOfMappings; ++m) {
+    for (int m = 0; m < mappingOfClassesG->numOfMappings; ++m) {
         bool foundSolution = false;
 
         // Calculate Outer Permutation
@@ -145,14 +147,15 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
 
         destroyPartitions(partitionF);
         destroyPartitions(partitionG);
-        destroyMappingOfClasses(mappingOfClassesF);
-        destroyMappingOfClasses(mappingOfClassesG);
         freeTtLinkedList(l1);
         // End time
         runTimes->total = stopTime(runTimes->total, startTotalTime);
 
         if (!foundSolution) break;
     }
+
+    destroyMappingOfClasses(mappingOfClassesF);
+    destroyMappingOfClasses(mappingOfClassesG);
 
     // Print time information
     printTimes(runTimes);

@@ -6,6 +6,7 @@ RunTimes *initRunTimes() {
     RunTimes *newTime = malloc(sizeof(RunTimes));
     newTime->total = 0.0;
     newTime->parsing = 0.0;
+    newTime->partition = 0.0;
     newTime->outerPermutation = 0.0;
     newTime->innerPermutation = 0.0;
     return newTime;
@@ -29,4 +30,8 @@ void writeTimes(RunTimes *runTimes, FILE *fp) {
     fprintf(fp, "Time spent outer permutation: %f \n", runTimes->outerPermutation);
     fprintf(fp, "Time spent inner permutation: %f \n", runTimes->innerPermutation);
     fprintf(fp, "Total time spent: %f \n", runTimes->total);
+}
+
+void destroyRunTimes(RunTimes *runTimes) {
+    free(runTimes);
 }

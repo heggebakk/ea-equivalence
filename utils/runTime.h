@@ -19,4 +19,6 @@ void printTimes(RunTimes *runTimes);
 
 void writeTimes(RunTimes *runTimes, FILE *fp);
 
+void destroyRunTimes(RunTimes *runTimes);
+
 #endif //EA_EQUIVALENCE_RUNTIME_H
