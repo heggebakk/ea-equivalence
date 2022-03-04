@@ -8,7 +8,7 @@
  * class in the partition under f to its corresponding class in the partition under g.
  */
 size_t
-outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *partitionMap,
+outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *gClassPosition,
                  size_t *domainMap, FILE *fp) {
     basis = createBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
@@ -26,17 +26,15 @@ outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, 
      * the index of the bucket w.r.t. f containing the element i)
      */
     size_t *fClassPosition = correspondingPermutationClass(f, dimension);
-    size_t *gClassPosition = correspondingPermutationClass(g, dimension);
 
     /* Recursively guess the values of L on the basis (essentially, a DFS with backtracking upon contradiction) */
     recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fClassPosition, gClassPosition,
-              partitionMap, domainMap);
+              domainMap);
 
     free(images);
     free(basis);
     free(generated);
     free(fClassPosition);
-    free(gClassPosition);
 
     printf("\n");
     size_t numPerm = countTtNodes(l1);
@@ -85,8 +83,8 @@ size_t *correspondingPermutationClass(partitions *partition, size_t dimension) {
  * with respect to F maps to an element from a bucket with the same size corresponding to G.
  */
 void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
-               size_t *generated, bool *generatedImages, ttNode *l1, const size_t *fClassPosition,
-               const size_t *gClassPosition, size_t *partitionMap, size_t *domainMap) {
+               size_t *generated, bool *generatedImages, ttNode *l1, size_t *fClassPosition, size_t *gClassPosition,
+               size_t *domainMap) {
     /* If all basis elements have been assigned an image, and no contradictions have occurred, then we have found
      * a linear permutation preserving the partitions. We reconstruct its truth-table, and add it to the linked
      * list containing all permutations found by the search.
@@ -125,7 +123,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
 
 	/* We now go through all linear combinations of the basis elements that have been previously assigned.
 	 * Adding the newly guessed basis element to such combination allows us to derive one more value of the
-	 * function; if one of these values maps to the wrong bucket, we set "problem" to false to indicate a
+	 * function; if one of these values maps to the wrong bucket, we set "problem" = false, to indicate a
 	 * contradiction and backtrack.
 	 */
         for (size_t linearCombination = 0; linearCombination < LIMIT; ++linearCombination) {
@@ -156,7 +154,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
         if (!problem) {
             images[k] = ck;
             recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, l1,
-                      fClassPosition, gClassPosition, partitionMap, domainMap);
+                      fClassPosition, gClassPosition, domainMap);
         }
 
 	/* When backtracking, we need to reset the generated image indicators */

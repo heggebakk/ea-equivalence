@@ -40,6 +40,9 @@ int main(int argc, char *argv[]) {
     clock_t endParsing = clock();
     timeSpentParsing += (double) (endParsing - startParsing) / CLOCKS_PER_SEC;
 
+    printf("Time spent parsing files: %f\n", timeSpentParsing);
+    printf("\n");
+
     char *filename = "result.txt";
     FILE *fp = fopen(filename, "w+");
     fprintf(fp, "%s\n", argv[1]);
@@ -58,8 +61,6 @@ int main(int argc, char *argv[]) {
 
     // Solve with new algorithm:
     runOriginal(functionF, functionG, k, DIMENSION, basis, fp);
-    printf("Time spent parsing files: %f\n", timeSpentParsing);
-    printf("\n");
 
     fclose(fp);
     free(basis);
