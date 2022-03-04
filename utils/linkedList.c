@@ -2,31 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 #include "linkedList.h"
-#include "freeMemory.h"
+#include "truthTable.h"
 
-typedef struct ttNode ttNode;
-
-struct Node *initLinkedList() {
-    struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
-    newNode->next = NULL;
+Node * initLinkedList() {
+    Node *newNode = malloc(sizeof(Node));
     newNode->data = (size_t) NULL;
+    newNode->next = NULL;
     return newNode;
 }
 
-void addToLinkedList(struct Node *head, size_t data) {
+void addToLinkedList(Node *head, size_t data) {
     if ((void *) head->data == NULL) {
         head->data = data;
         return;
     }
-    struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
+    Node *newNode = malloc(sizeof(Node));
     newNode->data = data;
     newNode->next = head->next;
-    head->next = newNode;
+    head->next = (struct Node *) newNode;
 }
 
-
-void displayLinkedList(struct Node *head) {
-    struct Node *current = head;
+void displayLinkedList(Node *head) {
+    Node *current = head;
     if (head == NULL) {
         printf("Linked list is empty. \n");
         return;
@@ -34,28 +31,28 @@ void displayLinkedList(struct Node *head) {
     printf("Nodes of linked list: ");
     while (current != NULL) {
         printf("%zu ", current->data);
-        current = current->next;
+        current = (Node *) current->next;
     }
     printf("\n");
 }
 
-size_t countNodes(struct Node *head) {
+size_t countNodes(Node *head) {
     size_t count = 0;
-    struct Node *current = head;
+    Node *current = head;
 
     while (current != NULL) {
         count += 1;
-        current = current->next;
+        current = (Node *) current->next;
     }
 
     return count;
 }
 
-void freeLinkedList(struct Node *head) {
-    struct Node *current = NULL;
+void freeLinkedList(Node *head) {
+    Node *current = NULL;
     while (head != NULL) {
         current = head;
-        head = head->next;
+        head = (Node *) head->next;
         free(current);
     }
 }
@@ -64,8 +61,8 @@ void freeLinkedList(struct Node *head) {
  * Initialize a new Linked list of type Truth Table Node
  * @return The new node created
  */
-struct ttNode * initNode() {
-    struct ttNode *newNode = (struct ttNode*) malloc(sizeof(ttNode));
+ttNode * initTtNode() {
+    ttNode *newNode = malloc(sizeof(ttNode));
     newNode->next = NULL;
     newNode->data = NULL;
     return newNode;
@@ -76,16 +73,16 @@ struct ttNode * initNode() {
  * @param head The pointer to the head of the linked list
  * @param data The data to add to the list
  */
-void addNode(struct ttNode *head, truthTable *data) {
+void addNode(ttNode *head, truthTable *data) {
     // head.data should be the same right? Why is it different?
     if (head->data == NULL) {
         head->data = data;
         return;
     }
-    struct ttNode *newNode = (struct ttNode*) malloc(sizeof(ttNode));
+    ttNode *newNode = malloc(sizeof(ttNode));
     newNode->data = data;
     newNode->next = head->next;
-    head->next = newNode;
+    head->next = (struct ttNode *) newNode;
 }
 
 /**
@@ -93,31 +90,31 @@ void addNode(struct ttNode *head, truthTable *data) {
  * @param head The pointer to the head of the linked list
  * @return The number of nodes in the linked list
  */
-size_t countTtNodes(struct ttNode *head) {
+size_t countTtNodes(ttNode *head) {
     if (head == NULL) return 0;
     size_t count = 1;
-    struct ttNode *current = head;
+    ttNode *current = head;
     while (current->next != NULL) {
         count += 1;
-        current = current->next;
+        current = (ttNode *) current->next;
     }
     return count;
 }
 
-truthTable * getNode(struct ttNode *head, size_t index) {
+truthTable * getNode(ttNode *head, size_t index) {
     if (index > countTtNodes(head)) {
         printf("The node is out of bounds\n");
         exit(1);
     }
-    struct ttNode *current = head;
+    ttNode *current = head;
     for (int i = 0; i < index; ++i) {
-        current = current->next;
+        current = (ttNode *) current->next;
     }
     return current->data;
 }
 
-void displayTtLinkedList(struct ttNode *head) {
-    struct ttNode *current = head;
+void displayTtLinkedList(ttNode *head) {
+    ttNode *current = head;
     if (head == NULL) {
         printf("Linked list is empty. \n");
         return;
@@ -125,17 +122,17 @@ void displayTtLinkedList(struct ttNode *head) {
     printf("Nodes of linked list: ");
     while (current != NULL) {
         printf("%zu ", (size_t)current);
-        current = current->next;
+        current = (ttNode *) current->next;
     }
     printf("\n");
 }
 
-void freeTtLinkedList(struct ttNode *head) {
-    struct ttNode *current = NULL;
+void freeTtLinkedList(ttNode *head) {
+    ttNode *current = NULL;
     while (head != NULL) {
         current = head;
-        head = head->next;
-        freeTruthTable(current->data);
+        head = (ttNode *) head->next;
+        destroyTruthTable(current->data);
         free(current);
     }
 }

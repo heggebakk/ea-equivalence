@@ -7,36 +7,36 @@
 /**
  * Represent a node of a linked list
  */
-struct Node {
+typedef struct {
     size_t data;
     struct Node *next;
-};
+} Node ;
 
-struct Node *initLinkedList();
+Node * initLinkedList();
 
-void addToLinkedList(struct Node *head, size_t data);
+void addToLinkedList(Node *head, size_t data);
 
-void displayLinkedList(struct Node *head);
+void displayLinkedList(Node *head);
 
-size_t countNodes(struct Node *head);
+size_t countNodes(Node *head);
 
-void freeLinkedList(struct Node *head);
+void freeLinkedList(Node *head);
 
-struct ttNode {
+typedef struct {
     truthTable *data;
     struct ttNode *next;
-};
+} ttNode ;
 
-struct ttNode * initNode();
+ttNode * initTtNode();
 
-void addNode(struct ttNode *head, truthTable *data);
+void addNode(ttNode *head, truthTable *data);
 
-truthTable * getNode(struct ttNode *head, size_t index);
+truthTable * getNode(ttNode *head, size_t index);
 
-size_t countTtNodes(struct ttNode *head);
+size_t countTtNodes(ttNode *head);
 
-void displayTtLinkedList(struct ttNode *head);
+void displayTtLinkedList(ttNode *head);
 
-void freeTtLinkedList(struct ttNode *head);
+void freeTtLinkedList(ttNode *head);
 
 #endif //EA_EQUIVALENCE_LINKEDLIST_H

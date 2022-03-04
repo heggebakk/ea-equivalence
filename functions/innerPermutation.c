@@ -1,11 +1,9 @@
 #include <malloc.h>
 #include <stdbool.h>
 #include "innerPermutation.h"
-#include "../utils/linkedList.h"
-#include "../utils/freeMemory.h"
 
 bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime) {
-    struct Node **restrictedDomains = calloc(sizeof(struct Node), f->dimension); // A list of Linked Lists
+    Node **restrictedDomains = calloc(sizeof(Node **), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
         bool *map = computeSetOfTs(g, basis[i]);
@@ -34,7 +32,7 @@ bool *computeSetOfTs(truthTable *f, size_t x) {
     return map;
 }
 
-struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
+Node *computeDomain(const bool *listOfTs, truthTable *f) {
     size_t n = f->dimension;
     bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -60,32 +58,18 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f) {
     }
 
     // Restricted domain represented as a Linked List
-    struct Node *head = NULL;
-    struct Node *tail = NULL;
+    Node *head = initLinkedList();
     for (size_t i = 0; i < 1L << n; ++i) {
         if (domain[i]) {
             // Add a new node to the linked list
-            struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
-            newNode->data = i;
-            newNode->next = NULL;
-
-            // Check if the linked list is empty
-            if (head == NULL) {
-                head = newNode;
-                tail = newNode;
-            } else {
-                tail->next = newNode;
-                tail = newNode;
-            }
+            addToLinkedList(head, i);
         }
     }
     free(domain);
     return head;
 }
 
-bool
-dfs(struct Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2,
-    truthTable **lPrime) {
+bool dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime) {
     if (k >= f->dimension) {
         reconstructTruthTable(values, l2);
         *lPrime = composeFunctions(f, l2);
@@ -93,14 +77,15 @@ dfs(struct Node **domains, size_t k, size_t *values, truthTable *f, truthTable *
         if (isLinear(*lPrime)) {
             return true;
         }
-        freeTruthTable(*lPrime); // Not the right l'
+        destroyTruthTable(*lPrime);
+        return false;
     }
-    struct Node *current = domains[k];
+    Node *current = domains[k];
     while (current != NULL) {
         values[k] = current->data;
         bool linear = dfs(domains, k + 1, values, f, g, l2, lPrime);
         if (linear) return true;
-        current = current->next;
+        current = (Node *) current->next;
     }
     return false;
 }

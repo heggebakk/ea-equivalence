@@ -10,19 +10,19 @@
 #include "walshTransform/walshTransform.h"
 #include "utils/inverse.h"
 #include "functions/innerPermutation.h"
-#include "utils/freeMemory.h"
+#include "utils/runTime.h"
 
-int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
-
-int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp);
+void runAlgorithm(truthTable *functionF, truthTable *functionG, partitions *partitionF, partitions *partitionG,
+                  size_t DIMENSION, RunTimes *runTime, size_t *basis, ttNode *l1, FILE *fp);
 
 int main(int argc, char *argv[]) {
+    long k = 4;
+
     if (argc < 2) {
-        printf("Expected at least 2 arguments!");
+        printf("Expected at least 1 argument!");
         return 1;
     }
 
-    long k = 4;
     if (argv[2] != NULL) {
         char* p;
         errno = 0;
@@ -33,15 +33,15 @@ int main(int argc, char *argv[]) {
         }
         printf("k = %ld\n", k);
     }
-    // Parse files to truth tables
-    double timeSpentParsing = 0.0;
-    clock_t startParsing = clock();
-    truthTable *functionF = parseTruthTable(argv[1]);
-//    truthTable *functionG = parseTruthTable(argv[2]);
-    truthTable *functionG = getFunctionG(functionF);
-    clock_t endParsing = clock();
-    timeSpentParsing += (double) (endParsing - startParsing) / CLOCKS_PER_SEC;
 
+    // Parse files to truth tables
+    clock_t startParsing= clock();
+    double parsingTime = 0.0;
+    truthTable *functionF = parseTruthTable(argv[1]);
+    truthTable *functionG = getFunctionG(functionF);
+    parsingTime += (double) (clock() - startParsing) / CLOCKS_PER_SEC;
+
+    // Specify which file to write to.
     char *filename = "result.txt";
     FILE *fp = fopen(filename, "w+");
     fprintf(fp, "%s\n", argv[1]);
@@ -51,197 +51,141 @@ int main(int argc, char *argv[]) {
     fprintf(fp, "// Dimension:\n%zu\n", functionF->dimension);
     writeTruthTable(functionF, fp, "F");
     writeTruthTable(functionG, fp, "G");
+    printf("\n");
     size_t DIMENSION = functionF->dimension;
-    size_t *basis = createBasis(DIMENSION); // Standard basis
 
-    // Solve with Walsh transform first:
-    runWalshTransform(functionF, functionG, k, DIMENSION, basis, fp);
+    size_t *basis = createStandardBasis(DIMENSION);
 
-    printf("\n");
+    RunTimes *runTime;
+    partitions *partitionF;
+    partitions *partitionG;
+    ttNode *l1 = initTtNode();
+    clock_t startTotalTime;
 
-    // Solve with new algorithm:
-    runOriginal(functionF, functionG, k, DIMENSION, basis, fp);
-    printf("Time spent parsing files: %f\n", timeSpentParsing);
-    printf("\n");
+    for (int a = 0; a < 2; ++a) {
+        // Solve with Walsh transform first:
+        if (a == 0) {
+            startTotalTime = clock();
+            runTime = initRunTimes();
+            runTime->parsing = parsingTime;
+            fprintf(fp, "\n** WALSH TRANSFORM **\n");
+            printf("Walsh transform\n");
 
-    fclose(fp);
+            // Partition function f and g
+            clock_t startPartitionTime = clock();
+            partitionF = eaPartitionWalsh(functionF, k);
+            partitionG = eaPartitionWalsh(functionG, k);
+            runTime->partition = stopTime(runTime->partition, startPartitionTime);
+
+            runAlgorithm(functionF, functionG, partitionF, partitionG, DIMENSION,
+                         runTime, basis, l1, fp);
+
+            // End time
+            runTime->total = stopTime(runTime->total, startTotalTime);
+            // Print time information
+            printTimes(runTime);
+
+            fprintf(fp, "\nWalsh Transform:\n");
+            writeTimes(runTime, fp);
+
+            destroyRunTimes(runTime);
+            destroyPartitions(partitionF);
+            destroyPartitions(partitionG);
+        } else if (a == 1) {
+            startTotalTime = clock();
+            runTime = initRunTimes();
+            runTime->parsing = parsingTime;
+            fprintf(fp, "\n** NEW ALGORITHM **\n");
+            printf("\nNew algorithm\n");
+
+            // Partition function f and g
+            clock_t startPartitionTime = clock();
+            partitionF = partitionFunction(functionF, k);
+            partitionG = partitionFunction(functionG, k);
+            runTime->partition = stopTime(runTime->partition, startPartitionTime);
+
+            runAlgorithm(functionF, functionG, partitionF, partitionG, DIMENSION,
+                         runTime, basis, l1, fp);
+
+            // End time
+            runTime->total = stopTime(runTime->total, startTotalTime);
+            // Print time information
+            printTimes(runTime);
+            fprintf(fp, "\nOriginal Algorithm\n");
+            writeTimes(runTime, fp);
+
+            destroyRunTimes(runTime);
+            destroyPartitions(partitionF);
+            destroyPartitions(partitionG);
+        }
+    }
+    destroyTruthTable(functionF);
+    destroyTruthTable(functionG);
     free(basis);
+    freeTtLinkedList(l1);
+    fclose(fp);
 
     return 0;
 }
 
-int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp) {
-    fprintf(fp, "\n** WALSH TRANSFORM **\n");
-    printf("Walsh transform\n");
-    // Start time
-    double totalTime = 0.0;
-    clock_t startTotalTime = clock();
+void runAlgorithm(truthTable *functionF, truthTable *functionG, partitions *partitionF, partitions *partitionG,
+                  size_t DIMENSION, RunTimes *runTime, size_t *basis, ttNode *l1, FILE *fp) {
+    // We might end up in a situation where we have more than one mapping of the partitions from F and G.
+    // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
+    MappingOfClasses *mappingOfClassesF = initMappingsOfClasses();
+    MappingOfClasses *mappingOfClassesG = initMappingsOfClasses();
+    mapPartitionClasses(partitionG, partitionF, DIMENSION, mappingOfClassesF);
+    mapPartitionClasses(partitionF, partitionG, DIMENSION, mappingOfClassesG);
 
-    // Change function f and g from a truth table to a walsh transform table
-    walshTransform *functionF = truthTableToWalshTransform(*f);
-    walshTransform *functionG = truthTableToWalshTransform(*g);
+    // Loop over all the mappings, if we find a solution, we break and finish.
+    for (int m = 0; m < mappingOfClassesG->numOfMappings; ++m) {
+        bool foundSolution = false;
 
-    // Partition function f and g
-    double partitionTime = 0.0;
-    clock_t startPartitionTime = clock();
-    partitions *partitionF = eaPartitionWalsh(functionF, k);
-    partitions *partitionG = eaPartitionWalsh(functionG, k);
-    clock_t endPartitionTime = clock();
-    partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
+        // Calculate Outer Permutation
+        clock_t startOuterPermutationTime = clock();
+        size_t numPermutations = outerPermutation(partitionF, partitionG, DIMENSION, basis, l1,
+                                                  mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m], fp,
+                                                  mappingOfClassesF->mappings[m]);
+        runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
 
-    // Calculate Outer Permutation
-    double outerPermutationTime = 0.0;
-    clock_t startOuterPermutationTime = clock();
-    struct ttNode *l1 = initNode();
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp);
-    clock_t endOuterPermutationTime = clock();
-    outerPermutationTime += (double) (endOuterPermutationTime - startOuterPermutationTime) / CLOCKS_PER_SEC;
+        // Calculate inner permutation
+        clock_t startInnerPermutationTime = clock();
+        for (size_t i = 0; i < numPermutations; ++i) {
+            truthTable *l1Prime = getNode(l1, i);
+            truthTable *l1Inverse = inverse(*l1Prime);
+            truthTable *gPrime = composeFunctions(l1Inverse, functionG);
+            truthTable *lPrime;
+            truthTable *l2 = malloc(sizeof(truthTable));
+            l2->dimension = DIMENSION;
+            l2->elements = malloc(sizeof(size_t) * 1L << DIMENSION);
 
-    // Calculate inner permutation
-    double innerPermutationTime = 0.0;
-    clock_t startInnerPermutationTime = clock();
-    for (size_t i = 0; i < numPermutations; ++i) {
-        truthTable *l1Prime = getNode(l1, i);
-        truthTable *l1Inverse = inverse(*l1Prime);
-        truthTable *gPrime = composeFunctions(l1Inverse, g);
-        truthTable *lPrime;
-        truthTable *l2 = malloc(sizeof(truthTable));
-        l2->dimension = dimension;
-        l2->elements = malloc(sizeof(size_t) * 1L << dimension);
+            if (innerPermutation(functionF, gPrime, basis, l2, &lPrime)) {
+                runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
 
-        if (innerPermutation(f, gPrime, basis, l2, &lPrime)) {
-            clock_t endInnerPermutationTime = clock();
-            innerPermutationTime += (double) (endInnerPermutationTime - startInnerPermutationTime) / CLOCKS_PER_SEC;
+                // Find l
+                truthTable *l = composeFunctions(l1Prime, lPrime);
+                writeTruthTable(l1[i].data, fp, "l1");
+                writeTruthTable(l2, fp, "l2");
+                writeTruthTable(l, fp, "l");
 
-            // Find l
-            truthTable *l = composeFunctions(l1Prime, lPrime);
-            writeTruthTable(l1[i].data, fp, "l1");
-            writeTruthTable(l2, fp, "l2");
-            writeTruthTable(l, fp, "l");
+                foundSolution = true;
 
-            // Free memory
-            freeTruthTable(l);
-            freeTruthTable(l1Inverse);
-            freeTruthTable(l2);
-            freeTruthTable(lPrime);
-            freeTruthTable(gPrime);
+                // Free memory
+                destroyTruthTable(l);
+                destroyTruthTable(l1Inverse);
+                destroyTruthTable(l2);
+                destroyTruthTable(lPrime);
+                destroyTruthTable(gPrime);
 
-            break;
+                break;
+            }
+            destroyTruthTable(l1Inverse);
+            destroyTruthTable(l2);
+            destroyTruthTable(gPrime);
         }
-        freeTruthTable(l1Inverse);
-        freeTruthTable(l2);
-        freeTruthTable(gPrime);
+
+        if (!foundSolution) break;
     }
-
-    freeTtWt(functionF);
-    freeTtWt(functionG);
-    freePartition(partitionF);
-    freePartition(partitionG);
-    freeTtLinkedList(l1);
-
-    // End time
-    clock_t endTotalTime = clock();
-    totalTime += (double) (endTotalTime - startTotalTime) / CLOCKS_PER_SEC;
-
-    // Print time information
-    printf("Walsh Transform:\n");
-    printf("Time spent partitioning: %f \n", partitionTime);
-    printf("Time spent outer permutation: %f \n", outerPermutationTime);
-    printf("Time spent inner permutation: %f \n", innerPermutationTime);
-    printf("Total time spent: %f \n", totalTime);
-
-
-    fprintf(fp, "\nWalsh Transform:\n");
-    fprintf(fp, "Time spent partitioning: %f \n", partitionTime);
-    fprintf(fp, "Time spent outer permutation: %f \n", outerPermutationTime);
-    fprintf(fp, "Time spent inner permutation: %f \n", innerPermutationTime);
-    fprintf(fp, "Total time spent: %f \n", totalTime);
-
-    return 0;
-}
-
-int runOriginal(truthTable *f, truthTable *g, size_t k, size_t dimension, size_t *basis, FILE *fp) {
-    fprintf(fp, "\n** NEW ALGORITHM **\n");
-    // Start time
-    double totalTime = 0.0;
-    clock_t startTotalTime = clock();
-
-    // Partition function f and g
-    double partitionTime = 0.0;
-    clock_t startPartitionTime = clock();
-    partitions *partitionF = partitionFunction(f, k);
-    partitions *partitionG = partitionFunction(g, k);
-    // TODO: Map partition classes
-
-    mapPartitionClasses(partitionF, partitionG);
-
-    clock_t endPartitionTime = clock();
-    partitionTime += (double) (endPartitionTime - startPartitionTime) / CLOCKS_PER_SEC;
-
-    // Outer permutation
-    double outerPermutationTime = 0.0;
-    clock_t startOuterPermutation = clock();
-    struct ttNode *l1 = initNode();
-    size_t numPermutations = findOuterPermutation(dimension, partitionF, partitionG, basis, l1, fp);
-    clock_t endOuterPermutation = clock();
-    outerPermutationTime += (double) (endOuterPermutation - startOuterPermutation) / CLOCKS_PER_SEC;
-
-    // Inner permutation
-    double innerPermutationTime = 0.0;
-    clock_t startInnerPermutation = clock();
-    for (size_t i = 0; i < numPermutations; ++i) {
-        truthTable *l1Prime = getNode(l1, i);
-        truthTable *l1Inverse = inverse(*l1Prime);
-        truthTable *gPrime = composeFunctions(l1Inverse, g);
-        truthTable *lPrime;
-        truthTable *l2 = malloc(sizeof(truthTable));
-        l2->dimension = dimension;
-        l2->elements = malloc(sizeof(size_t) * 1L << dimension);
-
-        if (innerPermutation(f, gPrime, basis, l2, &lPrime)) {
-            clock_t endInnerPermutation = clock();
-            innerPermutationTime += (double) (endInnerPermutation - startInnerPermutation) / CLOCKS_PER_SEC;
-
-            // Find l
-            truthTable *l = composeFunctions(l1Prime, lPrime);
-
-            writeTruthTable(l1[i].data, fp, "l1");
-            writeTruthTable(l2, fp, "l2");
-            writeTruthTable(l, fp, "l");
-
-            freeTruthTable(l);
-            freeTruthTable(l1Inverse);
-            freeTruthTable(l2);
-            freeTruthTable(lPrime);
-            freeTruthTable(gPrime);
-            break;
-        }
-        freeTruthTable(l1Inverse);
-        freeTruthTable(l2);
-        freeTruthTable(gPrime);
-    }
-
-    freeTruthTable(f);
-    freeTruthTable(g);
-    freePartition(partitionF);
-    freePartition(partitionG);
-    freeTtLinkedList(l1);
-
-    // End time
-    clock_t endTotalTime = clock();
-    totalTime += (double) (endTotalTime - startTotalTime) / CLOCKS_PER_SEC;
-
-    printf("Original algorithm: \n");
-    printf("Time spent partitioning: %f \n", partitionTime);
-    printf("Time spent outer permutation: %f \n", outerPermutationTime);
-    printf("Time spent inner permutation: %f \n", innerPermutationTime);
-    printf("Total time spent: %f \n", totalTime);
-
-    fprintf(fp, "\nOriginal algorithm:\n");
-    fprintf(fp, "Time spent partitioning: %f \n", partitionTime);
-    fprintf(fp, "Time spent outer permutation: %f \n", outerPermutationTime);
-    fprintf(fp, "Time spent inner permutation: %f \n", innerPermutationTime);
-    fprintf(fp, "Total time spent: %f \n", totalTime);
-
-    return 0;
+    destroyMappingOfClasses(mappingOfClassesF);
+    destroyMappingOfClasses(mappingOfClassesG);
 }

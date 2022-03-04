@@ -3,11 +3,14 @@
 
 #include "../utils/truthTable.h"
 #include "../functions/partition.h"
+#include "../walshTransform/walshTransform.h"
 
 typedef struct vbfWalshTransform {
     size_t dimension;
     size_t **elements;
 } walshTransform;
+
+void destroyWalshTransform(walshTransform *wt);
 
 _Bool dot(size_t a, size_t b);
 
@@ -19,6 +22,6 @@ void printWalshTransformTable(walshTransform wt);
 
 size_t walshTransformPowerMoment(walshTransform wt, size_t k, size_t shiftA, size_t shiftB);
 
-partitions * eaPartitionWalsh(walshTransform *wt, size_t k);
+partitions *eaPartitionWalsh(truthTable *tt, size_t k);
 
 #endif //EA_EQUIVALENCE_WALSHTRANSFORM_H

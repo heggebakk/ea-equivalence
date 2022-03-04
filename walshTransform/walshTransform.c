@@ -1,6 +1,15 @@
+#include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
 #include "walshTransform.h"
+
+void destroyWalshTransform(walshTransform *wt) {
+    for (size_t i = 0; i < 1L << wt->dimension; ++i) {
+        free(wt->elements[i]);
+    }
+    free(wt->elements);
+    free(wt);
+}
 
 _Bool dot(size_t a, size_t b) {
     return __builtin_popcountl(a & b) % 2;
@@ -55,7 +64,10 @@ size_t walshTransformPowerMoment(walshTransform wt, size_t k, size_t shiftA, siz
     return sum;
 }
 
-partitions * eaPartitionWalsh(walshTransform *wt, size_t k) {
+partitions *eaPartitionWalsh(truthTable *tt, size_t k) {
+    // Change function f and g from a truth table to a walsh transform table
+    walshTransform *wt = truthTableToWalshTransform(*tt);
+
     size_t *multiplicities = malloc(sizeof(size_t) * 1L << wt->dimension);
     size_t possibleValues [1L << wt->dimension];
     size_t currentPossibleValue = 0;
@@ -98,5 +110,6 @@ partitions * eaPartitionWalsh(walshTransform *wt, size_t k) {
         p->classes[classIndex] = malloc(sizeof(size_t *) * currentClassIndex);
         memcpy(p->classes[classIndex], currentClass, sizeof(size_t) * currentClassIndex);
     }
+    destroyWalshTransform(wt);
     return p;
 }

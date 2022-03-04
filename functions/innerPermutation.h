@@ -3,6 +3,7 @@
 
 #include "../utils/truthTable.h"
 #include "stdbool.h"
+#include "../utils/linkedList.h"
 
 /**
  * Reconstruction the inner permutations of function F and function G
@@ -30,7 +31,7 @@ bool *computeSetOfTs(truthTable *f, size_t x);
  * @param f A function F
  * @return The restricted domain represented as a linked list.
  */
-struct Node * computeDomain(const bool *listOfTs, truthTable *f);
+Node * computeDomain(const bool *listOfTs, truthTable *f);
 
 /**
  * A depth first search over a array containing linked lists.
@@ -44,7 +45,7 @@ struct Node * computeDomain(const bool *listOfTs, truthTable *f);
  * @return True if the dfs successfully reconstructed a inner permutation, false otherwise.
  */
 bool
-dfs(struct Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime);
+dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime);
 
 /**
  * Reconstruction of a truth table

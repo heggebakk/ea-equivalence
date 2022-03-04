@@ -5,12 +5,24 @@
 #include "../utils/truthTable.h"
 #include "../utils/linkedList.h"
 
+typedef struct {
+    size_t **mappings;
+    size_t **domains;
+    size_t numOfMappings;
+} MappingOfClasses;
+
+MappingOfClasses *initMappingsOfClasses();
+
+void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses);
+
 typedef struct vbfPartitions {
     size_t numberOfClasses;
     size_t *multiplicities;
     size_t *classSizes;
     size_t **classes;
 } partitions;
+
+void destroyPartitions(partitions *p);
 
 /**
  * Partition bucket size where k = even
@@ -47,11 +59,13 @@ void printPartitionInfo(partitions *p);
  * @param partitionF A partition of function F
  * @param partitionG A partition of function G
  */
-size_t ** mapPartitionClasses(partitions *partitionF, partitions *partitionG);
+void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingOfClasses *mappingOfClasses);
 
-void createMappings(size_t **mappings, struct Node **domains, partitions *partitionG, size_t numOfMappings);
+void
+createMappings(MappingOfClasses *mappingOfClasses, Node **domains, partitions *partitionG, size_t dimension);
 
-void selectRecursive(size_t i, size_t *newList, bool *chosen, struct Node **domains, partitions *partitionG);
+void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
+                     partitions *partitionG, size_t dimension);
 
 size_t factorial(size_t value);
 
