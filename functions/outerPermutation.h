@@ -1,11 +1,12 @@
 #ifndef EA_EQUIVALENCE_OUTERPERMUTATION_H
 #define EA_EQUIVALENCE_OUTERPERMUTATION_H
 
-#include "../utils/truthTable.h"
-#include "../utils/linkedList.h"
+#include <stdio.h>
 #include "stdbool.h"
 #include "partition.h"
 #include "../utils/runTime.h"
+#include "../utils/truthTable.h"
+#include "../utils/linkedList.h"
 
 size_t
 outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *gClassPosition,

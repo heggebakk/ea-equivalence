@@ -19,7 +19,7 @@ int runWalshTransform(truthTable *f, truthTable *g, size_t k, size_t dimension, 
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        printf("Expected at least 2 arguments!");
+        printf("Expected at least 1 argument!");
         return 1;
     }
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     runTimeWalsh->parsing = stopTime(runTimeWalsh->parsing, startParsing);
     runTime->parsing = runTimeWalsh->parsing;
 
-
+    // Specify which file to write to.
     char *filename = "result.txt";
     FILE *fp = fopen(filename, "w+");
     fprintf(fp, "%s\n", argv[1]);
@@ -56,7 +56,8 @@ int main(int argc, char *argv[]) {
     writeTruthTable(functionG, fp, "G");
     printf("\n");
     size_t DIMENSION = functionF->dimension;
-    size_t *basis = createStandardBasis(DIMENSION); // Standard basis
+
+    size_t *basis = createStandardBasis(DIMENSION);
 
     // Solve with Walsh transform first:
     runWalshTransform(functionF, functionG, k, DIMENSION, basis, fp, runTimeWalsh);

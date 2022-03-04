@@ -1,7 +1,8 @@
 #ifndef EA_EQUIVALENCE_RUNTIME_H
 #define EA_EQUIVALENCE_RUNTIME_H
 
-#include <bits/types/clock_t.h>
+#include <stdio.h>
+#include "time.h"
 
 typedef struct {
     double total;
