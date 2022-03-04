@@ -9,7 +9,7 @@
  */
 size_t
 outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *gClassPosition,
-                 size_t *domainMap, FILE *fp) {
+                 size_t *domainMap, FILE *fp, size_t *fClassPosition) {
     basis = createBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
@@ -25,7 +25,6 @@ outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, 
     /* Create dictionaries indexing buckets by elements (for instance, fClassPosition[i] would be
      * the index of the bucket w.r.t. f containing the element i)
      */
-    size_t *fClassPosition = correspondingPermutationClass(f, dimension);
 
     /* Recursively guess the values of L on the basis (essentially, a DFS with backtracking upon contradiction) */
     recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fClassPosition, gClassPosition,
@@ -34,7 +33,6 @@ outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, 
     free(images);
     free(basis);
     free(generated);
-    free(fClassPosition);
 
     printf("\n");
     size_t numPerm = countTtNodes(l1);
@@ -48,35 +46,6 @@ size_t *createBasis(size_t dimension) {
         basis[i] = 1L << i;
     }
     return basis;
-}
-
-/**
- * // TODO: Add description
- * @param partition
- * @param dimension
- * @return
- */
-size_t *correspondingPermutationClass(partitions *partition, size_t dimension) {
-    size_t *correspondingClass = (size_t *) calloc(sizeof(size_t), 1L << dimension);
-
-    for (size_t i = 0; i < 1L << dimension; ++i) {
-        for (size_t j = 0; j < partition->numberOfClasses; ++j) {
-            size_t *partitionClass = partition->classes[j];
-            for (size_t k = 0; k < partition->classSizes[j]; ++k) {
-                if (partitionClass[k] == i) {
-                    correspondingClass[i] = j;
-                    break;
-                }
-            }
-        }
-    }
-    printf("Corresponding class: \n");
-    for (int i = 0; i < 1L << dimension; ++i) {
-        printf("%zu ", correspondingClass[i]);
-    }
-    printf("\n");
-    printPartitionInfo(partition);
-    return correspondingClass;
 }
 
 /* This is a DFS for linear permutations respecting the given partitions, i.e. such that every element from a given bucket

@@ -8,7 +8,7 @@
 
 size_t
 outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *gClassPosition,
-                 size_t *domainMap, FILE *fp);
+                 size_t *domainMap, FILE *fp, size_t *fClassPosition);
 
 /**
  * Create a standard basis for the given dimension. 2^n where n = dimension.
@@ -16,8 +16,6 @@ outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, 
  * @return The standard basis of 2^n, where n = dimension
  */
 size_t *createBasis(size_t dimension);
-
-size_t *correspondingPermutationClass(partitions *partition, size_t dimension);
 
 void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
                size_t *generated, bool *generatedImages, ttNode *l1, size_t *fClassPosition, size_t *gClassPosition,
