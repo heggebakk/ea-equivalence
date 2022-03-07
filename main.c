@@ -21,28 +21,65 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *part
 TruthTable *inverse(TruthTable function);
 
 int main(int argc, char *argv[]) {
+    char *filename = "result.txt";
+    char *fileTruthTable;
     long k = 4;
+    bool partitionOnly = false;
 
     if (argc < 2) {
         printf("Expected at least 1 argument!");
         return 1;
     }
 
-    if (argv[2] != NULL) {
-        char* p;
-        errno = 0;
-        k = strtol(argv[2], &p, 10);
-        if (*p != '\0' || errno != 0) {
-            printf("Conversion went wrong!\n");
-            return 1;
+    for (int i = 1; i < argc; ++i) {
+        // Check for flag
+        if (argv[i][0] == '-') {
+            switch (argv[i][1]) {
+                // Help
+                case 'h':
+                    printf("How to use the program: \n");
+                    printf("-h \tHelp\n");
+                    printf("-f \tFilename for writing to file");
+                    printf("-k \tSize of tuple T");
+                    printf("-t \t* File, type Truth Table\n");
+                    printf("-p \tRuns only partitioning \tBy adding this flag it sets this to be true.\n");
+                    exit(0);
+                case 'f':
+                    i++;
+                    filename = argv[i];
+                    printf("Write to %s\n", filename);
+                    continue;
+                case 'k':
+                    // Set the k
+                    i++;
+                    errno = 0;
+                    char *p;
+                    k = strtol(argv[i], &p, 10);
+                    if (*p != '\0' || errno != 0) {
+                        printf("Conversion went wrong for k\n");
+                        return 1;
+                    }
+                    printf("k = %ld\n", k);
+                    continue;
+                case 't':
+                    // Parse files to truth tables
+                    i++;
+                    fileTruthTable = argv[i];
+                    continue;
+                case 'p': {
+                    partitionOnly = true;
+                }
+            }
         }
-        printf("k = %ld\n", k);
     }
+
+    // Specify which file to write to.
+    FILE *fp = fopen(filename, "w+");
 
     // Parse files to truth tables
     clock_t startParsing= clock();
     double parsingTime = 0.0;
-    TruthTable *functionF = parseTruthTable(argv[1]);
+    TruthTable *functionF = parseTruthTable(fileTruthTable);
     TruthTable *functionG = getFunctionG(functionF);
     parsingTime += (double) (clock() - startParsing) / CLOCKS_PER_SEC;
 
@@ -53,6 +90,7 @@ int main(int argc, char *argv[]) {
 
     printTruthTable(functionF);
     printTruthTable(functionG);
+    fprintf(fp, "%s\n", fileTruthTable);
     fprintf(fp, "// Dimension:\n%zu\n", functionF->dimension);
     writeTruthTable(functionF, fp, "F");
     writeTruthTable(functionG, fp, "G");
