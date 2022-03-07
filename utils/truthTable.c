@@ -36,6 +36,7 @@ TruthTable * parseTruthTable(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         printf("Requested file does not exists in system or is not found. \n");
+        printf("File: %s", filename);
         exit(1);
     }
 
