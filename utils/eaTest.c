@@ -4,7 +4,7 @@
 #include "../functions/innerPermutation.h"
 #include "truthTable.h"
 
-truthTable *randomLinearFunction(size_t dimension) {
+TruthTable *randomLinearFunction(size_t dimension) {
     size_t entries = 1L << dimension;
     size_t listGenerated[entries];
     listGenerated[0] = 0;
@@ -16,14 +16,12 @@ truthTable *randomLinearFunction(size_t dimension) {
             listGenerated[(1L << i) + k] = listGenerated[k] ^ j;
         }
     }
-    truthTable *result = malloc(sizeof(truthTable));
-    result->dimension = dimension;
-    result->elements = malloc(sizeof(size_t) * entries);
+    TruthTable *result = initTruthTable(dimension);
     memcpy(result->elements, listGenerated, sizeof(size_t) * entries);
     return result;
 }
 
-truthTable *randomLinearPermutation(size_t dimension) {
+TruthTable *randomLinearPermutation(size_t dimension) {
     size_t entries = 1L << dimension;
     bool generated[entries];
     size_t listGenerated[entries];
@@ -45,25 +43,19 @@ truthTable *randomLinearPermutation(size_t dimension) {
             generated[listGenerated[k] ^ j] = true;
         }
     }
-    truthTable *result = malloc(sizeof(truthTable));
-    result->dimension = dimension;
-    result->elements = malloc(sizeof(size_t) * entries);
+    TruthTable *result = initTruthTable(dimension);
     memcpy(result->elements, listGenerated, sizeof(size_t) * entries);
     return result;
 }
 
-truthTable * getFunctionG(truthTable *functionF) {
+TruthTable * getFunctionG(TruthTable *functionF) {
     size_t n = functionF->dimension;
-    truthTable *l1 = randomLinearPermutation(n);
-    truthTable *l2 = randomLinearPermutation(n);
-    truthTable *l = randomLinearFunction(n);
+    TruthTable *l1 = randomLinearPermutation(n);
+    TruthTable *l2 = randomLinearPermutation(n);
+    TruthTable *l = randomLinearFunction(n);
 
-//    printTruthTable(l1);
-//    printTruthTable(l2);
-//    printTruthTable(l);
-
-    truthTable *temp = composeFunctions(functionF, l2);
-    truthTable *g = composeFunctions(l1, temp);
+    TruthTable *temp = composeFunctions(functionF, l2);
+    TruthTable *g = composeFunctions(l1, temp);
     addFunctionsTogether(g, l);
 
     destroyTruthTable(l1);
@@ -71,6 +63,5 @@ truthTable * getFunctionG(truthTable *functionF) {
     destroyTruthTable(l);
     destroyTruthTable(temp);
 
-//    printTruthTable(g);
     return g;
 }

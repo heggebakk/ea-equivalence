@@ -4,16 +4,21 @@
 #include <string.h>
 #include "time.h"
 #include "utils/truthTable.h"
-#include "utils/parser.h"
 #include "functions/outerPermutation.h"
 #include "utils/eaTest.h"
 #include "walshTransform/walshTransform.h"
-#include "utils/inverse.h"
 #include "functions/innerPermutation.h"
 #include "utils/runTime.h"
 
-void runAlgorithm(truthTable *functionF, truthTable *functionG, partitions *partitionF, partitions *partitionG,
-                  size_t DIMENSION, RunTimes *runTime, size_t *basis, ttNode *l1, FILE *fp);
+void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *partitionF, partitions *partitionG,
+                  size_t DIMENSION, RunTimes *runTime, size_t *basis, TtNode *l1, FILE *fp);
+
+/**
+ * Create the inverse function
+ * @param function The function to create the inverse of
+ * @return The inverse
+ */
+TruthTable * inverse(TruthTable function);
 
 int main(int argc, char *argv[]) {
     long k = 4;
@@ -37,8 +42,8 @@ int main(int argc, char *argv[]) {
     // Parse files to truth tables
     clock_t startParsing= clock();
     double parsingTime = 0.0;
-    truthTable *functionF = parseTruthTable(argv[1]);
-    truthTable *functionG = getFunctionG(functionF);
+    TruthTable *functionF = parseTruthTable(argv[1]);
+    TruthTable *functionG = getFunctionG(functionF);
     parsingTime += (double) (clock() - startParsing) / CLOCKS_PER_SEC;
 
     // Specify which file to write to.
@@ -59,7 +64,7 @@ int main(int argc, char *argv[]) {
     RunTimes *runTime;
     partitions *partitionF;
     partitions *partitionG;
-    ttNode *l1 = initTtNode();
+    TtNode *l1 = initTtNode();
     clock_t startTotalTime;
 
     for (int a = 0; a < 2; ++a) {
@@ -122,14 +127,14 @@ int main(int argc, char *argv[]) {
     destroyTruthTable(functionF);
     destroyTruthTable(functionG);
     free(basis);
-    freeTtLinkedList(l1);
+    destroyTtLinkedList(l1);
     fclose(fp);
 
     return 0;
 }
 
-void runAlgorithm(truthTable *functionF, truthTable *functionG, partitions *partitionF, partitions *partitionG,
-                  size_t DIMENSION, RunTimes *runTime, size_t *basis, ttNode *l1, FILE *fp) {
+void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *partitionF, partitions *partitionG,
+                  size_t DIMENSION, RunTimes *runTime, size_t *basis, TtNode *l1, FILE *fp) {
     // We might end up in a situation where we have more than one mapping of the partitions from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
     MappingOfClasses *mappingOfClassesF = initMappingsOfClasses();
@@ -144,26 +149,24 @@ void runAlgorithm(truthTable *functionF, truthTable *functionG, partitions *part
         // Calculate Outer Permutation
         clock_t startOuterPermutationTime = clock();
         size_t numPermutations = outerPermutation(partitionF, partitionG, DIMENSION, basis, l1,
-                                                  mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m], fp,
-                                                  mappingOfClassesF->mappings[m]);
+                                                  mappingOfClassesF->mappings[m],
+                                                  mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m], fp);
         runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
 
         // Calculate inner permutation
         clock_t startInnerPermutationTime = clock();
         for (size_t i = 0; i < numPermutations; ++i) {
-            truthTable *l1Prime = getNode(l1, i);
-            truthTable *l1Inverse = inverse(*l1Prime);
-            truthTable *gPrime = composeFunctions(l1Inverse, functionG);
-            truthTable *lPrime;
-            truthTable *l2 = malloc(sizeof(truthTable));
-            l2->dimension = DIMENSION;
-            l2->elements = malloc(sizeof(size_t) * 1L << DIMENSION);
+            TruthTable *l1Prime = getNode(l1, i);
+            TruthTable *l1Inverse = inverse(*l1Prime);
+            TruthTable *gPrime = composeFunctions(l1Inverse, functionG);
+            TruthTable *lPrime;
+            TruthTable *l2 = initTruthTable(DIMENSION);
 
             if (innerPermutation(functionF, gPrime, basis, l2, &lPrime)) {
                 runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
 
                 // Find l
-                truthTable *l = composeFunctions(l1Prime, lPrime);
+                TruthTable *l = composeFunctions(l1Prime, lPrime);
                 writeTruthTable(l1[i].data, fp, "l1");
                 writeTruthTable(l2, fp, "l2");
                 writeTruthTable(l, fp, "l");
@@ -188,4 +191,13 @@ void runAlgorithm(truthTable *functionF, truthTable *functionG, partitions *part
     }
     destroyMappingOfClasses(mappingOfClassesF);
     destroyMappingOfClasses(mappingOfClassesG);
+}
+
+TruthTable *inverse(TruthTable function) {
+    TruthTable *result = initTruthTable(function.dimension);
+    for (size_t x = 0; x < 1L << function.dimension; ++x) {
+        size_t y = function.elements[x];
+        result->elements[y] = x;
+    }
+    return result;
 }

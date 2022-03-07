@@ -12,31 +12,81 @@ typedef struct {
     struct Node *next;
 } Node ;
 
+/**
+ * Initialize a new linked list of struct Node
+ * @return A new empty linked list
+ */
 Node * initLinkedList();
 
+/**
+ * Add a new node to a linked list.
+ * @param head The head of the linked list
+ * @param data The data for the node to be added
+ */
 void addToLinkedList(Node *head, size_t data);
 
-void displayLinkedList(Node *head);
+/**
+ * Print a linked list to the console
+ * @param head The head of the linked list
+ */
+void printLinkedList(Node *head);
 
+/**
+ * Counts all the nodes in a linked list and returns the result
+ * @param head The head of the linked list
+ * @return The number of nodes in the linked list
+ */
 size_t countNodes(Node *head);
 
-void freeLinkedList(Node *head);
+/**
+ * Destroy a linked list of struct Node
+ * @param head The head of the Linked List
+ */
+void destroyLinkedList(Node *head);
 
 typedef struct {
-    truthTable *data;
+    TruthTable *data;
     struct ttNode *next;
-} ttNode ;
+} TtNode ;
 
-ttNode * initTtNode();
+/**
+ * Initialize a new Linked list of type Truth Table Node
+ * @return The new node created
+ */
+TtNode * initTtNode();
 
-void addNode(ttNode *head, truthTable *data);
+/**
+ * Add a node to the linked list.
+ * @param head The pointer to the head of the linked list
+ * @param data The data to add to the list
+ */
+void addNode(TtNode *head, TruthTable *data);
 
-truthTable * getNode(ttNode *head, size_t index);
+/**
+ * Count the number of nodes in the linked list
+ * @param head The pointer to the head of the linked list
+ * @return The number of nodes in the linked list
+ */
+TruthTable * getNode(TtNode *head, size_t index);
 
-size_t countTtNodes(ttNode *head);
 
-void displayTtLinkedList(ttNode *head);
+/**
+ * Counts all the nodes in a linked list and returns the result
+ * @param head The head of the linked list
+ * @return The number of nodes in the linked list
+ */
+size_t countTtNodes(TtNode *head);
 
-void freeTtLinkedList(ttNode *head);
+/**
+ * Print linked list to the console
+ * @param head The head of the linked list
+ */
+void printTtLinkedList(TtNode *head);
+
+/**
+ * Destroy Linked List of struct TtNode
+ * @param head The head of the linked list
+ */
+void destroyTtLinkedList(TtNode *head);
 
 #endif //EA_EQUIVALENCE_LINKEDLIST_H

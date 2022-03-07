@@ -1,9 +1,8 @@
-#include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
 #include "walshTransform.h"
 
-void destroyWalshTransform(walshTransform *wt) {
+void destroyWalshTransform(WalshTransform *wt) {
     for (size_t i = 0; i < 1L << wt->dimension; ++i) {
         free(wt->elements[i]);
     }
@@ -15,7 +14,7 @@ _Bool dot(size_t a, size_t b) {
     return __builtin_popcountl(a & b) % 2;
 }
 
-size_t truthTableWalshTransform(truthTable tt, size_t a, size_t b) {
+size_t truthTableWalshTransform(TruthTable tt, size_t a, size_t b) {
     size_t sum = 0;
     for (size_t x = 0; x < 1L << tt.dimension; ++x) {
         sum += dot(a, x) ^ dot(b, tt.elements[x]) ? -1 : 1;
@@ -23,8 +22,8 @@ size_t truthTableWalshTransform(truthTable tt, size_t a, size_t b) {
     return sum;
 }
 
-walshTransform * truthTableToWalshTransform(truthTable tt) {
-    walshTransform *wt = malloc(sizeof(walshTransform));
+WalshTransform * truthTableToWalshTransform(TruthTable tt) {
+    WalshTransform *wt = malloc(sizeof(WalshTransform));
     size_t dimension = tt.dimension;
     wt->dimension = dimension;
     wt->elements = malloc(sizeof(size_t) * 1L << dimension);
@@ -37,7 +36,7 @@ walshTransform * truthTableToWalshTransform(truthTable tt) {
     return wt;
 }
 
-void printWalshTransformTable(walshTransform wt) {
+void printWalshTransformTable(WalshTransform wt) {
     printf("Walsh transform: \n");
     size_t entries = 1L << wt.dimension;
     for (size_t a = 0; a < entries; ++a) {
@@ -48,7 +47,7 @@ void printWalshTransformTable(walshTransform wt) {
     }
 }
 
-size_t walshTransformPowerMoment(walshTransform wt, size_t k, size_t shiftA, size_t shiftB) {
+size_t walshTransformPowerMoment(WalshTransform wt, size_t k, size_t shiftA, size_t shiftB) {
     size_t sum = 0;
     for (size_t a = 0; a < 1L << wt.dimension; ++a) {
         for (size_t b = 0; b < 1L << wt.dimension; ++b) {
@@ -64,9 +63,9 @@ size_t walshTransformPowerMoment(walshTransform wt, size_t k, size_t shiftA, siz
     return sum;
 }
 
-partitions *eaPartitionWalsh(truthTable *tt, size_t k) {
+partitions *eaPartitionWalsh(TruthTable *tt, size_t k) {
     // Change function f and g from a truth table to a walsh transform table
-    walshTransform *wt = truthTableToWalshTransform(*tt);
+    WalshTransform *wt = truthTableToWalshTransform(*tt);
 
     size_t *multiplicities = malloc(sizeof(size_t) * 1L << wt->dimension);
     size_t possibleValues [1L << wt->dimension];

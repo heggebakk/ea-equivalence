@@ -8,9 +8,23 @@
 #include "../utils/truthTable.h"
 #include "../utils/linkedList.h"
 
+/**
+ * Find all linear permutations L respecting two given partitions f and g, i.e. such that L maps all elements from a given
+ * class in the partition under f to its corresponding class in the partition under g.
+ * @param f The partitions for function F
+ * @param g The partitions for function G
+ * @param dimension The dimension
+ * @param basis The basis
+ * @param l1
+ * @param fClassPosition
+ * @param gClassPosition
+ * @param domainMap
+ * @param fp The file to write to
+ * @return The number of permutations found
+ */
 size_t
-outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *gClassPosition,
-                 size_t *domainMap, FILE *fp, size_t *fClassPosition);
+outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
+                 size_t *gClassPosition, size_t *domainMap, FILE *fp);
 
 /**
  * Create a standard basis for the given dimension. 2^n where n = dimension.
@@ -19,8 +33,25 @@ outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, 
  */
 size_t *createStandardBasis(size_t dimension);
 
-void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
-               size_t *generated, bool *generatedImages, ttNode *l1, size_t *fClassPosition, size_t *gClassPosition,
+
+/**
+ * This is a DFS for linear permutations respecting the given partitions, i.e. such that every element from a given bucket
+ * with respect to F maps to an element from a bucket with the same size corresponding to G.
+ * @param k The recursive step
+ * @param basis The basis of the dimension
+ * @param images The
+ * @param partitionF Partitions of function f
+ * @param partitionG Partitions of function g
+ * @param dimension The dimension
+ * @param generated
+ * @param generatedImages
+ * @param l1
+ * @param fClassPosition
+ * @param gClassPosition
+ * @param domainMap
+ */
+void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t dimension,
+               size_t *generated, bool *generatedImages, TtNode *l1, size_t *fClassPosition, size_t *gClassPosition,
                size_t *domainMap);
 
 #endif //EA_EQUIVALENCE_OUTERPERMUTATION_H

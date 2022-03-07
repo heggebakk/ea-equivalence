@@ -1,16 +1,12 @@
 #include <stdbool.h>
 #include <string.h>
-#include <time.h>
 #include "stdlib.h"
 #include "outerPermutation.h"
 #include "partition.h"
 
-/* Find all linear permutations L respecting two given partitions f and g, i.e. such that L maps all elements from a given
- * class in the partition under f to its corresponding class in the partition under g.
- */
 size_t
-outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, ttNode *l1, size_t *gClassPosition,
-                 size_t *domainMap, FILE *fp, size_t *fClassPosition) {
+outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
+                 size_t *gClassPosition, size_t *domainMap, FILE *fp) {
 
     basis = createStandardBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
@@ -49,21 +45,16 @@ size_t *createStandardBasis(size_t dimension) {
     return basis;
 }
 
-/* This is a DFS for linear permutations respecting the given partitions, i.e. such that every element from a given bucket
- * with respect to F maps to an element from a bucket with the same size corresponding to G.
- */
-void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t n,
-               size_t *generated, bool *generatedImages, ttNode *l1, size_t *fClassPosition, size_t *gClassPosition,
+void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t dimension,
+               size_t *generated, bool *generatedImages, TtNode *l1, size_t *fClassPosition, size_t *gClassPosition,
                size_t *domainMap) {
     /* If all basis elements have been assigned an image, and no contradictions have occurred, then we have found
      * a linear permutation preserving the partitions. We reconstruct its truth-table, and add it to the linked
      * list containing all permutations found by the search.
      */
-    if (k == n) {
-        truthTable * new = malloc(sizeof(truthTable));
-        new->dimension = n;
-        new->elements = calloc(sizeof(size_t), 1L << n);
-        memcpy(new->elements, generated, sizeof(size_t) * 1L << n);
+    if (k == dimension) {
+        TruthTable *new = initTruthTable(dimension);
+        memcpy(new->elements, generated, sizeof(size_t) * 1L << dimension);
         addNode(l1, new);
         return;
     }
@@ -123,7 +114,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, partitions *partit
 	/* If no contradiction is encountered, we go to the next basis element. */
         if (!problem) {
             images[k] = ck;
-            recursive(k + 1, basis, images, partitionF, partitionG, n, generated, generatedImages, l1,
+            recursive(k + 1, basis, images, partitionF, partitionG, dimension, generated, generatedImages, l1,
                       fClassPosition, gClassPosition, domainMap);
         }
 

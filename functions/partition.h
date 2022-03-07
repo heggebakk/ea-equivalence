@@ -31,7 +31,7 @@ void destroyPartitions(partitions *p);
  * @param k The size of the tuple T
  * @return Partitions
  */
-partitions *partitionFunction(truthTable *function, size_t k);
+partitions *partitionFunction(TruthTable *function, size_t k);
 
 /**
  * A recursive function that find the multiplicities from k by xor'ing the elements from a function
@@ -42,7 +42,7 @@ partitions *partitionFunction(truthTable *function, size_t k);
  * @param x x_0 xor x_1 xor ... xor x_k
  * @param value The element[x] from the function where x is x_0 xor x_1 xor ... x_k
  */
-void findAllMultiplicities(size_t k, int i, size_t *multiplicities, truthTable *function, size_t x, size_t value);
+void findAllMultiplicities(size_t k, int i, size_t *multiplicities, TruthTable *function, size_t x, size_t value);
 
 /**
  * Printing out to the console, information about a partition (The multiplicity of a "bucket, the size of the
@@ -67,6 +67,11 @@ createMappings(MappingOfClasses *mappingOfClasses, Node **domains, partitions *p
 void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
                      partitions *partitionG, size_t dimension);
 
+/**
+ * Factorial calculations
+ * @param value The value to do factorial on
+ * @return The factorial of the value
+ */
 size_t factorial(size_t value);
 
 #endif //EA_EQUIVALENCE_PARTITION_H

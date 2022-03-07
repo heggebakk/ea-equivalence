@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "innerPermutation.h"
 
-bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTable *l2, truthTable **lPrime) {
+bool innerPermutation(TruthTable *f, TruthTable *g, const size_t *basis, TruthTable *l2, TruthTable **lPrime) {
     Node **restrictedDomains = calloc(sizeof(Node **), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
@@ -15,13 +15,13 @@ bool innerPermutation(truthTable *f, truthTable *g, const size_t *basis, truthTa
     free(values);
 
     for (size_t i = 0; i < f->dimension; ++i) {
-        freeLinkedList(restrictedDomains[i]);
+        destroyLinkedList(restrictedDomains[i]);
     }
     free(restrictedDomains);
     return result;
 }
 
-bool *computeSetOfTs(truthTable *f, size_t x) {
+bool *computeSetOfTs(TruthTable *f, size_t x) {
     size_t n = f->dimension;
     bool *map = calloc(sizeof(bool), 1L << n);
 
@@ -32,7 +32,7 @@ bool *computeSetOfTs(truthTable *f, size_t x) {
     return map;
 }
 
-Node *computeDomain(const bool *listOfTs, truthTable *f) {
+Node *computeDomain(const bool *listOfTs, TruthTable *f) {
     size_t n = f->dimension;
     bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -69,7 +69,7 @@ Node *computeDomain(const bool *listOfTs, truthTable *f) {
     return head;
 }
 
-bool dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g, truthTable *l2, truthTable **lPrime) {
+bool dfs(Node **domains, size_t k, size_t *values, TruthTable *f, TruthTable *g, TruthTable *l2, TruthTable **lPrime) {
     if (k >= f->dimension) {
         reconstructTruthTable(values, l2);
         *lPrime = composeFunctions(f, l2);
@@ -90,7 +90,7 @@ bool dfs(Node **domains, size_t k, size_t *values, truthTable *f, truthTable *g,
     return false;
 }
 
-void reconstructTruthTable(const size_t *basisValues, truthTable *l2) {
+void reconstructTruthTable(const size_t *basisValues, TruthTable *l2) {
     for (size_t coordinate = 0; coordinate < 1L << l2->dimension; ++coordinate) {
         size_t result = 0;
         for (size_t i = 0; i < l2->dimension; ++i) {
@@ -102,23 +102,21 @@ void reconstructTruthTable(const size_t *basisValues, truthTable *l2) {
     }
 }
 
-truthTable *composeFunctions(truthTable *f, truthTable *g) {
-    truthTable *result = malloc(sizeof(truthTable));
-    result->dimension = f->dimension;
-    result->elements = calloc(sizeof(size_t), 1L << f->dimension);
+TruthTable *composeFunctions(TruthTable *f, TruthTable *g) {
+    TruthTable *result = initTruthTable(f->dimension);
     for (size_t x = 0; x < 1L << f->dimension; ++x) {
         result->elements[x] = f->elements[g->elements[x]];
     }
     return result;
 }
 
-void addFunctionsTogether(truthTable *to, truthTable *from) {
+void addFunctionsTogether(TruthTable *to, TruthTable *from) {
     for (size_t i = 0; i < 1L << to->dimension; ++i) {
         to->elements[i] ^= from->elements[i];
     }
 }
 
-bool isLinear(truthTable *f) {
+bool isLinear(TruthTable *f) {
     for (size_t a = 1; a < 1L << f->dimension; ++a) {
         for (size_t b = a + 1; b < 1L << f->dimension; ++b) {
             if (b > (a ^ b)) continue;

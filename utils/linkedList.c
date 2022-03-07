@@ -22,7 +22,7 @@ void addToLinkedList(Node *head, size_t data) {
     head->next = (struct Node *) newNode;
 }
 
-void displayLinkedList(Node *head) {
+void printLinkedList(Node *head) {
     Node *current = head;
     if (head == NULL) {
         printf("Linked list is empty. \n");
@@ -48,7 +48,7 @@ size_t countNodes(Node *head) {
     return count;
 }
 
-void freeLinkedList(Node *head) {
+void destroyLinkedList(Node *head) {
     Node *current = NULL;
     while (head != NULL) {
         current = head;
@@ -57,64 +57,50 @@ void freeLinkedList(Node *head) {
     }
 }
 
-/**
- * Initialize a new Linked list of type Truth Table Node
- * @return The new node created
- */
-ttNode * initTtNode() {
-    ttNode *newNode = malloc(sizeof(ttNode));
+TtNode * initTtNode() {
+    TtNode *newNode = malloc(sizeof(TtNode));
     newNode->next = NULL;
     newNode->data = NULL;
     return newNode;
 }
 
-/**
- * Add a node to the linked list.
- * @param head The pointer to the head of the linked list
- * @param data The data to add to the list
- */
-void addNode(ttNode *head, truthTable *data) {
+void addNode(TtNode *head, TruthTable *data) {
     // head.data should be the same right? Why is it different?
     if (head->data == NULL) {
         head->data = data;
         return;
     }
-    ttNode *newNode = malloc(sizeof(ttNode));
+    TtNode *newNode = malloc(sizeof(TtNode));
     newNode->data = data;
     newNode->next = head->next;
     head->next = (struct ttNode *) newNode;
 }
 
-/**
- * Count the number of nodes in the linked list
- * @param head The pointer to the head of the linked list
- * @return The number of nodes in the linked list
- */
-size_t countTtNodes(ttNode *head) {
+size_t countTtNodes(TtNode *head) {
     if (head == NULL) return 0;
     size_t count = 1;
-    ttNode *current = head;
+    TtNode *current = head;
     while (current->next != NULL) {
         count += 1;
-        current = (ttNode *) current->next;
+        current = (TtNode *) current->next;
     }
     return count;
 }
 
-truthTable * getNode(ttNode *head, size_t index) {
+TruthTable * getNode(TtNode *head, size_t index) {
     if (index > countTtNodes(head)) {
         printf("The node is out of bounds\n");
         exit(1);
     }
-    ttNode *current = head;
+    TtNode *current = head;
     for (int i = 0; i < index; ++i) {
-        current = (ttNode *) current->next;
+        current = (TtNode *) current->next;
     }
     return current->data;
 }
 
-void displayTtLinkedList(ttNode *head) {
-    ttNode *current = head;
+void printTtLinkedList(TtNode *head) {
+    TtNode *current = head;
     if (head == NULL) {
         printf("Linked list is empty. \n");
         return;
@@ -122,16 +108,16 @@ void displayTtLinkedList(ttNode *head) {
     printf("Nodes of linked list: ");
     while (current != NULL) {
         printf("%zu ", (size_t)current);
-        current = (ttNode *) current->next;
+        current = (TtNode *) current->next;
     }
     printf("\n");
 }
 
-void freeTtLinkedList(ttNode *head) {
-    ttNode *current = NULL;
+void destroyTtLinkedList(TtNode *head) {
+    TtNode *current = NULL;
     while (head != NULL) {
         current = head;
-        head = (ttNode *) head->next;
+        head = (TtNode *) head->next;
         destroyTruthTable(current->data);
         free(current);
     }

@@ -26,7 +26,7 @@ partitions *initPartition(size_t size) {
     newPartition->classes = malloc(sizeof(size_t *) * size);
 }
 
-partitions *partitionFunction(truthTable *function, size_t k) {
+partitions *partitionFunction(TruthTable *function, size_t k) {
     if (k % 2 != 0) {
         printf("k is odd, the function partitionFunction works only for even numbers.");
         exit(1);
@@ -66,7 +66,7 @@ partitions *partitionFunction(truthTable *function, size_t k) {
     return partition;
 }
 
-void findAllMultiplicities(size_t k, int i, size_t *multiplicities, truthTable *function, size_t x, size_t value) {
+void findAllMultiplicities(size_t k, int i, size_t *multiplicities, TruthTable *function, size_t x, size_t value) {
     if (i == k - 1) {
         size_t newValue = value ^ function->elements[x];
         multiplicities[newValue] += 1;
@@ -135,7 +135,7 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
 
     // Free domains
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
-        freeLinkedList(domains[i]);
+        destroyLinkedList(domains[i]);
     }
     free(domains);
 }

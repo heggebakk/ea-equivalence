@@ -3,10 +3,10 @@
 
 #include "truthTable.h"
 
-truthTable *randomLinearPermutation(size_t dimension);
+TruthTable *randomLinearPermutation(size_t dimension);
 
-truthTable *randomLinearFunction(size_t dimension);
+TruthTable *randomLinearFunction(size_t dimension);
 
-truthTable * getFunctionG(truthTable *functionF);
+TruthTable * getFunctionG(TruthTable *functionF);
 
 #endif //EA_EQUIVALENCE_EATEST_H
