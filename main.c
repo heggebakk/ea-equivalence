@@ -18,7 +18,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *part
  * @param function The function to create the inverse of
  * @return The inverse
  */
-TruthTable * inverse(TruthTable function);
+TruthTable *inverse(TruthTable function);
 
 int main(int argc, char *argv[]) {
     long k = 4;
@@ -64,12 +64,12 @@ int main(int argc, char *argv[]) {
     RunTimes *runTime;
     partitions *partitionF;
     partitions *partitionG;
-    TtNode *l1 = initTtNode();
     clock_t startTotalTime;
 
     for (int a = 0; a < 2; ++a) {
         // Solve with Walsh transform first:
         if (a == 0) {
+            TtNode *l1 = initTtNode();
             startTotalTime = clock();
             runTime = initRunTimes();
             runTime->parsing = parsingTime;
@@ -93,10 +93,12 @@ int main(int argc, char *argv[]) {
             fprintf(fp, "\nWalsh Transform:\n");
             writeTimes(runTime, fp);
 
+            destroyTtLinkedList(l1);
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
             destroyPartitions(partitionG);
         } else if (a == 1) {
+            TtNode *l1 = initTtNode();
             startTotalTime = clock();
             runTime = initRunTimes();
             runTime->parsing = parsingTime;
@@ -119,6 +121,7 @@ int main(int argc, char *argv[]) {
             fprintf(fp, "\nOriginal Algorithm\n");
             writeTimes(runTime, fp);
 
+            destroyTtLinkedList(l1);
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
             destroyPartitions(partitionG);
@@ -127,7 +130,6 @@ int main(int argc, char *argv[]) {
     destroyTruthTable(functionF);
     destroyTruthTable(functionG);
     free(basis);
-    destroyTtLinkedList(l1);
     fclose(fp);
 
     return 0;
