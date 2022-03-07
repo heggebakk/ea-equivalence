@@ -9,10 +9,10 @@
 #include "../utils/linkedList.h"
 
 /**
- * Find all linear permutations L respecting two given partitions f and g, i.e. such that L maps all elements from a given
+ * Find all linear permutations L respecting two given Partition f and g, i.e. such that L maps all elements from a given
  * class in the partition under f to its corresponding class in the partition under g.
- * @param f The partitions for function F
- * @param g The partitions for function G
+ * @param f The Partition for function F
+ * @param g The Partition for function G
  * @param dimension The dimension
  * @param basis The basis
  * @param l1
@@ -23,7 +23,7 @@
  * @return The number of permutations found
  */
 size_t
-outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
+outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
                  size_t *gClassPosition, size_t *domainMap, FILE *fp);
 
 /**
@@ -35,7 +35,7 @@ size_t *createStandardBasis(size_t dimension);
 
 
 /**
- * This is a DFS for linear permutations respecting the given partitions, i.e. such that every element from a given bucket
+ * This is a DFS for linear permutations respecting the given Partition, i.e. such that every element from a given bucket
  * with respect to F maps to an element from a bucket with the same size corresponding to G.
  * @param k The recursive step
  * @param basis The basis of the dimension
@@ -50,7 +50,7 @@ size_t *createStandardBasis(size_t dimension);
  * @param gClassPosition
  * @param domainMap
  */
-void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t dimension,
+void recursive(size_t k, const size_t *basis, size_t *images, Partition *partitionF, Partition *partitionG, size_t dimension,
                size_t *generated, bool *generatedImages, TtNode *l1, size_t *fClassPosition, size_t *gClassPosition,
                size_t *domainMap);
 

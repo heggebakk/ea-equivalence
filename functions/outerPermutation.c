@@ -5,10 +5,9 @@
 #include "partition.h"
 
 size_t
-outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
+outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
                  size_t *gClassPosition, size_t *domainMap, FILE *fp) {
 
-    basis = createStandardBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
     for (size_t i = 0; i < 1L << dimension; ++i) {
@@ -29,7 +28,6 @@ outerPermutation(partitions *f, partitions *g, size_t dimension, size_t *basis, 
               domainMap);
 
     free(images);
-    free(basis);
     free(generated);
 
     size_t numPerm = countTtNodes(l1);
@@ -45,11 +43,11 @@ size_t *createStandardBasis(size_t dimension) {
     return basis;
 }
 
-void recursive(size_t k, const size_t *basis, size_t *images, partitions *partitionF, partitions *partitionG, size_t dimension,
+void recursive(size_t k, const size_t *basis, size_t *images, Partition *partitionF, Partition *partitionG, size_t dimension,
                size_t *generated, bool *generatedImages, TtNode *l1, size_t *fClassPosition, size_t *gClassPosition,
                size_t *domainMap) {
     /* If all basis elements have been assigned an image, and no contradictions have occurred, then we have found
-     * a linear permutation preserving the partitions. We reconstruct its truth-table, and add it to the linked
+     * a linear permutation preserving the Partition. We reconstruct its truth-table, and add it to the linked
      * list containing all permutations found by the search.
      */
     if (k == dimension) {

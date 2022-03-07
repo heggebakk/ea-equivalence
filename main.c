@@ -10,7 +10,7 @@
 #include "functions/innerPermutation.h"
 #include "utils/runTime.h"
 
-void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *partitionF, partitions *partitionG,
+void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, TtNode *l1, FILE *fp);
 
 /**
@@ -18,41 +18,79 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *part
  * @param function The function to create the inverse of
  * @return The inverse
  */
-TruthTable * inverse(TruthTable function);
+TruthTable *inverse(TruthTable function);
 
 int main(int argc, char *argv[]) {
+    char *filename = "result.txt";
+    char *fileTruthTable;
     long k = 4;
+    bool partitionOnly = false;
 
     if (argc < 2) {
         printf("Expected at least 1 argument!");
         return 1;
     }
 
-    if (argv[2] != NULL) {
-        char* p;
-        errno = 0;
-        k = strtol(argv[2], &p, 10);
-        if (*p != '\0' || errno != 0) {
-            printf("Conversion went wrong!\n");
-            return 1;
+    for (int i = 1; i < argc; ++i) {
+        // Check for flag
+        if (argv[i][0] == '-') {
+            switch (argv[i][1]) {
+                // Help
+                case 'h':
+                    printf("How to use the program: \n");
+                    printf("-h \tHelp\n");
+                    printf("-f \tFilename for writing to file\n");
+                    printf("-k \tSize of tuple T\n");
+                    printf("-t \t* File, type Truth Table\n");
+                    printf("-p \tRuns only partitioning \tBy adding this flag it sets this to be true.\n");
+                    exit(0);
+                case 'f':
+                    i++;
+                    filename = argv[i];
+                    continue;
+                case 'k':
+                    // Set the k
+                    i++;
+                    errno = 0;
+                    char *p;
+                    k = strtol(argv[i], &p, 10);
+                    if (*p != '\0' || errno != 0) {
+                        printf("Conversion went wrong for k\n");
+                        return 1;
+                    }
+                    continue;
+                case 't':
+                    // Parse files to truth tables
+                    i++;
+                    fileTruthTable = argv[i];
+                    continue;
+                case 'p': {
+                    partitionOnly = true;
+                }
+            }
         }
-        printf("k = %ld\n", k);
     }
+
+    // Specify which file to write to.
+    FILE *fp = fopen(filename, "w+");
 
     // Parse files to truth tables
     clock_t startParsing= clock();
     double parsingTime = 0.0;
-    TruthTable *functionF = parseTruthTable(argv[1]);
+    TruthTable *functionF = parseTruthTable(fileTruthTable);
     TruthTable *functionG = getFunctionG(functionF);
     parsingTime += (double) (clock() - startParsing) / CLOCKS_PER_SEC;
 
-    // Specify which file to write to.
-    char *filename = "result.txt";
-    FILE *fp = fopen(filename, "w+");
-    fprintf(fp, "%s\n", argv[1]);
+    if (partitionOnly) {
+        Partition *partition = partitionFunction(functionF, k);
+        writePartition(partition, fp);
+        printPartitionInfo(partition);
+        return 0;
+    }
 
     printTruthTable(functionF);
     printTruthTable(functionG);
+    fprintf(fp, "%s\n", fileTruthTable);
     fprintf(fp, "// Dimension:\n%zu\n", functionF->dimension);
     writeTruthTable(functionF, fp, "F");
     writeTruthTable(functionG, fp, "G");
@@ -62,14 +100,14 @@ int main(int argc, char *argv[]) {
     size_t *basis = createStandardBasis(DIMENSION);
 
     RunTimes *runTime;
-    partitions *partitionF;
-    partitions *partitionG;
-    TtNode *l1 = initTtNode();
+    Partition *partitionF;
+    Partition *partitionG;
     clock_t startTotalTime;
 
     for (int a = 0; a < 2; ++a) {
         // Solve with Walsh transform first:
         if (a == 0) {
+            TtNode *l1 = initTtNode();
             startTotalTime = clock();
             runTime = initRunTimes();
             runTime->parsing = parsingTime;
@@ -93,10 +131,12 @@ int main(int argc, char *argv[]) {
             fprintf(fp, "\nWalsh Transform:\n");
             writeTimes(runTime, fp);
 
+            destroyTtLinkedList(l1);
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
             destroyPartitions(partitionG);
         } else if (a == 1) {
+            TtNode *l1 = initTtNode();
             startTotalTime = clock();
             runTime = initRunTimes();
             runTime->parsing = parsingTime;
@@ -119,6 +159,7 @@ int main(int argc, char *argv[]) {
             fprintf(fp, "\nOriginal Algorithm\n");
             writeTimes(runTime, fp);
 
+            destroyTtLinkedList(l1);
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
             destroyPartitions(partitionG);
@@ -127,15 +168,14 @@ int main(int argc, char *argv[]) {
     destroyTruthTable(functionF);
     destroyTruthTable(functionG);
     free(basis);
-    destroyTtLinkedList(l1);
     fclose(fp);
 
     return 0;
 }
 
-void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *partitionF, partitions *partitionG,
+void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, TtNode *l1, FILE *fp) {
-    // We might end up in a situation where we have more than one mapping of the partitions from F and G.
+    // We might end up in a situation where we have more than one mapping of the Partition from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
     MappingOfClasses *mappingOfClassesF = initMappingsOfClasses();
     MappingOfClasses *mappingOfClassesG = initMappingsOfClasses();
