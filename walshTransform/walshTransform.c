@@ -63,7 +63,7 @@ size_t walshTransformPowerMoment(WalshTransform wt, size_t k, size_t shiftA, siz
     return sum;
 }
 
-partitions *eaPartitionWalsh(TruthTable *tt, size_t k) {
+Partition *eaPartitionWalsh(TruthTable *tt, size_t k) {
     // Change function f and g from a truth table to a walsh transform table
     WalshTransform *wt = truthTableToWalshTransform(*tt);
 
@@ -89,7 +89,7 @@ partitions *eaPartitionWalsh(TruthTable *tt, size_t k) {
     }
 
     // At this point, we know what exact multiplicities define the partition, and can construct the structure
-    partitions *p = malloc(sizeof(partitions));
+    Partition *p = malloc(sizeof(Partition));
     p->numberOfClasses = currentPossibleValue;
     p->classSizes = malloc(sizeof(size_t) * currentPossibleValue);
     p->classes = malloc(sizeof(size_t *) * currentPossibleValue);

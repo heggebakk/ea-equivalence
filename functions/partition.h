@@ -15,14 +15,14 @@ MappingOfClasses *initMappingsOfClasses();
 
 void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses);
 
-typedef struct vbfPartitions {
+typedef struct {
     size_t numberOfClasses;
     size_t *multiplicities;
     size_t *classSizes;
     size_t **classes;
-} partitions;
+} Partition;
 
-void destroyPartitions(partitions *p);
+void destroyPartitions(Partition *p);
 
 /**
  * Partition bucket size where k = even
@@ -31,7 +31,7 @@ void destroyPartitions(partitions *p);
  * @param k The size of the tuple T
  * @return Partitions
  */
-partitions *partitionFunction(TruthTable *function, size_t k);
+Partition *partitionFunction(TruthTable *function, size_t k);
 
 /**
  * A recursive function that find the multiplicities from k by xor'ing the elements from a function
@@ -49,7 +49,7 @@ void findAllMultiplicities(size_t k, int i, size_t *multiplicities, TruthTable *
  * bucket and the elements in the bucket.
  * @param p A partition
  */
-void printPartitionInfo(partitions *p);
+void printPartitionInfo(Partition *p);
 
 /**
  * To avoid recalculating which permutation class maps to which, we'll create a map. This map will tell us which class
@@ -59,13 +59,13 @@ void printPartitionInfo(partitions *p);
  * @param partitionF A partition of function F
  * @param partitionG A partition of function G
  */
-void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingOfClasses *mappingOfClasses);
+void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t dimension, MappingOfClasses *mappingOfClasses);
 
 void
-createMappings(MappingOfClasses *mappingOfClasses, Node **domains, partitions *partitionG, size_t dimension);
+createMappings(MappingOfClasses *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension);
 
 void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
-                     partitions *partitionG, size_t dimension);
+                     Partition *partitionG, size_t dimension);
 
 /**
  * Factorial calculations

@@ -18,15 +18,15 @@ void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses) {
     free(mappingsOfClasses);
 }
 
-partitions *initPartition(size_t size) {
-    partitions *newPartition = malloc(sizeof(partitions));
+Partition *initPartition(size_t size) {
+    Partition *newPartition = malloc(sizeof(Partition));
     newPartition->numberOfClasses = 0;
     newPartition->multiplicities = malloc(sizeof(size_t) * size);
     newPartition->classSizes = malloc(sizeof(size_t) * size);
     newPartition->classes = malloc(sizeof(size_t *) * size);
 }
 
-partitions *partitionFunction(TruthTable *function, size_t k) {
+Partition *partitionFunction(TruthTable *function, size_t k) {
     if (k % 2 != 0) {
         printf("k is odd, the function partitionFunction works only for even numbers.");
         exit(1);
@@ -37,7 +37,7 @@ partitions *partitionFunction(TruthTable *function, size_t k) {
     for (size_t i = 0; i < 1L << function->dimension; ++i) multiplicities[i] = 0;
     findAllMultiplicities(k, 0, multiplicities, function, 0, 0);
 
-    partitions *partition = initPartition(1L << function->dimension);
+    Partition *partition = initPartition(1L << function->dimension);
 
     for (size_t i = 0; i < 1L << function->dimension; ++i) {
         size_t numBuckets = partition->numberOfClasses;
@@ -79,7 +79,7 @@ void findAllMultiplicities(size_t k, int i, size_t *multiplicities, TruthTable *
     }
 }
 
-void printPartitionInfo(partitions *p) {
+void printPartitionInfo(Partition *p) {
     for (int i = 0; i < p->numberOfClasses; ++i) {
         printf("%zu, %zu, ", p->multiplicities[i], p->classSizes[i]);
         for (int j = 0; j < p->classSizes[i]; ++j) {
@@ -89,7 +89,7 @@ void printPartitionInfo(partitions *p) {
     }
 }
 
-void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_t dimension, MappingOfClasses *mappingOfClasses) {
+void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t dimension, MappingOfClasses *mappingOfClasses) {
     // Check if the Partition has the same number of classes. If the sizes of the classes is different,
     // we have an invalid solution.
     if (partitionF->numberOfClasses != partitionG->numberOfClasses) {
@@ -140,7 +140,7 @@ void **mapPartitionClasses(partitions *partitionF, partitions *partitionG, size_
     free(domains);
 }
 
-void createMappings(MappingOfClasses *mappingOfClasses, Node **domains, partitions *partitionG, size_t dimension) {
+void createMappings(MappingOfClasses *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension) {
     for (size_t i = 0; i < mappingOfClasses->numOfMappings; ++i) {
         size_t *newList = malloc(sizeof(size_t) * 1L << dimension);
         bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses); // A boolean map with the size of number of classes
@@ -156,7 +156,7 @@ void createMappings(MappingOfClasses *mappingOfClasses, Node **domains, partitio
 }
 
 void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
-                     partitions *partitionG, size_t dimension) {
+                     Partition *partitionG, size_t dimension) {
     if (i >= partitionG->numberOfClasses) {
         return;
     }
@@ -182,7 +182,7 @@ size_t factorial(size_t value) {
     return fact;
 }
 
-void destroyPartitions(partitions *p) {
+void destroyPartitions(Partition *p) {
     for (size_t i = 0; i < p->numberOfClasses; ++i) {
         free(p->classes[i]);
     }

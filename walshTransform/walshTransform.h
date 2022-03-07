@@ -21,6 +21,6 @@ void printWalshTransformTable(WalshTransform wt);
 
 size_t walshTransformPowerMoment(WalshTransform wt, size_t k, size_t shiftA, size_t shiftB);
 
-partitions *eaPartitionWalsh(TruthTable *tt, size_t k);
+Partition *eaPartitionWalsh(TruthTable *tt, size_t k);
 
 #endif //EA_EQUIVALENCE_WALSHTRANSFORM_H

@@ -10,7 +10,7 @@
 #include "functions/innerPermutation.h"
 #include "utils/runTime.h"
 
-void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *partitionF, partitions *partitionG,
+void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, TtNode *l1, FILE *fp);
 
 /**
@@ -100,8 +100,8 @@ int main(int argc, char *argv[]) {
     size_t *basis = createStandardBasis(DIMENSION);
 
     RunTimes *runTime;
-    partitions *partitionF;
-    partitions *partitionG;
+    Partition *partitionF;
+    Partition *partitionG;
     clock_t startTotalTime;
 
     for (int a = 0; a < 2; ++a) {
@@ -173,9 +173,9 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void runAlgorithm(TruthTable *functionF, TruthTable *functionG, partitions *partitionF, partitions *partitionG,
+void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, TtNode *l1, FILE *fp) {
-    // We might end up in a situation where we have more than one mapping of the partitions from F and G.
+    // We might end up in a situation where we have more than one mapping of the Partition from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
     MappingOfClasses *mappingOfClassesF = initMappingsOfClasses();
     MappingOfClasses *mappingOfClassesG = initMappingsOfClasses();
