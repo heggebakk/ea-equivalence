@@ -39,15 +39,14 @@ int main(int argc, char *argv[]) {
                 case 'h':
                     printf("How to use the program: \n");
                     printf("-h \tHelp\n");
-                    printf("-f \tFilename for writing to file");
-                    printf("-k \tSize of tuple T");
+                    printf("-f \tFilename for writing to file\n");
+                    printf("-k \tSize of tuple T\n");
                     printf("-t \t* File, type Truth Table\n");
                     printf("-p \tRuns only partitioning \tBy adding this flag it sets this to be true.\n");
                     exit(0);
                 case 'f':
                     i++;
                     filename = argv[i];
-                    printf("Write to %s\n", filename);
                     continue;
                 case 'k':
                     // Set the k
@@ -59,7 +58,6 @@ int main(int argc, char *argv[]) {
                         printf("Conversion went wrong for k\n");
                         return 1;
                     }
-                    printf("k = %ld\n", k);
                     continue;
                 case 't':
                     // Parse files to truth tables
