@@ -22,6 +22,8 @@ typedef struct {
     size_t **classes;
 } Partition;
 
+Partition *initPartition(size_t size);
+
 void destroyPartitions(Partition *p);
 
 /**
