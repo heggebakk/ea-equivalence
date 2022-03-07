@@ -8,7 +8,6 @@ size_t
 outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
                  size_t *gClassPosition, size_t *domainMap, FILE *fp) {
 
-    basis = createStandardBasis(dimension); /* We will guess the values of L on a linear basis */
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
     for (size_t i = 0; i < 1L << dimension; ++i) {
@@ -29,7 +28,6 @@ outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, Tt
               domainMap);
 
     free(images);
-    free(basis);
     free(generated);
 
     size_t numPerm = countTtNodes(l1);
