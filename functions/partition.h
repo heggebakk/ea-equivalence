@@ -47,9 +47,18 @@ void findAllMultiplicities(size_t k, int i, size_t *multiplicities, TruthTable *
 /**
  * Printing out to the console, information about a partition (The multiplicity of a "bucket, the size of the
  * bucket and the elements in the bucket.
- * @param p A partition
+ * @param partition A partition
  */
-void printPartitionInfo(Partition *p);
+void printPartitionInfo(Partition *partition);
+
+/**
+ * Write partition information to a file where
+ * First line, n, is the number of classes
+ * Next n lines contains the class n
+ * @param partition The partition to write
+ * @param fp The file to write to
+ */
+void writePartition(Partition *partition, FILE *fp);
 
 /**
  * To avoid recalculating which permutation class maps to which, we'll create a map. This map will tell us which class

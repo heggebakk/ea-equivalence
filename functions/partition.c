@@ -79,13 +79,30 @@ void findAllMultiplicities(size_t k, int i, size_t *multiplicities, TruthTable *
     }
 }
 
-void printPartitionInfo(Partition *p) {
-    for (int i = 0; i < p->numberOfClasses; ++i) {
-        printf("%zu, %zu, ", p->multiplicities[i], p->classSizes[i]);
-        for (int j = 0; j < p->classSizes[i]; ++j) {
-            printf("%zu ", p->classes[i][j]);
+void printPartitionInfo(Partition *partition) {
+    printf("Partition:\n%zu\n", partition->numberOfClasses);
+    for (int i = 0; i < partition->numberOfClasses; ++i) {
+        for (int j = 0; j < partition->classSizes[i]; ++j) {
+            if (j == partition->classSizes[i] - 1) {
+                printf("%zu\n", partition->classes[i][j]);
+            } else {
+                printf("%zu ", partition->classes[i][j]);
+            }
         }
-        printf("\n");
+    }
+    printf("\n");
+}
+
+void writePartition(Partition *partition, FILE *fp) {
+    fprintf(fp, "%zu\n", partition->numberOfClasses);
+    for (int i = 0; i < partition->numberOfClasses; ++i) {
+        for (int j = 0; j < partition->classSizes[i]; ++j) {
+            if (j == partition->classSizes[i] - 1) {
+                fprintf(fp, "%zu\n", partition->classes[i][j]);
+            } else {
+                fprintf(fp, "%zu ", partition->classes[i][j]);
+            }
+        }
     }
 }
 

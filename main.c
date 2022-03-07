@@ -83,10 +83,12 @@ int main(int argc, char *argv[]) {
     TruthTable *functionG = getFunctionG(functionF);
     parsingTime += (double) (clock() - startParsing) / CLOCKS_PER_SEC;
 
-    // Specify which file to write to.
-    char *filename = "result.txt";
-    FILE *fp = fopen(filename, "w+");
-    fprintf(fp, "%s\n", argv[1]);
+    if (partitionOnly) {
+        Partition *partition = partitionFunction(functionF, k);
+        writePartition(partition, fp);
+        printPartitionInfo(partition);
+        return 0;
+    }
 
     printTruthTable(functionF);
     printTruthTable(functionG);
