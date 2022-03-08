@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
     char *fileTruthTable;
     long k = 4;
     bool partitionOnly = false;
+    bool allPartitions = false;
 
     if (argc < 2) {
         printf("Expected at least 1 argument!");
@@ -41,6 +42,7 @@ int main(int argc, char *argv[]) {
                     printf("-h \tHelp\n");
                     printf("-f \tFilename for writing to file\n");
                     printf("-k \tSize of tuple T\n");
+                    printf("-o \tRuns only outer permutations stuff\n");
                     printf("-t \t* File, type Truth Table\n");
                     printf("-p \tRuns only partitioning \tBy adding this flag it sets this to be true.\n");
                     exit(0);
@@ -58,6 +60,9 @@ int main(int argc, char *argv[]) {
                         printf("Conversion went wrong for k\n");
                         return 1;
                     }
+                    continue;
+                case 'o':
+                    allPartitions = true;
                     continue;
                 case 't':
                     // Parse file to truth tables
@@ -89,6 +94,24 @@ int main(int argc, char *argv[]) {
         destroyTruthTable(functionF);
         destroyTruthTable(functionG);
         fclose(fp);
+        return 0;
+    }
+    if (allPartitions) {
+        MappingOfClasses *mappingOfClasses = initMappingsOfClasses();
+        Partition *partition = partitionFunction(functionF, k);
+        size_t dimension = functionF->dimension;
+        size_t *basis = createStandardBasis(dimension);
+        TtNode *l1 = initTtNode();
+
+        mapPartitionClasses(partition, partition, dimension, mappingOfClasses);
+        outerPermutation(partition, partition, dimension, basis, l1, mappingOfClasses->mappings[0], mappingOfClasses->mappings[0],
+                         mappingOfClasses->domains[0], fp);
+        fprintf(fp, "%zu\n", countTtNodes(l1));
+        writeTtLinkedList(l1, fp);
+
+        destroyMappingOfClasses(mappingOfClasses);
+        destroyPartitions(partition);
+        free(basis);
         return 0;
     }
 
