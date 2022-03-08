@@ -85,6 +85,10 @@ int main(int argc, char *argv[]) {
         Partition *partition = partitionFunction(functionF, k);
         writePartition(partition, fp);
         printPartitionInfo(partition);
+        destroyPartitions(partition);
+        destroyTruthTable(functionF);
+        destroyTruthTable(functionG);
+        fclose(fp);
         return 0;
     }
 
