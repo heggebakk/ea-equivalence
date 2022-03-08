@@ -145,6 +145,7 @@ int main(int argc, char *argv[]) {
             partitionF = eaPartitionWalsh(functionF, k);
             partitionG = eaPartitionWalsh(functionG, k);
             runTime->partition = stopTime(runTime->partition, startPartitionTime);
+            printPartitionInfo(partitionF);
 
             runAlgorithm(functionF, functionG, partitionF, partitionG, DIMENSION,
                          runTime, basis, fp);
@@ -229,6 +230,9 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
             TruthTable *l2 = initTruthTable(DIMENSION);
 
             if (innerPermutation(functionF, gPrime, basis, l2, &lPrime)) {
+                foundSolution = true;
+                printf("HERE!");
+
                 runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
 
                 // Find l
@@ -236,8 +240,6 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
                 writeTruthTable(l1[i].data, fp, "l1");
                 writeTruthTable(l2, fp, "l2");
                 writeTruthTable(l, fp, "l");
-
-                foundSolution = true;
 
                 // Free memory
                 destroyTruthTable(l);
@@ -253,7 +255,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
             destroyTruthTable(gPrime);
         }
 
-        if (!foundSolution) break;
+        if (foundSolution) break;
     }
     destroyTtLinkedList(l1);
     destroyMappingOfClasses(mappingOfClassesF);

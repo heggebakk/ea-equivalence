@@ -135,12 +135,14 @@ void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t 
             printf("Partition F and G does not have the same class sizes!");
             exit(1);
         }
+        printLinkedList(domains[i]);
+        printf("\n");
     }
 
     // Find out how many mappings there is
     mappingOfClasses->numOfMappings = 1; // There is always at least one mapping
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
-        mappingOfClasses->numOfMappings *= factorial(countNodes(domains[i]));
+        mappingOfClasses->numOfMappings = mappingOfClasses->numOfMappings * factorial(countNodes(domains[i]));
     }
 
     // Create a list of different domain mappings

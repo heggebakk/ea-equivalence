@@ -4,22 +4,22 @@
 #include "linkedList.h"
 #include "truthTable.h"
 
-Node * initLinkedList() {
+Node *initLinkedList() {
     Node *newNode = malloc(sizeof(Node));
-    newNode->data = (size_t) NULL;
+    newNode->data = -1;
     newNode->next = NULL;
     return newNode;
 }
 
 void addToLinkedList(Node *head, size_t data) {
-    if ((void *) head->data == NULL) {
+    if (head->data == -1) {
         head->data = data;
         return;
     }
     Node *newNode = malloc(sizeof(Node));
     newNode->data = data;
     newNode->next = head->next;
-    head->next = (struct Node *) newNode;
+    head->next = (struct Node*) newNode;
 }
 
 void printLinkedList(Node *head) {
@@ -33,7 +33,6 @@ void printLinkedList(Node *head) {
         printf("%zu ", current->data);
         current = (Node *) current->next;
     }
-    printf("\n");
 }
 
 size_t countNodes(Node *head) {
@@ -65,7 +64,6 @@ TtNode * initTtNode() {
 }
 
 void addNode(TtNode *head, TruthTable *data) {
-    // head.data should be the same right? Why is it different?
     if (head->data == NULL) {
         head->data = data;
         return;
