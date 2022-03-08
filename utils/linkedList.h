@@ -69,7 +69,6 @@ void addNode(TtNode *head, TruthTable *data);
  */
 TruthTable * getNode(TtNode *head, size_t index);
 
-
 /**
  * Counts all the nodes in a linked list and returns the result
  * @param head The head of the linked list
@@ -82,6 +81,13 @@ size_t countTtNodes(TtNode *head);
  * @param head The head of the linked list
  */
 void printTtLinkedList(TtNode *head);
+
+/**
+ * Write all truth tables from a linked list to a file
+ * @param head The head of the linked list
+ * @param fp The file to write to
+ */
+void writeTtLinkedList(TtNode *head, FILE *fp);
 
 /**
  * Destroy Linked List of struct TtNode

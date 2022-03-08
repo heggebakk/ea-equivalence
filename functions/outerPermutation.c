@@ -4,7 +4,7 @@
 #include "outerPermutation.h"
 #include "partition.h"
 
-size_t
+void
 outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
                  size_t *gClassPosition, size_t *domainMap, FILE *fp) {
 
@@ -29,10 +29,6 @@ outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, Tt
 
     free(images);
     free(generated);
-
-    size_t numPerm = countTtNodes(l1);
-    fprintf(fp, "// Number of permutations:\n%zu \n", numPerm);
-    return numPerm;
 }
 
 size_t *createStandardBasis(size_t dimension) {

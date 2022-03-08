@@ -107,10 +107,30 @@ void printTtLinkedList(TtNode *head) {
     }
     printf("Nodes of linked list: ");
     while (current != NULL) {
-        printf("%zu ", (size_t)current);
+        for (int i = 0; i < 1L << current->data->dimension; ++i) {
+            if (i == (1L << current->data->dimension) - 1) {
+                printf("%zu\n", current->data->elements[i]);
+            } else {
+                printf("%zu ", current->data->elements[i]);
+            }
+        }
         current = (TtNode *) current->next;
     }
     printf("\n");
+}
+
+void writeTtLinkedList(TtNode *head, FILE *fp) {
+    TtNode *current = head;
+    while (current != NULL) {
+        for (int i = 0; i < 1L << current->data->dimension; ++i) {
+            if (i == (1L << current->data->dimension) - 1) {
+                fprintf(fp, "%zu\n", current->data->elements[i]);
+            } else {
+                fprintf(fp, "%zu ", current->data->elements[i]);
+            }
+        }
+        current = (TtNode *) current->next;
+    }
 }
 
 void destroyTtLinkedList(TtNode *head) {

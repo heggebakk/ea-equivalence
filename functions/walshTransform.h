@@ -2,7 +2,7 @@
 #define EA_EQUIVALENCE_WALSHTRANSFORM_H
 
 #include "../utils/truthTable.h"
-#include "../functions/partition.h"
+#include "partition.h"
 
 typedef struct {
     size_t dimension;
