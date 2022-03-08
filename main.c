@@ -6,7 +6,7 @@
 #include "utils/truthTable.h"
 #include "functions/outerPermutation.h"
 #include "utils/eaTest.h"
-#include "walshTransform/walshTransform.h"
+#include "functions/walshTransform.h"
 #include "functions/innerPermutation.h"
 #include "utils/runTime.h"
 
