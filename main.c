@@ -158,6 +158,7 @@ int main(int argc, char *argv[]) {
             fprintf(fp, "\nWalsh Transform:\n");
             writeTimes(runTime, fp);
 
+            destroyRunTimes(runTime);
             destroyPartitions(partitionF);
             destroyPartitions(partitionG);
         } else if (a == 1) {
@@ -231,7 +232,6 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
             if (innerPermutation(functionF, gPrime, basis, l2, &lPrime)) {
                 foundSolution = true;
-                printf("HERE!");
 
                 runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
 
