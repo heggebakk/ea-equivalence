@@ -8,6 +8,14 @@ MappingOfClasses *initMappingsOfClasses() {
     return newMap;
 }
 
+void addToMOC(MappingOfClasses *moc, size_t *mapping, size_t *domain, size_t mappingSize, size_t domainSize) {
+    moc->mappings[moc->numOfMappings] = malloc(sizeof(size_t *) * mappingSize);
+    moc->domains[moc->numOfMappings] = malloc(sizeof (size_t *) * domainSize);
+    memcpy(moc->mappings[moc->numOfMappings], mapping, mappingSize);
+    memcpy(moc->domains[moc->numOfMappings], domain, domainSize);
+    moc->numOfMappings += 1;
+}
+
 void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses) {
     for (int i = 0; i < mappingsOfClasses->numOfMappings; ++i) {
         free(mappingsOfClasses->domains[i]);
@@ -156,7 +164,7 @@ void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t 
 
     // Recursive part.
     mappingOfClasses->mappings = malloc(sizeof(size_t *) * numOfMappings);
-    createMappings(mappingOfClasses, domains, partitionG, dimension);
+    createMappings(mappingOfClasses, domains, partitionG, dimension, numOfMappings);
 
     // Free domains
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
@@ -165,35 +173,45 @@ void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t 
     free(domains);
 }
 
-void createMappings(MappingOfClasses *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension) {
-    for (size_t i = 0; i < mappingOfClasses->numOfMappings; ++i) {
+void
+createMappings(MappingOfClasses *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension, size_t numOfMappings) {
+    for (size_t i = 0; i < numOfMappings; ++i) {
         size_t *newList = malloc(sizeof(size_t) * 1L << dimension);
         bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses); // A boolean map with the size of number of classes
         size_t *currentDomain = malloc(sizeof(size_t) * partitionG->numberOfClasses);
         for (int j = 0; j < partitionG->numberOfClasses; ++j) {
             chosen[j] = false;
         }
-        selectRecursive(0, newList, currentDomain, chosen, domains, partitionG, dimension);
-        mappingOfClasses->mappings[i] = newList;
-        mappingOfClasses->domains[i] = currentDomain;
+        selectRecursive(0, newList, currentDomain, chosen, domains, partitionG, dimension, mappingOfClasses);
         free(chosen);
     }
 }
 
-void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
-                     Partition *partitionG, size_t dimension) {
+void
+selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains, Partition *partitionG,
+                size_t dimension, MappingOfClasses *moc) {
     if (i >= partitionG->numberOfClasses) {
+        printf("newlist: ");
+        for (int j = 0; j < 1L << dimension; ++j) {
+            printf("%zu ", newList[j]);
+        }
+        printf("\n");
+        // Add the new list and the matching domain map to the mappingOfClasses.
+        addToMOC(moc, newList, currentDomain, 1L << dimension, partitionG->numberOfClasses);
         return;
     }
-    Node *current = (Node *) domains[i]; // Tells us which bucket we are going through, starting with the first possible matching
+    Node *current = (Node *) domains[i]->next; // Tells us which bucket we are going through, starting with the first possible matching
     while (current != NULL) {
-        if (chosen[current->data] == false) {
+        if (!chosen[current->data]) {
             currentDomain[i] = current->data;
             for (int j = 0; j < partitionG->classSizes[current->data]; ++j) {
                 newList[partitionG->classes[current->data][j]] = current->data;
-                chosen[current->data] = true;
-                selectRecursive(i + 1, newList, currentDomain, chosen, domains, partitionG, dimension);
             }
+            chosen[current->data] = true;
+            selectRecursive(i + 1, newList, currentDomain, chosen, domains, partitionG, dimension, moc);
+        }
+        if (current->next == NULL) {
+            chosen[current->data] = false;
         }
         current = (Node *) current->next;
     }

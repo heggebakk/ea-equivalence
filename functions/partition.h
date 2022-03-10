@@ -13,6 +13,8 @@ typedef struct {
 
 MappingOfClasses *initMappingsOfClasses();
 
+void addToMOC(MappingOfClasses *moc, size_t *mappings, size_t *domains, size_t mappingSize, size_t domainSize);
+
 void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses);
 
 typedef struct {
@@ -73,10 +75,11 @@ void writePartition(Partition *partition, FILE *fp);
 void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t dimension, MappingOfClasses *mappingOfClasses);
 
 void
-createMappings(MappingOfClasses *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension);
+createMappings(MappingOfClasses *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension, size_t numOfMappings);
 
-void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
-                     Partition *partitionG, size_t dimension);
+void
+selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains, Partition *partitionG,
+                size_t dimension, MappingOfClasses *moc);
 
 /**
  * Factorial calculations
