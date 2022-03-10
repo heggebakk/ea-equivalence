@@ -6,38 +6,35 @@
 
 Node *initLinkedList() {
     Node *newNode = malloc(sizeof(Node));
-    newNode->data = -1;
+    newNode->data = 0;
     newNode->next = NULL;
     return newNode;
 }
 
 void addToLinkedList(Node *head, size_t data) {
-    if (head->data == -1) {
-        head->data = data;
-        return;
-    }
-    Node *newNode = malloc(sizeof(Node));
+    Node *newNode = initLinkedList();
     newNode->data = data;
     newNode->next = head->next;
     head->next = (struct Node*) newNode;
 }
 
 void printLinkedList(Node *head) {
-    Node *current = head;
-    if (head == NULL) {
+    if (head->next == NULL) {
         printf("Linked list is empty. \n");
         return;
     }
+    Node *current = (Node *) head->next;
     printf("Nodes of linked list: ");
     while (current != NULL) {
         printf("%zu ", current->data);
         current = (Node *) current->next;
     }
+    printf("\n");
 }
 
 size_t countNodes(Node *head) {
     size_t count = 0;
-    Node *current = head;
+    Node *current = (Node *) head->next;
 
     while (current != NULL) {
         count += 1;
