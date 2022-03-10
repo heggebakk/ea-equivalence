@@ -199,13 +199,13 @@ int main(int argc, char *argv[]) {
 
 void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, FILE *fp) {
-    TtNode *l1 = initTtNode();
     // We might end up in a situation where we have more than one mapping of the Partition from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
     MappingOfClasses *mappingOfClassesF = initMappingsOfClasses();
     MappingOfClasses *mappingOfClassesG = initMappingsOfClasses();
     mapPartitionClasses(partitionG, partitionF, DIMENSION, mappingOfClassesF);
     mapPartitionClasses(partitionF, partitionG, DIMENSION, mappingOfClassesG);
+    printf("Number of mappings: %zu & %zu\n", mappingOfClassesF->numOfMappings, mappingOfClassesG->numOfMappings);
 
     // Loop over all the mappings, if we find a solution, we break and finish.
     for (int m = 0; m < mappingOfClassesG->numOfMappings; ++m) {
