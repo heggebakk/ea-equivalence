@@ -57,6 +57,12 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
      * respect to G. We know that the image of the basis element must
      * belong to that bucket.
      */
+    //printf("k is %lu\n", k);
+    //printf("basis[k] is %lu\n", basis[k]);
+    //printf("fClassPosition[basis[k]] is %lu\n", fClassPosition[basis[k]]);
+    //printf("domainMap is %lu\n", (size_t) domainMap);
+    //printf("domainMap[0] is %lu\n", domainMap[0]);
+    //printf("domainMap[fClassPosition[basis[k]]] is %lu\n", domainMap[fClassPosition[basis[k]]]);
     size_t posBg = domainMap[fClassPosition[basis[k]]];
     /* We now go through all possible choice from the bucket */
     for (size_t ick = 0; ick < partitionG->classSizes[posBg]; ++ick) {

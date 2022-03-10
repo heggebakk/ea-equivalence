@@ -214,6 +214,8 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
         // Calculate Outer Permutation
         clock_t startOuterPermutationTime = clock();
+	//printf("m is %d\n", m);
+	//printf("mappingOfClassesG->domains is %lu\n", (size_t) mappingOfClassesG->domains);
         outerPermutation(partitionF, partitionG, DIMENSION, basis, l1,
                          mappingOfClassesF->mappings[m],
                          mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m], fp);
