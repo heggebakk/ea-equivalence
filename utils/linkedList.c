@@ -15,7 +15,7 @@ void addToLinkedList(Node *head, size_t data) {
     Node *newNode = initLinkedList();
     newNode->data = data;
     newNode->next = head->next;
-    head->next = (struct Node*) newNode;
+    head->next = newNode;
 }
 
 void printLinkedList(Node *head) {
@@ -23,22 +23,22 @@ void printLinkedList(Node *head) {
         printf("Linked list is empty. \n");
         return;
     }
-    Node *current = (Node *) head->next;
+    Node *current = head->next;
     printf("Nodes of linked list: ");
     while (current != NULL) {
         printf("%zu ", current->data);
-        current = (Node *) current->next;
+        current = current->next;
     }
     printf("\n");
 }
 
 size_t countNodes(Node *head) {
     size_t count = 0;
-    Node *current = (Node *) head->next;
+    Node *current = head->next;
 
     while (current != NULL) {
         count += 1;
-        current = (Node *) current->next;
+        current = current->next;
     }
 
     return count;
@@ -48,7 +48,7 @@ void destroyLinkedList(Node *head) {
     Node *current = NULL;
     while (head != NULL) {
         current = head;
-        head = (Node *) head->next;
+        head = head->next;
         free(current);
     }
 }
@@ -68,7 +68,7 @@ void addNode(TtNode *head, TruthTable *data) {
     TtNode *newNode = malloc(sizeof(TtNode));
     newNode->data = data;
     newNode->next = head->next;
-    head->next = (struct ttNode *) newNode;
+    head->next = newNode;
 }
 
 size_t countTtNodes(TtNode *head) {
@@ -77,7 +77,7 @@ size_t countTtNodes(TtNode *head) {
     TtNode *current = head;
     while (current->next != NULL) {
         count += 1;
-        current = (TtNode *) current->next;
+        current = current->next;
     }
     return count;
 }
@@ -89,7 +89,7 @@ TruthTable * getNode(TtNode *head, size_t index) {
     }
     TtNode *current = head;
     for (int i = 0; i < index; ++i) {
-        current = (TtNode *) current->next;
+        current = current->next;
     }
     return current->data;
 }
@@ -124,15 +124,14 @@ void writeTtLinkedList(TtNode *head, FILE *fp) {
                 fprintf(fp, "%zu ", current->data->elements[i]);
             }
         }
-        current = (TtNode *) current->next;
+        current = current->next;
     }
 }
 
 void destroyTtLinkedList(TtNode *head) {
-    TtNode *current = NULL;
     while (head != NULL) {
-        current = head;
-        head = (TtNode *) head->next;
+        TtNode *current = head;
+        head = head->next;
         destroyTruthTable(current->data);
         free(current);
     }
