@@ -104,8 +104,9 @@ int main(int argc, char *argv[]) {
         TtNode *l1 = initTtNode();
 
         mapPartitionClasses(partition, partition, dimension, mappingOfClasses);
-        outerPermutation(partition, partition, dimension, basis, l1, mappingOfClasses->mappings[0], mappingOfClasses->mappings[0],
-                         mappingOfClasses->domains[0], fp);
+        outerPermutation(partition, partition, dimension, basis, l1, mappingOfClasses->mappings[0],
+                         mappingOfClasses->mappings[0],
+                         mappingOfClasses->domains[0]);
         fprintf(fp, "%zu\n", countTtNodes(l1));
         writeTtLinkedList(l1, fp);
 
@@ -218,7 +219,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 	//printf("mappingOfClassesG->domains is %lu\n", (size_t) mappingOfClassesG->domains);
         outerPermutation(partitionF, partitionG, DIMENSION, basis, l1,
                          mappingOfClassesF->mappings[m],
-                         mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m], fp);
+                         mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m]);
         size_t numPermutations = countTtNodes(l1);
         fprintf(fp, "// Number of permutations:\n%zu \n", numPermutations);
 
