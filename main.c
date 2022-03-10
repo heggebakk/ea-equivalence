@@ -209,6 +209,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
     // Loop over all the mappings, if we find a solution, we break and finish.
     for (int m = 0; m < mappingOfClassesG->numOfMappings; ++m) {
+        TtNode *l1 = initTtNode();
         bool foundSolution = false;
 
         // Calculate Outer Permutation
@@ -242,6 +243,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
                 writeTruthTable(l, fp, "l");
 
                 // Free memory
+                destroyTtLinkedList(l1);
                 destroyTruthTable(l);
                 destroyTruthTable(l1Inverse);
                 destroyTruthTable(l2);
@@ -250,14 +252,15 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
                 break;
             }
+            destroyTtLinkedList(l1);
             destroyTruthTable(l1Inverse);
             destroyTruthTable(l2);
             destroyTruthTable(gPrime);
         }
 
         if (foundSolution) break;
+        destroyTtLinkedList(l1);
     }
-    destroyTtLinkedList(l1);
     destroyMappingOfClasses(mappingOfClassesF);
     destroyMappingOfClasses(mappingOfClassesG);
 }

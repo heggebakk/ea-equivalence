@@ -136,20 +136,26 @@ void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t 
             exit(1);
         }
         printLinkedList(domains[i]);
-        printf("\n");
     }
 
     // Find out how many mappings there is
-    mappingOfClasses->numOfMappings = 1; // There is always at least one mapping
+    size_t numOfMappings = 1; // There is always at least one mapping
+    bool *isCalculated = malloc(sizeof(bool) * partitionF->numberOfClasses);
+    for (int i = 0; i < partitionF->numberOfClasses; ++i) isCalculated[i] = false;
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
-        mappingOfClasses->numOfMappings = mappingOfClasses->numOfMappings * factorial(countNodes(domains[i]));
+        Node *current = (Node *) domains[i]->next;
+        if (!isCalculated[current->data]) {
+            numOfMappings = numOfMappings * factorial(countNodes(domains[i]));
+            isCalculated[current->data] = true;
+        }
     }
+    free(isCalculated);
 
     // Create a list of different domain mappings
-    mappingOfClasses->domains = malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
+    mappingOfClasses->domains = malloc(sizeof(size_t *) * numOfMappings);
 
     // Recursive part.
-    mappingOfClasses->mappings = malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
+    mappingOfClasses->mappings = malloc(sizeof(size_t *) * numOfMappings);
     createMappings(mappingOfClasses, domains, partitionG, dimension);
 
     // Free domains
@@ -179,7 +185,7 @@ void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *cho
     if (i >= partitionG->numberOfClasses) {
         return;
     }
-    Node *current = domains[i]; // Tells us which bucket we are going through, starting with the first possible matching
+    Node *current = (Node *) domains[i]; // Tells us which bucket we are going through, starting with the first possible matching
     while (current != NULL) {
         if (chosen[current->data] == false) {
             currentDomain[i] = current->data;
@@ -195,7 +201,7 @@ void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *cho
 
 size_t factorial(size_t value) {
     size_t fact = 1;
-    for (int i = 1; i < value; ++i) {
+    for (int i = 1; i < value + 1; ++i) {
         fact *= i;
     }
     return fact;
