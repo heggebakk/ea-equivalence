@@ -202,13 +202,13 @@ void
 selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains, Partition *partitionG,
                 size_t dimension, MappingOfClasses *moc) {
     if (i >= partitionG->numberOfClasses) {
-        printf("newlist: ");
-        for (int j = 0; j < 1L << dimension; ++j) {
-            printf("%zu ", newList[j]);
-        }
-        printf("\n");
         // Add the new list and the matching domain map to the mappingOfClasses.
         addToMOC(moc, newList, currentDomain, 1L << dimension, partitionG->numberOfClasses);
+        printf("domain: ");
+        for (int j = 0; j < partitionG->numberOfClasses; ++j) {
+            printf("%zu ", moc->domains[moc->numOfMappings - 1][j]);
+        }
+        printf("\n");
         return;
     }
     Node *current = (Node *) domains[i]->next; // Tells us which bucket we are going through, starting with the first possible matching

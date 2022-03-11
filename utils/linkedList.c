@@ -72,7 +72,7 @@ void addNode(TtNode *head, TruthTable *data) {
 }
 
 size_t countTtNodes(TtNode *head) {
-    if (head == NULL) return 0;
+    if (head->data == NULL) return 0;
     size_t count = 1;
     TtNode *current = head;
     while (current->next != NULL) {
@@ -129,10 +129,11 @@ void writeTtLinkedList(TtNode *head, FILE *fp) {
 }
 
 void destroyTtLinkedList(TtNode *head) {
-    while (head != NULL) {
+    while (head->next != NULL) {
         TtNode *current = head;
         head = head->next;
         destroyTruthTable(current->data);
         free(current);
     }
+    free(head);
 }

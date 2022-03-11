@@ -215,19 +215,18 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
         // Calculate Outer Permutation
         clock_t startOuterPermutationTime = clock();
-	//printf("m is %d\n", m);
-	//printf("mappingOfClassesG->domains is %lu\n", (size_t) mappingOfClassesG->domains);
         outerPermutation(partitionF, partitionG, DIMENSION, basis, l1,
                          mappingOfClassesF->mappings[m],
                          mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m]);
         size_t numPermutations = countTtNodes(l1);
-        fprintf(fp, "// Number of permutations:\n%zu \n", numPermutations);
-
         runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
 
         // Calculate inner permutation
         clock_t startInnerPermutationTime = clock();
         for (size_t i = 0; i < numPermutations; ++i) {
+            fprintf(fp, "// Number of permutations:\n%zu \n", numPermutations);
+            printf("l1:\n");
+            printTtLinkedList(l1);
             TruthTable *l1Prime = getNode(l1, i);
             TruthTable *l1Inverse = inverse(*l1Prime);
             TruthTable *gPrime = composeFunctions(l1Inverse, functionG);

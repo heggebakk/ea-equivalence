@@ -50,6 +50,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
         TruthTable *new = initTruthTable(dimension);
         memcpy(new->elements, generated, sizeof(size_t) * 1L << dimension);
         addNode(l1, new);
+//        destroyTruthTable(new);
         return;
     }
 
