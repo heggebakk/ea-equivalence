@@ -225,8 +225,6 @@ selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, 
             }
             printf("\n");
             selectRecursive(i + 1, newList, currentDomain, chosen, domains, partitionG, dimension, moc);
-        }
-        if (current->next == NULL) {
             chosen[current->data] = false;
             printf("CHOSEN B: ");
             for (int j = 0; j < partitionG->numberOfClasses; ++j) {

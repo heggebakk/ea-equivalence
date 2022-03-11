@@ -241,12 +241,11 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
                 // Find l
                 TruthTable *l = composeFunctions(l1Prime, lPrime);
-                writeTruthTable(l1[i].data, fp, "l1");
+                writeTruthTable(getNode(l1, i), fp, "l1");
                 writeTruthTable(l2, fp, "l2");
                 writeTruthTable(l, fp, "l");
 
                 // Free memory
-                destroyTtLinkedList(l1);
                 destroyTruthTable(l);
                 destroyTruthTable(l1Inverse);
                 destroyTruthTable(l2);
@@ -255,14 +254,12 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
                 break;
             }
-            destroyTtLinkedList(l1);
             destroyTruthTable(l1Inverse);
             destroyTruthTable(l2);
             destroyTruthTable(gPrime);
         }
-
-        if (foundSolution) break;
         destroyTtLinkedList(l1);
+        if (foundSolution) break;
     }
     destroyMappingOfClasses(mappingOfClassesF);
     destroyMappingOfClasses(mappingOfClassesG);
