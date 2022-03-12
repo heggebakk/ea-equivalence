@@ -62,11 +62,13 @@ TtNode * initTtNode() {
 
 void addNode(TtNode *head, TruthTable *data) {
     if (head->data == NULL) {
-        head->data = data;
+        head->data = initTruthTable(data->dimension);
+        memcpy(head->data->elements, data->elements, sizeof(size_t) * 1L << data->dimension);
         return;
     }
     TtNode *newNode = malloc(sizeof(TtNode));
-    newNode->data = data;
+    newNode->data = initTruthTable(data->dimension);
+    memcpy(newNode->data->elements, data->elements, sizeof(size_t) * 1L << data->dimension);
     newNode->next = head->next;
     head->next = newNode;
 }
@@ -129,11 +131,14 @@ void writeTtLinkedList(TtNode *head, FILE *fp) {
 }
 
 void destroyTtLinkedList(TtNode *head) {
-    while (head->next != NULL) {
+    while (head->data != NULL) {
         TtNode *current = head;
         head = head->next;
         destroyTruthTable(current->data);
         free(current);
+        if(head == NULL) {
+            free(head);
+            break;
+        }
     }
-    free(head);
 }

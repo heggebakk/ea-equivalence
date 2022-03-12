@@ -154,7 +154,6 @@ void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t 
             printf("Partition F and G does not have the same class sizes!");
             exit(1);
         }
-        printLinkedList(domains[i]);
     }
 
     // Find out how many mappings there is
@@ -204,11 +203,6 @@ selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, 
     if (i >= partitionG->numberOfClasses) {
         // Add the new list and the matching domain map to the mappingOfClasses.
         addToMOC(moc, newList, currentDomain, 1L << dimension, partitionG->numberOfClasses);
-        printf("domain: ");
-        for (int j = 0; j < partitionG->numberOfClasses; ++j) {
-            printf("%zu ", moc->domains[moc->numOfMappings - 1][j]);
-        }
-        printf("\n");
         return;
     }
     Node *current = (Node *) domains[i]->next; // Tells us which bucket we are going through, starting with the first possible matching
@@ -219,18 +213,8 @@ selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, 
                 newList[partitionG->classes[current->data][j]] = current->data;
             }
             chosen[current->data] = true;
-            printf("CHOSEN A: ");
-            for (int j = 0; j < partitionG->numberOfClasses; ++j) {
-                printf("%d ", chosen[j]);
-            }
-            printf("\n");
             selectRecursive(i + 1, newList, currentDomain, chosen, domains, partitionG, dimension, moc);
             chosen[current->data] = false;
-            printf("CHOSEN B: ");
-            for (int j = 0; j < partitionG->numberOfClasses; ++j) {
-                printf("%d ", chosen[j]);
-            }
-            printf("\n");
         }
         current = (Node *) current->next;
     }
