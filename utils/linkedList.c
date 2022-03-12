@@ -4,45 +4,41 @@
 #include "linkedList.h"
 #include "truthTable.h"
 
-Node * initLinkedList() {
+Node *initLinkedList() {
     Node *newNode = malloc(sizeof(Node));
-    newNode->data = (size_t) NULL;
+    newNode->data = 0;
     newNode->next = NULL;
     return newNode;
 }
 
 void addToLinkedList(Node *head, size_t data) {
-    if ((void *) head->data == NULL) {
-        head->data = data;
-        return;
-    }
-    Node *newNode = malloc(sizeof(Node));
+    Node *newNode = initLinkedList();
     newNode->data = data;
     newNode->next = head->next;
-    head->next = (struct Node *) newNode;
+    head->next = newNode;
 }
 
 void printLinkedList(Node *head) {
-    Node *current = head;
-    if (head == NULL) {
+    if (head->next == NULL) {
         printf("Linked list is empty. \n");
         return;
     }
+    Node *current = head->next;
     printf("Nodes of linked list: ");
     while (current != NULL) {
         printf("%zu ", current->data);
-        current = (Node *) current->next;
+        current = current->next;
     }
     printf("\n");
 }
 
 size_t countNodes(Node *head) {
     size_t count = 0;
-    Node *current = head;
+    Node *current = head->next;
 
     while (current != NULL) {
         count += 1;
-        current = (Node *) current->next;
+        current = current->next;
     }
 
     return count;
@@ -52,7 +48,7 @@ void destroyLinkedList(Node *head) {
     Node *current = NULL;
     while (head != NULL) {
         current = head;
-        head = (Node *) head->next;
+        head = head->next;
         free(current);
     }
 }
@@ -65,24 +61,25 @@ TtNode * initTtNode() {
 }
 
 void addNode(TtNode *head, TruthTable *data) {
-    // head.data should be the same right? Why is it different?
     if (head->data == NULL) {
-        head->data = data;
+        head->data = initTruthTable(data->dimension);
+        memcpy(head->data->elements, data->elements, sizeof(size_t) * 1L << data->dimension);
         return;
     }
     TtNode *newNode = malloc(sizeof(TtNode));
-    newNode->data = data;
+    newNode->data = initTruthTable(data->dimension);
+    memcpy(newNode->data->elements, data->elements, sizeof(size_t) * 1L << data->dimension);
     newNode->next = head->next;
-    head->next = (struct ttNode *) newNode;
+    head->next = newNode;
 }
 
 size_t countTtNodes(TtNode *head) {
-    if (head == NULL) return 0;
+    if (head->data == NULL) return 0;
     size_t count = 1;
     TtNode *current = head;
     while (current->next != NULL) {
         count += 1;
-        current = (TtNode *) current->next;
+        current = current->next;
     }
     return count;
 }
@@ -94,7 +91,7 @@ TruthTable * getNode(TtNode *head, size_t index) {
     }
     TtNode *current = head;
     for (int i = 0; i < index; ++i) {
-        current = (TtNode *) current->next;
+        current = current->next;
     }
     return current->data;
 }
@@ -129,16 +126,19 @@ void writeTtLinkedList(TtNode *head, FILE *fp) {
                 fprintf(fp, "%zu ", current->data->elements[i]);
             }
         }
-        current = (TtNode *) current->next;
+        current = current->next;
     }
 }
 
 void destroyTtLinkedList(TtNode *head) {
-    TtNode *current = NULL;
-    while (head != NULL) {
-        current = head;
-        head = (TtNode *) head->next;
+    while (head->data != NULL) {
+        TtNode *current = head;
+        head = head->next;
         destroyTruthTable(current->data);
         free(current);
+        if(head == NULL) {
+            free(head);
+            break;
+        }
     }
 }

@@ -19,12 +19,11 @@
  * @param fClassPosition
  * @param gClassPosition
  * @param domainMap
- * @param fp The file to write to
  * @return The number of permutations found
  */
 void
 outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
-                 size_t *gClassPosition, size_t *domainMap, FILE *fp);
+                 size_t *gClassPosition, size_t *domainMap);
 
 /**
  * Create a standard basis for the given dimension. 2^n where n = dimension.

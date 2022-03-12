@@ -104,8 +104,9 @@ int main(int argc, char *argv[]) {
         TtNode *l1 = initTtNode();
 
         mapPartitionClasses(partition, partition, dimension, mappingOfClasses);
-        outerPermutation(partition, partition, dimension, basis, l1, mappingOfClasses->mappings[0], mappingOfClasses->mappings[0],
-                         mappingOfClasses->domains[0], fp);
+        outerPermutation(partition, partition, dimension, basis, l1, mappingOfClasses->mappings[0],
+                         mappingOfClasses->mappings[0],
+                         mappingOfClasses->domains[0]);
         fprintf(fp, "%zu\n", countTtNodes(l1));
         writeTtLinkedList(l1, fp);
 
@@ -145,6 +146,7 @@ int main(int argc, char *argv[]) {
             partitionF = eaPartitionWalsh(functionF, k);
             partitionG = eaPartitionWalsh(functionG, k);
             runTime->partition = stopTime(runTime->partition, startPartitionTime);
+            printPartitionInfo(partitionF);
 
             runAlgorithm(functionF, functionG, partitionF, partitionG, DIMENSION,
                          runTime, basis, fp);
@@ -157,6 +159,7 @@ int main(int argc, char *argv[]) {
             fprintf(fp, "\nWalsh Transform:\n");
             writeTimes(runTime, fp);
 
+            destroyRunTimes(runTime);
             destroyPartitions(partitionF);
             destroyPartitions(partitionG);
         } else if (a == 1) {
@@ -197,31 +200,31 @@ int main(int argc, char *argv[]) {
 
 void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, FILE *fp) {
-    TtNode *l1 = initTtNode();
     // We might end up in a situation where we have more than one mapping of the Partition from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
     MappingOfClasses *mappingOfClassesF = initMappingsOfClasses();
     MappingOfClasses *mappingOfClassesG = initMappingsOfClasses();
     mapPartitionClasses(partitionG, partitionF, DIMENSION, mappingOfClassesF);
     mapPartitionClasses(partitionF, partitionG, DIMENSION, mappingOfClassesG);
+    printf("Number of mappings: %zu & %zu\n", mappingOfClassesF->numOfMappings, mappingOfClassesG->numOfMappings);
 
     // Loop over all the mappings, if we find a solution, we break and finish.
     for (int m = 0; m < mappingOfClassesG->numOfMappings; ++m) {
+        TtNode *l1 = initTtNode();
         bool foundSolution = false;
 
         // Calculate Outer Permutation
         clock_t startOuterPermutationTime = clock();
         outerPermutation(partitionF, partitionG, DIMENSION, basis, l1,
                          mappingOfClassesF->mappings[m],
-                         mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m], fp);
+                         mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m]);
         size_t numPermutations = countTtNodes(l1);
-        fprintf(fp, "// Number of permutations:\n%zu \n", numPermutations);
-
         runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
 
         // Calculate inner permutation
         clock_t startInnerPermutationTime = clock();
         for (size_t i = 0; i < numPermutations; ++i) {
+            fprintf(fp, "// Number of permutations:\n%zu \n", numPermutations);
             TruthTable *l1Prime = getNode(l1, i);
             TruthTable *l1Inverse = inverse(*l1Prime);
             TruthTable *gPrime = composeFunctions(l1Inverse, functionG);
@@ -229,15 +232,15 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
             TruthTable *l2 = initTruthTable(DIMENSION);
 
             if (innerPermutation(functionF, gPrime, basis, l2, &lPrime)) {
+                foundSolution = true;
+
                 runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
 
                 // Find l
                 TruthTable *l = composeFunctions(l1Prime, lPrime);
-                writeTruthTable(l1[i].data, fp, "l1");
+                writeTruthTable(getNode(l1, i), fp, "l1");
                 writeTruthTable(l2, fp, "l2");
                 writeTruthTable(l, fp, "l");
-
-                foundSolution = true;
 
                 // Free memory
                 destroyTruthTable(l);
@@ -252,10 +255,9 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
             destroyTruthTable(l2);
             destroyTruthTable(gPrime);
         }
-
-        if (!foundSolution) break;
+        destroyTtLinkedList(l1);
+        if (foundSolution) break;
     }
-    destroyTtLinkedList(l1);
     destroyMappingOfClasses(mappingOfClassesF);
     destroyMappingOfClasses(mappingOfClassesG);
 }

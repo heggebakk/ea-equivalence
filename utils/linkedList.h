@@ -7,7 +7,7 @@
 /**
  * Represent a node of a linked list
  */
-typedef struct {
+typedef struct Node {
     size_t data;
     struct Node *next;
 } Node ;
@@ -44,9 +44,9 @@ size_t countNodes(Node *head);
  */
 void destroyLinkedList(Node *head);
 
-typedef struct {
+typedef struct TtNode {
     TruthTable *data;
-    struct ttNode *next;
+    struct TtNode *next;
 } TtNode ;
 
 /**

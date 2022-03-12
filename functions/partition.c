@@ -8,6 +8,25 @@ MappingOfClasses *initMappingsOfClasses() {
     return newMap;
 }
 
+void addToMOC(MappingOfClasses *moc, size_t *mapping, size_t *domain, size_t mappingSize, size_t domainSize) {
+    //for (int i=0; i < domainSize; ++i) {
+    //  printf("%lu ", domain[i]);
+    //}
+    //printf("\n");
+    //printf("numOfMappings is %lu\n", moc->numOfMappings);
+    moc->mappings[moc->numOfMappings] = malloc(sizeof(size_t *) * mappingSize);
+    moc->domains[moc->numOfMappings] = malloc(sizeof (size_t *) * domainSize);
+    memcpy(moc->mappings[moc->numOfMappings], mapping, mappingSize * sizeof(size_t));
+    memcpy(moc->domains[moc->numOfMappings], domain, domainSize * sizeof(size_t));
+    moc->numOfMappings += 1;
+    //printf("moc is %lu\n", (size_t) moc);
+    //printf("moc->domains is %lu\n", (size_t) moc->domains);
+    //printf("moc->domains[0] is %lu\n", (size_t) moc->domains[0]);
+    //printf("Did we copy correctly? Let's find out: %lu\n", moc->domains[moc->numOfMappings-1][0]);
+    //printf("Did we copy correctly? Let's find out: %lu\n", moc->domains[moc->numOfMappings-1][1]);
+    //printf("Did we copy correctly? Let's find out: %lu\n", moc->domains[moc->numOfMappings-1][2]);
+}
+
 void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses) {
     for (int i = 0; i < mappingsOfClasses->numOfMappings; ++i) {
         free(mappingsOfClasses->domains[i]);
@@ -138,17 +157,24 @@ void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t 
     }
 
     // Find out how many mappings there is
-    mappingOfClasses->numOfMappings = 1; // There is always at least one mapping
+    size_t numOfMappings = 1; // There is always at least one mapping
+    bool *isCalculated = malloc(sizeof(bool) * partitionF->numberOfClasses);
+    for (int i = 0; i < partitionF->numberOfClasses; ++i) isCalculated[i] = false;
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
-        mappingOfClasses->numOfMappings *= factorial(countNodes(domains[i]));
+        Node *current = (Node *) domains[i]->next;
+        if (!isCalculated[current->data]) {
+            numOfMappings = numOfMappings * factorial(countNodes(domains[i]));
+            isCalculated[current->data] = true;
+        }
     }
+    free(isCalculated);
 
     // Create a list of different domain mappings
-    mappingOfClasses->domains = malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
+    mappingOfClasses->domains = malloc(sizeof(size_t *) * numOfMappings);
 
     // Recursive part.
-    mappingOfClasses->mappings = malloc(sizeof(size_t *) * mappingOfClasses->numOfMappings);
-    createMappings(mappingOfClasses, domains, partitionG, dimension);
+    mappingOfClasses->mappings = malloc(sizeof(size_t *) * numOfMappings);
+    createMappings(mappingOfClasses, domains, partitionG, dimension, numOfMappings);
 
     // Free domains
     for (int i = 0; i < partitionF->numberOfClasses; ++i) {
@@ -157,35 +183,38 @@ void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t 
     free(domains);
 }
 
-void createMappings(MappingOfClasses *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension) {
-    for (size_t i = 0; i < mappingOfClasses->numOfMappings; ++i) {
-        size_t *newList = malloc(sizeof(size_t) * 1L << dimension);
-        bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses); // A boolean map with the size of number of classes
-        size_t *currentDomain = malloc(sizeof(size_t) * partitionG->numberOfClasses);
-        for (int j = 0; j < partitionG->numberOfClasses; ++j) {
-            chosen[j] = false;
-        }
-        selectRecursive(0, newList, currentDomain, chosen, domains, partitionG, dimension);
-        mappingOfClasses->mappings[i] = newList;
-        mappingOfClasses->domains[i] = currentDomain;
-        free(chosen);
-    }
+void
+createMappings(MappingOfClasses *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension, size_t numOfMappings) {
+      size_t *newList = malloc(sizeof(size_t) * 1L << dimension);
+      bool *chosen = malloc(sizeof(bool) * partitionG->numberOfClasses); // A boolean map with the size of number of classes
+      size_t *currentDomain = malloc(sizeof(size_t) * partitionG->numberOfClasses);
+      for (int j = 0; j < partitionG->numberOfClasses; ++j) {
+	  chosen[j] = false;
+      }
+      selectRecursive(0, newList, currentDomain, chosen, domains, partitionG, dimension, mappingOfClasses);
+      free(currentDomain);
+      free(newList);
+      free(chosen);
 }
 
-void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains,
-                     Partition *partitionG, size_t dimension) {
+void
+selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains, Partition *partitionG,
+                size_t dimension, MappingOfClasses *moc) {
     if (i >= partitionG->numberOfClasses) {
+        // Add the new list and the matching domain map to the mappingOfClasses.
+        addToMOC(moc, newList, currentDomain, 1L << dimension, partitionG->numberOfClasses);
         return;
     }
-    Node *current = domains[i]; // Tells us which bucket we are going through, starting with the first possible matching
+    Node *current = (Node *) domains[i]->next; // Tells us which bucket we are going through, starting with the first possible matching
     while (current != NULL) {
-        if (chosen[current->data] == false) {
+        if (!chosen[current->data]) {
             currentDomain[i] = current->data;
             for (int j = 0; j < partitionG->classSizes[current->data]; ++j) {
                 newList[partitionG->classes[current->data][j]] = current->data;
-                chosen[current->data] = true;
-                selectRecursive(i + 1, newList, currentDomain, chosen, domains, partitionG, dimension);
             }
+            chosen[current->data] = true;
+            selectRecursive(i + 1, newList, currentDomain, chosen, domains, partitionG, dimension, moc);
+            chosen[current->data] = false;
         }
         current = (Node *) current->next;
     }
@@ -193,7 +222,7 @@ void selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *cho
 
 size_t factorial(size_t value) {
     size_t fact = 1;
-    for (int i = 1; i < value; ++i) {
+    for (int i = 1; i < value + 1; ++i) {
         fact *= i;
     }
     return fact;

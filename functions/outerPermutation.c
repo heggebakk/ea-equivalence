@@ -6,7 +6,7 @@
 
 void
 outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
-                 size_t *gClassPosition, size_t *domainMap, FILE *fp) {
+                 size_t *gClassPosition, size_t *domainMap) {
 
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
@@ -50,6 +50,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
         TruthTable *new = initTruthTable(dimension);
         memcpy(new->elements, generated, sizeof(size_t) * 1L << dimension);
         addNode(l1, new);
+        destroyTruthTable(new);
         return;
     }
 
