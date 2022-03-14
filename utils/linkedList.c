@@ -131,12 +131,16 @@ void writeTtLinkedList(TtNode *head, FILE *fp) {
 }
 
 void destroyTtLinkedList(TtNode *head) {
+    if (head->data == NULL) {
+        free(head);
+        return;
+    }
     while (head->data != NULL) {
         TtNode *current = head;
         head = head->next;
         destroyTruthTable(current->data);
         free(current);
-        if(head == NULL) {
+        if (head == NULL) {
             free(head);
             break;
         }

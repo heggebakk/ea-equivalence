@@ -101,18 +101,27 @@ int main(int argc, char *argv[]) {
         Partition *partition = partitionFunction(functionF, k);
         size_t dimension = functionF->dimension;
         size_t *basis = createStandardBasis(dimension);
-        TtNode *l1 = initTtNode();
-
         mapPartitionClasses(partition, partition, dimension, mappingOfClasses);
-        outerPermutation(partition, partition, dimension, basis, l1, mappingOfClasses->mappings[0],
-                         mappingOfClasses->mappings[0],
-                         mappingOfClasses->domains[0]);
-        fprintf(fp, "%zu\n", countTtNodes(l1));
-        writeTtLinkedList(l1, fp);
 
+        for (int m = 0; m < mappingOfClasses->numOfMappings; ++m) {
+            TtNode *l1 = initTtNode();
+            outerPermutation(partition, partition, dimension, basis, l1, mappingOfClasses->mappings[m],
+                             mappingOfClasses->mappings[m],
+                             mappingOfClasses->domains[m]);
+            if (l1->data != NULL) {
+                fprintf(fp, "%zu\n", countTtNodes(l1));
+                writeTtLinkedList(l1, fp);
+                destroyTtLinkedList(l1);
+                break;
+            }
+            destroyTtLinkedList(l1);
+        }
+        destroyTruthTable(functionF);
+        destroyTruthTable(functionG);
         destroyMappingOfClasses(mappingOfClasses);
         destroyPartitions(partition);
         free(basis);
+        fclose(fp);
         return 0;
     }
 
