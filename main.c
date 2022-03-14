@@ -146,7 +146,6 @@ int main(int argc, char *argv[]) {
             partitionF = eaPartitionWalsh(functionF, k);
             partitionG = eaPartitionWalsh(functionG, k);
             runTime->partition = stopTime(runTime->partition, startPartitionTime);
-            printPartitionInfo(partitionF);
 
             runAlgorithm(functionF, functionG, partitionF, partitionG, DIMENSION,
                          runTime, basis, fp);
@@ -206,7 +205,6 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
     MappingOfClasses *mappingOfClassesG = initMappingsOfClasses();
     mapPartitionClasses(partitionG, partitionF, DIMENSION, mappingOfClassesF);
     mapPartitionClasses(partitionF, partitionG, DIMENSION, mappingOfClassesG);
-    printf("Number of mappings: %zu & %zu\n", mappingOfClassesF->numOfMappings, mappingOfClassesG->numOfMappings);
 
     // Loop over all the mappings, if we find a solution, we break and finish.
     for (int m = 0; m < mappingOfClassesG->numOfMappings; ++m) {
