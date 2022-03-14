@@ -4,16 +4,14 @@ import os
 import subprocess
 import threading
 
-dim = "dim8/yuyin"
+dim = "dim8/yuyin_2"
 dirs = os.listdir(f"./resources/TT_library/{dim}")
 
 
 def permute(name):
-    logging.info("Thread %s: starting", name)
     filename = f"./resources/TT_library/{dim}/{name}"
     dest_name = f"./results/permutations/{dim}/{name[:-3]}.txt"
     subprocess.run(["./main.out", '-t', filename, '-f', dest_name, '-o'])
-    logging.info("Thread %s: finishing", name)
 
 
 if __name__ == '__main__':
@@ -25,7 +23,6 @@ if __name__ == '__main__':
         x = threading.Thread(target=permute, args=(file,))
         threads.append(x)
         x.start()
-        logging.info("%s done", file)
     for thread in threads:
         thread.join()
 
