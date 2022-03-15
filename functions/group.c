@@ -3,24 +3,12 @@
 #include <memory.h>
 #include <stdbool.h>
 #include "group.h"
-#include "../utils/linkedList.h"
 
 char *filename;
+char *writeFile = "group_test.txt";
 size_t numPermutations;
 size_t dimension;
 size_t *basis;
-
-void checkFlags(int argc, char **argv);
-
-TtNode * parsePermutationFile(char *input);
-
-void findGroups(TtNode *permutations);
-
-void compose(TruthTable *src, TruthTable *dest);
-
-bool isIdentity(TruthTable *dest);
-
-size_t standardBasis();
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -28,7 +16,8 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
     checkFlags(argc, argv);
-    TtNode *permutations = parsePermutationFile(filename);
+    TtNode *permutations;
+    permutations = parsePermutationFile(filename);
     standardBasis(dimension);
     findGroups(permutations);
     destroyTtLinkedList(permutations);
@@ -43,16 +32,29 @@ size_t standardBasis() {
 }
 
 void findGroups(TtNode *permutations) {
+    FILE *fp = fopen(writeFile, "w+");
     for (int i = 0; i < numPermutations; ++i) {
+        size_t counter = 1;
         TruthTable *src = getNode(permutations, i);
         TruthTable *dest = initTruthTable(dimension);
         memcpy(dest->elements, src->elements, sizeof(size_t) * 1L << dimension);
         while (true) {
             if (isIdentity(dest)) {
-                printTruthTable(dest);
+                if (counter == numPermutations) {
+                    writeTruthTable(src, fp, "");
+                    printf("Found group:\n");
+                    printTruthTable(src);
+                } else {
+//            printf("Not a group, found identity at %zu\n", counter);
+                }
                 break;
             }
             compose(src, dest);
+            counter += 1;
+            if (counter > numPermutations) {
+                printf("Something's wrong!");
+                exit(1);
+            }
         }
         destroyTruthTable(dest);
     }
@@ -104,12 +106,19 @@ void checkFlags(int argc, char **argv) {
     for (int i = 0; i < argc; ++i) {
         if (argv[i][0] == '-') {
             switch (argv[i][1]) {
-                // Help:
                 case 'h':
+                    // Help:
                     printHelp();
-                case 'f':
+
+                case 't':
+                    // File to read from
                     i++;
                     filename = argv[i];
+                    continue;
+                case 'f':
+                    // Filename to write to
+                    i++;
+                    writeFile = argv[i];
                     continue;
             }
         }
@@ -118,8 +127,9 @@ void checkFlags(int argc, char **argv) {
 
 void printHelp() {
     printf("How to use the program:\n");
-    printf("-f Input file \t Permutation file, first line is number of permutations, next n lines is the permutations.\n");
+    printf("-t Input file \t Permutation file, first line is number of permutations, next n lines is the permutations.\n");
     printf("-d Dimension \t The dimension, which tells us the size of the tables.\n");
     printf("\n");
     printf("-h  Help\n");
+    printf("-f Filename to write to.");
 }
