@@ -109,6 +109,7 @@ int main(int argc, char *argv[]) {
                              mappingOfClasses->mappings[m],
                              mappingOfClasses->domains[m]);
             if (l1->data != NULL) {
+                fprintf(fp, "%zu\n", dimension);
                 fprintf(fp, "%zu\n", countTtNodes(l1));
                 writeTtLinkedList(l1, fp);
                 destroyTtLinkedList(l1);
