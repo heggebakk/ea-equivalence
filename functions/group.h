@@ -1,0 +1,6 @@
+#ifndef EA_EQUIVALENCE_GROUP_H
+#define EA_EQUIVALENCE_GROUP_H
+
+void printHelp();
+
+#endif //EA_EQUIVALENCE_GROUP_H
