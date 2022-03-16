@@ -6,6 +6,7 @@
 
 char *filename;
 char *writeFile = "group_test.txt";
+FILE *fp;
 size_t numPermutations;
 size_t dimension;
 size_t *basis;
@@ -16,11 +17,9 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
     checkFlags(argc, argv);
-    TtNode *permutations;
-    permutations = parsePermutationFile(filename);
-    standardBasis(dimension);
-    findGroups(permutations);
-    destroyTtLinkedList(permutations);
+    fp = fopen(writeFile, "w+");
+    parsePermutationFile(filename);
+    fclose(fp);
     return 0;
 }
 
@@ -31,33 +30,27 @@ size_t standardBasis() {
     }
 }
 
-void findGroups(TtNode *permutations) {
-    FILE *fp = fopen(writeFile, "w+");
-    for (int i = 0; i < numPermutations; ++i) {
-        size_t counter = 1;
-        TruthTable *src = getNode(permutations, i);
-        TruthTable *dest = initTruthTable(dimension);
-        memcpy(dest->elements, src->elements, sizeof(size_t) * 1L << dimension);
-        while (true) {
-            if (isIdentity(dest)) {
-                if (counter == numPermutations) {
-                    writeTruthTable(src, fp, "");
-                    printf("Found group:\n");
-                    printTruthTable(src);
-                } else {
-//            printf("Not a group, found identity at %zu\n", counter);
-                }
-                break;
-            }
-            compose(src, dest);
-            counter += 1;
-            if (counter > numPermutations) {
-                printf("Something's wrong!");
-                exit(1);
-            }
-        }
-        destroyTruthTable(dest);
+void findGroups(TruthTable *src) {
+    if (numPermutations == 1) {
+        // If the number of permutation is 1, the permutation is the identity.
+        return;
     }
+    size_t counter = 1;
+    TruthTable *dest = initTruthTable(dimension);
+    memcpy(dest->elements, src->elements, sizeof(size_t) * 1L << dimension);
+    while (true) {
+        if (isIdentity(dest)) {
+            fprintf(fp, "%zu\n", counter);
+            break;
+        }
+        compose(src, dest);
+        counter += 1;
+        if (counter > numPermutations) {
+            printf("Something's wrong!");
+            exit(1);
+        }
+    }
+    destroyTruthTable(dest);
 }
 
 bool isIdentity(TruthTable *dest) {
@@ -78,28 +71,34 @@ void compose(TruthTable *src, TruthTable *dest) {
     dest->elements = temp;
 }
 
-TtNode * parsePermutationFile(char *input) {
-    TtNode *permutations;
+void parsePermutationFile(char *input) {
     FILE *file = fopen(input, "r");
-
     if (file == NULL) {
         printf("Requested file, %s, not found.\n", input);
         fclose(file);
         exit(1);
     }
-    permutations = initTtNode();
+
+    // Fist line should be the dimension for the permutation
     fscanf(file, "%zu", &dimension);
+
+    // Second line should be the total number of permutations
     fscanf(file, "%zu", &numPermutations);
+
+    // Create the standard basis
+    standardBasis();
+
+    // Find the order for each permutation one by one.
     for (int i = 0; i < numPermutations; ++i) {
+        // Save the permutation
         TruthTable *truthTable = initTruthTable(dimension);
         for (int j = 0; j < 1L << dimension; ++j) {
             fscanf(file, "%zu", &truthTable->elements[j]);
         }
-        addNode(permutations, truthTable);
+        findGroups(truthTable);
         destroyTruthTable(truthTable);
     }
     fclose(file);
-    return permutations;
 }
 
 void checkFlags(int argc, char **argv) {
@@ -128,7 +127,6 @@ void checkFlags(int argc, char **argv) {
 void printHelp() {
     printf("How to use the program:\n");
     printf("-t Input file \t Permutation file, first line is number of permutations, next n lines is the permutations.\n");
-    printf("-d Dimension \t The dimension, which tells us the size of the tables.\n");
     printf("\n");
     printf("-h  Help\n");
     printf("-f Filename to write to.");

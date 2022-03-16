@@ -6,9 +6,9 @@
 
 void checkFlags(int argc, char **argv);
 
-TtNode * parsePermutationFile(char *input);
+void parsePermutationFile(char *input);
 
-void findGroups(TtNode *permutations);
+void findGroups(TruthTable *permutation);
 
 void compose(TruthTable *src, TruthTable *dest);
 
