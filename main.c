@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     char *fileTruthTable;
     long k = 4;
     bool partitionOnly = false;
-    bool allPartitions = false;
+    bool autoMorphism = false;
 
     if (argc < 2) {
         printf("Expected at least 1 argument!");
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
                     printf("-h \tHelp\n");
                     printf("-f \tFilename for writing to file\n");
                     printf("-k \tSize of tuple T\n");
-                    printf("-o \tRuns only outer permutations stuff\n");
+                    printf("-o \tCalculate auto morphism\n");
                     printf("-t \t* File, type Truth Table\n");
                     printf("-p \tRuns only partitioning \tBy adding this flag it sets this to be true.\n");
                     exit(0);
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
                     }
                     continue;
                 case 'o':
-                    allPartitions = true;
+                    autoMorphism = true;
                     continue;
                 case 't':
                     // Parse file to truth tables
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
         fclose(fp);
         return 0;
     }
-    if (allPartitions) {
+    if (autoMorphism) {
         MappingOfClasses *mappingOfClasses = initMappingsOfClasses();
         Partition *partition = partitionFunction(functionF, k);
         size_t dimension = functionF->dimension;
@@ -128,11 +128,7 @@ int main(int argc, char *argv[]) {
 
     printTruthTable(functionF);
     printTruthTable(functionG);
-    fprintf(fp, "%s\n", fileTruthTable);
-    fprintf(fp, "// Dimension:\n%zu\n", functionF->dimension);
-    writeTruthTable(functionF, fp, "F");
-    writeTruthTable(functionG, fp, "G");
-    printf("\n");
+    fprintf(fp, "%zu\n", functionF->dimension);
     size_t DIMENSION = functionF->dimension;
 
     size_t *basis = createStandardBasis(DIMENSION);
@@ -142,7 +138,7 @@ int main(int argc, char *argv[]) {
     Partition *partitionG;
     clock_t startTotalTime;
 
-    for (int a = 0; a < 2; ++a) {
+    for (int a = 1; a < 2; ++a) {
         // Solve with Walsh transform first:
         if (a == 0) {
             startTotalTime = clock();
@@ -175,7 +171,6 @@ int main(int argc, char *argv[]) {
             startTotalTime = clock();
             runTime = initRunTimes();
             runTime->parsing = parsingTime;
-            fprintf(fp, "\n** NEW ALGORITHM **\n");
             printf("\nNew algorithm\n");
 
             // Partition function f and g
@@ -191,7 +186,7 @@ int main(int argc, char *argv[]) {
             runTime->total = stopTime(runTime->total, startTotalTime);
             // Print time information
             printTimes(runTime);
-            fprintf(fp, "\nOriginal Algorithm\n");
+            fprintf(fp, "\nNew Algorithm\n");
             writeTimes(runTime, fp);
 
             destroyRunTimes(runTime);
@@ -232,7 +227,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
         // Calculate inner permutation
         clock_t startInnerPermutationTime = clock();
         for (size_t i = 0; i < numPermutations; ++i) {
-            fprintf(fp, "// Number of permutations:\n%zu \n", numPermutations);
+            fprintf(fp, "%zu\n", numPermutations);
             TruthTable *l1Prime = getNode(l1, i);
             TruthTable *l1Inverse = inverse(*l1Prime);
             TruthTable *gPrime = composeFunctions(l1Inverse, functionG);
@@ -246,9 +241,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
                 // Find l
                 TruthTable *l = composeFunctions(l1Prime, lPrime);
-                writeTruthTable(getNode(l1, i), fp, "l1");
-                writeTruthTable(l2, fp, "l2");
-                writeTruthTable(l, fp, "l");
+                writeTruthTable(l, fp);
 
                 // Free memory
                 destroyTruthTable(l);

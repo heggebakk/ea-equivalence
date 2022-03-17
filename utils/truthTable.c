@@ -23,9 +23,7 @@ void printTruthTable(TruthTable *tt) {
     printf("\n");
 }
 
-void writeTruthTable(TruthTable *tt, FILE *fp, char *ttName) {
-    fprintf(fp, "// %s:\n", ttName);
-
+void writeTruthTable(TruthTable *tt, FILE *fp) {
     for (size_t i = 0; i < 1L << tt->dimension; ++i) {
         fprintf(fp, "%zu ", tt->elements[i]);
     }
