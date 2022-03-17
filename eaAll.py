@@ -4,14 +4,14 @@ import os
 import subprocess
 import threading
 
-dim = "dim8/classic"
+dim = "dim10"
 dirs = os.listdir(f"./resources/TT_library/{dim}")
 
 
-def permute(name):
+def ea(name):
     filename = f"./resources/TT_library/{dim}/{name}"
-    dest_name = f"./results/permutations/{dim}/{name[:-3]}.txt"
-    subprocess.run(["./main.out", '-t', filename, '-f', dest_name, '-o'])
+    dest_name = f"./results/{dim}/{name[:-3]}.txt"
+    subprocess.run(["./main.out", '-t', filename, '-f', dest_name])
 
 
 if __name__ == '__main__':
@@ -19,12 +19,11 @@ if __name__ == '__main__':
     logging.basicConfig(format=time_format, level=logging.INFO, datefmt="%H:%M:%S")
     start = time.perf_counter()
     threads = list()
-    for file in dirs:
-        x = threading.Thread(target=permute, args=(file,))
+    for file in dirs[:1]:
+        x = threading.Thread(target=ea, args=(file,))
         threads.append(x)
         x.start()
     for thread in threads:
         thread.join()
-
     end = time.perf_counter()
     print(end-start)
