@@ -1,5 +1,4 @@
 *.pdf
-*.txt
 # Created by https://www.toptal.com/developers/gitignore/api/c,clion+all,latex
 # Edit at https://www.toptal.com/developers/gitignore?templates=c,clion+all,latex
 
@@ -167,3 +166,7 @@ bb.out.*
 
 # End of https://www.toptal.com/developers/gitignore/api/c,clion+all,latex
 
+/result.txt
+/test.txt
+/group_test.txt
+/group.txt
