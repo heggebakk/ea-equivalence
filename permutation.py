@@ -4,7 +4,7 @@ import os
 import subprocess
 import threading
 
-dim = "dim8/yuyin_2"
+dim = "dim6"
 dirs = os.listdir(f"./resources/TT_library/{dim}")
 
 

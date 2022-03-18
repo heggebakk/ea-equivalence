@@ -1,0 +1,1 @@
+gcc -lm -o group.out functions/group.c functions/group.h utils/linkedList.h utils/linkedList.c utils/truthTable.h utils/truthTable.c

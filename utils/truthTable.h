@@ -39,7 +39,7 @@ void printTruthTable(TruthTable *tt);
  * @param fp The file to write to
  * @param ttName The name of the truth table represented as a String
  */
-void writeTruthTable(TruthTable *tt, FILE *fp, char *ttName);
+void writeTruthTable(TruthTable *tt, FILE *fp);
 
 /**
  * Destroy a Truth table

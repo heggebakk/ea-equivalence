@@ -23,9 +23,7 @@ void printTruthTable(TruthTable *tt) {
     printf("\n");
 }
 
-void writeTruthTable(TruthTable *tt, FILE *fp, char *ttName) {
-    fprintf(fp, "// %s:\n", ttName);
-
+void writeTruthTable(TruthTable *tt, FILE *fp) {
     for (size_t i = 0; i < 1L << tt->dimension; ++i) {
         fprintf(fp, "%zu ", tt->elements[i]);
     }
@@ -37,6 +35,7 @@ TruthTable * parseTruthTable(const char *filename) {
     if (file == NULL) {
         printf("Requested file does not exists in system or is not found. \n");
         printf("File: %s\n", filename);
+        fclose(file);
         exit(1);
     }
 
