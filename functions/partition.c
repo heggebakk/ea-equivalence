@@ -9,22 +9,11 @@ MappingOfClasses *initMappingsOfClasses() {
 }
 
 void addToMOC(MappingOfClasses *moc, size_t *mapping, size_t *domain, size_t mappingSize, size_t domainSize) {
-    //for (int i=0; i < domainSize; ++i) {
-    //  printf("%lu ", domain[i]);
-    //}
-    //printf("\n");
-    //printf("numOfMappings is %lu\n", moc->numOfMappings);
     moc->mappings[moc->numOfMappings] = malloc(sizeof(size_t *) * mappingSize);
     moc->domains[moc->numOfMappings] = malloc(sizeof (size_t *) * domainSize);
     memcpy(moc->mappings[moc->numOfMappings], mapping, mappingSize * sizeof(size_t));
     memcpy(moc->domains[moc->numOfMappings], domain, domainSize * sizeof(size_t));
     moc->numOfMappings += 1;
-    //printf("moc is %lu\n", (size_t) moc);
-    //printf("moc->domains is %lu\n", (size_t) moc->domains);
-    //printf("moc->domains[0] is %lu\n", (size_t) moc->domains[0]);
-    //printf("Did we copy correctly? Let's find out: %lu\n", moc->domains[moc->numOfMappings-1][0]);
-    //printf("Did we copy correctly? Let's find out: %lu\n", moc->domains[moc->numOfMappings-1][1]);
-    //printf("Did we copy correctly? Let's find out: %lu\n", moc->domains[moc->numOfMappings-1][2]);
 }
 
 void destroyMappingOfClasses(MappingOfClasses *mappingsOfClasses) {
