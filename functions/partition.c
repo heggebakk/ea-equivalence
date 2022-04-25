@@ -160,9 +160,8 @@ void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t 
 
     // Create a list of different domain mappings
     mappingOfClasses->domains = malloc(sizeof(size_t *) * numOfMappings);
-
-    // Recursive part.
     mappingOfClasses->mappings = malloc(sizeof(size_t *) * numOfMappings);
+
     createMappings(mappingOfClasses, domains, partitionG, dimension, numOfMappings);
 
     // Free domains
@@ -192,6 +191,7 @@ selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, 
     if (i >= partitionG->numberOfClasses) {
         // Add the new list and the matching domain map to the mappingOfClasses.
         addToMOC(moc, newList, currentDomain, 1L << dimension, partitionG->numberOfClasses);
+
         return;
     }
     Node *current = (Node *) domains[i]->next; // Tells us which bucket we are going through, starting with the first possible matching
