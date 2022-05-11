@@ -20,61 +20,26 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
  */
 TruthTable *inverse(TruthTable function);
 
+void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k,
+              bool *partitionOnly, bool *autoMorphism);
+
+void printHelp();
+
 int main(int argc, char *argv[]) {
-    char *filename = "result.txt";
-    char *fileTruthTable;
+    char *filename = "result.txt"; // Default position to write results to
+    char *fileFunctionF;
+    char *fileFunctionG = NULL;
     long k = 4;
     bool partitionOnly = false;
     bool autoMorphism = false;
 
     if (argc < 2) {
         printf("Expected at least 1 argument!");
+        printHelp();
         return 1;
     }
 
-    for (int i = 1; i < argc; ++i) {
-        // Check for flag
-        if (argv[i][0] == '-') {
-            switch (argv[i][1]) {
-                // Help
-                case 'h':
-                    printf("How to use the program: \n");
-                    printf("-h \tHelp\n");
-                    printf("-f \tFilename for writing to file\n");
-                    printf("-k \tSize of tuple T\n");
-                    printf("-o \tCalculate auto morphism\n");
-                    printf("-t \t* File, type Truth Table\n");
-                    printf("-p \tRuns only partitioning \tBy adding this flag it sets this to be true.\n");
-                    exit(0);
-                case 'f':
-                    i++;
-                    filename = argv[i];
-                    continue;
-                case 'k':
-                    // Set the k
-                    i++;
-                    errno = 0;
-                    char *p;
-                    k = strtol(argv[i], &p, 10);
-                    if (*p != '\0' || errno != 0) {
-                        printf("Conversion went wrong for k\n");
-                        return 1;
-                    }
-                    continue;
-                case 'o':
-                    autoMorphism = true;
-                    continue;
-                case 't':
-                    // Parse file to truth tables
-                    i++;
-                    fileTruthTable = argv[i];
-                    continue;
-                case 'p': {
-                    partitionOnly = true;
-                }
-            }
-        }
-    }
+    setFlags(argc, argv, &filename, &fileFunctionF, &fileFunctionG, &k, &partitionOnly, &autoMorphism);
 
     // Specify which file to write to.
     FILE *fp = fopen(filename, "w+");
@@ -82,8 +47,11 @@ int main(int argc, char *argv[]) {
     // Parse files to truth tables
     clock_t startParsing= clock();
     double parsingTime = 0.0;
-    TruthTable *functionF = parseTruthTable(fileTruthTable);
-    TruthTable *functionG = getFunctionG(functionF);
+    // Parse function F. Parse function G if given, otherwise create random function G with respect to function F.
+    TruthTable *functionF = parseTruthTable(fileFunctionF);
+    TruthTable *functionG;
+    if (fileFunctionG != NULL) functionG = parseTruthTable(fileFunctionG);
+    else functionG = getFunctionG(functionF);
     parsingTime += (double) (clock() - startParsing) / CLOCKS_PER_SEC;
 
     if (partitionOnly) {
@@ -200,6 +168,63 @@ int main(int argc, char *argv[]) {
     fclose(fp);
 
     return 0;
+}
+
+void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k,
+              bool *partitionOnly, bool *autoMorphism) {
+    for (int i = 1; i < argc; ++i) {
+        // Check for flag
+        if (argv[i][0] == '-') {
+            switch (argv[i][1]) {
+                // Help
+                case 'h':
+                    printHelp();
+                    exit(0);
+                case 'f':
+                    // Parse function F to TruthTable
+                    i++;
+                    (*fileFunctionF) = argv[i];
+                    continue;
+                case 'g':
+                    // Parse function G to TruthTable
+                    i++;
+                    (*fileFunctionG) = argv[i];
+                    continue;
+                case 'k':
+                    // Set the k
+                    i++;
+                    errno = 0;
+                    char *p;
+                    (*k) = strtol(argv[i], &p, 10);
+                    if (*p != '\0' || errno != 0) {
+                        printf("Conversion went wrong for k\n");
+                        exit(1);
+                    }
+                    continue;
+                case 'o':
+                    (*autoMorphism) = true;
+                    continue;
+                case 'w':
+                    i++;
+                    (*filename) = argv[i];
+                    continue;
+                case 'p': {
+                    (*partitionOnly) = true;
+                }
+            }
+        }
+    }
+}
+
+void printHelp() {
+    printf("How to use the program: \n");
+    printf("-h \tHelp\n");
+    printf("-f \t* Path to Function F\n");
+    printf("-g \t* Path to Function G");
+    printf("-k \tSize of tuple T\n");
+    printf("-o \tCalculate auto morphism\n");
+    printf("-p \tRuns only partitioning \tBy adding this flag it sets this to be true.\n");
+    printf("-w \tFilename for writing to file\n");
 }
 
 void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
