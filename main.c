@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 
         for (int m = 0; m < mappingOfClasses->numOfMappings; ++m) {
             TtNode *l1 = initTtNode();
-            outerPermutation(partition, partition, dimension, basis, l1, mappingOfClasses->mappings[m],
+            outerPermutation(partition, partition, dimension, basis, mappingOfClasses->mappings[m],
                              mappingOfClasses->mappings[m],
                              mappingOfClasses->domains[m]);
             if (l1->data != NULL) {
@@ -96,7 +96,6 @@ int main(int argc, char *argv[]) {
 
     printTruthTable(functionF);
     printTruthTable(functionG);
-    fprintf(fp, "%zu\n", functionF->dimension);
     size_t DIMENSION = functionF->dimension;
 
     size_t *basis = createStandardBasis(DIMENSION);
@@ -106,13 +105,12 @@ int main(int argc, char *argv[]) {
     Partition *partitionG;
     clock_t startTotalTime;
 
-    for (int a = 1; a < 2; ++a) {
-        // Solve with Walsh transform first:
+    for (int a = 0; a < 2; ++a) {
+        // Solve with Walsh transform:
         if (a == 0) {
             startTotalTime = clock();
             runTime = initRunTimes();
             runTime->parsing = parsingTime;
-            fprintf(fp, "\n** WALSH TRANSFORM **\n");
             printf("Walsh transform\n");
 
             // Partition function f and g
@@ -129,8 +127,8 @@ int main(int argc, char *argv[]) {
             // Print time information
             printTimes(runTime);
 
-            fprintf(fp, "\nWalsh Transform:\n");
-            writeTimes(runTime, fp);
+//            fprintf(fp, "\nWalsh Transform:\n");
+//            writeTimes(runTime, fp);
 
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
@@ -154,8 +152,8 @@ int main(int argc, char *argv[]) {
             runTime->total = stopTime(runTime->total, startTotalTime);
             // Print time information
             printTimes(runTime);
-            fprintf(fp, "\nNew Algorithm\n");
-            writeTimes(runTime, fp);
+//            fprintf(fp, "\nNew Algorithm\n");
+//            writeTimes(runTime, fp);
 
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
@@ -238,14 +236,13 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
     // Loop over all the mappings, if we find a solution, we break and finish.
     for (int m = 0; m < mappingOfClassesG->numOfMappings; ++m) {
-        TtNode *l1 = initTtNode();
         bool foundSolution = false;
 
         // Calculate Outer Permutation
         clock_t startOuterPermutationTime = clock();
-        outerPermutation(partitionF, partitionG, DIMENSION, basis, l1,
-                         mappingOfClassesF->mappings[m],
-                         mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m]);
+        TtNode *l1 = outerPermutation(partitionF, partitionG, DIMENSION, basis,
+                                      mappingOfClassesF->mappings[m],
+                                      mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m]);
         size_t numPermutations = countTtNodes(l1);
         runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
 

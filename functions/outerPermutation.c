@@ -4,31 +4,22 @@
 #include "outerPermutation.h"
 #include "partition.h"
 
-void
-outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, TtNode *l1, size_t *fClassPosition,
-                 size_t *gClassPosition, size_t *domainMap) {
-
+TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, size_t *fClassPosition,
+                         size_t *gClassPosition, size_t *domainMap) {
+    TtNode *l1 = initTtNode();
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
-    for (size_t i = 0; i < 1L << dimension; ++i) {
-        generated[i] = 0;
-    }
-    bool generated_images[1L << dimension]; /* a Boolean map showing which elements are among the images of the partially defined L */
-    for (size_t i = 0; i < 1L << dimension; ++i) {
-        generated_images[i] = false;
-    }
-    generated_images[0] = true;
-
-    /* Create dictionaries indexing buckets by elements (for instance, fClassPosition[i] would be
-     * the index of the bucket w.r.t. f containing the element i)
-     */
+    bool *generatedImages = calloc(sizeof(bool), 1L << dimension); /* a Boolean map showing which elements are among the images of the partially defined L */
+    generatedImages[0] = true;
 
     /* Recursively guess the values of L on the basis (essentially, a DFS with backtracking upon contradiction) */
-    recursive(0, basis, images, f, g, dimension, generated, generated_images, l1, fClassPosition, gClassPosition,
+    recursive(0, basis, images, f, g, dimension, generated, generatedImages, l1, fClassPosition, gClassPosition,
               domainMap);
 
     free(images);
     free(generated);
+    free(generatedImages);
+    return l1;
 }
 
 size_t *createStandardBasis(size_t dimension) {
