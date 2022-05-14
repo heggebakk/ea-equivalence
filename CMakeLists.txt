@@ -6,6 +6,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 
 add_executable(ea_equivalence
-        src/ea.c
-#        functions/group.c functions/group.h
-        src/structures.c src/structures.h src/permutation.c src/permutation.h)
+#        src/automorphism.c src/permutation.h src/permutation.c src/structures.h src/structures.c)
+#        src/group.c src/group.h src/structures.c src/structures.h)
+#        src/partition.c src/structures.h src/structures.c)
+        src/ea.c src/structures.c src/structures.h src/permutation.c src/permutation.h)
