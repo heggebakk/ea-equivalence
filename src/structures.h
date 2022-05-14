@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "stdio.h"
+#include "time.h"
 
 /**
  * In this file you will find all the structures that is needed and used for all the different structures.
@@ -22,7 +23,7 @@ typedef struct TruthTable {
  * Holds all the information for the Partition:
  * Number of buckets, all the multiplicities, the sizes of the buckets, and all the elements in all the buckets.
  */
-typedef struct {
+typedef struct Partition {
     size_t numberOfClasses;
     size_t *multiplicities;
     size_t *classSizes;
@@ -51,6 +52,16 @@ typedef struct {
     size_t dimension;
     size_t **elements;
 } WalshTransform;
+
+/**
+ * A struct for keeping all the run times for the entire program
+ */
+typedef struct {
+    double total;
+    double partition;
+    double outerPermutation;
+    double innerPermutation;
+} RunTimes;
 
 /**
  * Initialize a new Truth Table
@@ -253,5 +264,38 @@ void printWalshTransformTable(WalshTransform wt);
 size_t walshTransformPowerMoment(WalshTransform wt, size_t k, size_t shiftA, size_t shiftB);
 
 Partition *eaPartitionWalsh(TruthTable *tt, size_t k);
+
+/**
+ * Initialize a new empty struct of Run times
+ * @return A empty RunTimes
+ */
+RunTimes *initRunTimes();
+
+/**
+ * Stop the time and return the run time
+ * @param runTime The time to do the calculations on
+ * @param startParsing The start time
+ * @return The total run time
+ */
+double stopTime(double runTime, clock_t startParsing);
+
+/**
+ * Print all times to the console
+ * @param runTimes the Run times to print
+ */
+void printTimes(RunTimes *runTimes);
+
+/**
+ * Write all times to a file
+ * @param runTimes The run times to write
+ * @param fp The file to write to
+ */
+void writeTimes(RunTimes *runTimes, FILE *fp);
+
+/**
+ * Destroy the run times
+ * @param runTimes The run times to destroy
+ */
+void destroyRunTimes(RunTimes *runTimes);
 
 #endif //EA_EQUIVALENCE_STRUCTURES_H

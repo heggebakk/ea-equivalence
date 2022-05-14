@@ -14,7 +14,7 @@
  * @param lPrime l'
  * @return Returns true if reconstruction of the inner permutation was successful, false otherwise.
  */
-bool innerPermutation(struct TruthTable *f, struct TruthTable *g, const size_t *basis, struct TruthTable *l2, struct TruthTable **lPrime) {
+bool innerPermutation(TruthTable *f, TruthTable *g, const size_t *basis, TruthTable *l2, TruthTable **lPrime) {
     struct Node **restrictedDomains = calloc(sizeof(struct Node **), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
@@ -39,7 +39,7 @@ bool innerPermutation(struct TruthTable *f, struct TruthTable *g, const size_t *
  * @param x A fixed x to compute with
  * @return The set of t's from the computation
  */
-bool *computeSetOfTs(struct TruthTable *f, size_t x) {
+bool *computeSetOfTs(TruthTable *f, size_t x) {
     size_t n = f->dimension;
     bool *map = calloc(sizeof(bool), 1L << n);
 
@@ -50,7 +50,7 @@ bool *computeSetOfTs(struct TruthTable *f, size_t x) {
     return map;
 }
 
-struct Node *computeDomain(const bool *listOfTs, struct TruthTable *f) {
+struct Node *computeDomain(const bool *listOfTs, TruthTable *f) {
     size_t n = f->dimension;
     bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -100,7 +100,7 @@ struct Node *computeDomain(const bool *listOfTs, struct TruthTable *f) {
  */
 
 bool
-dfs(Node **domains, size_t k, size_t *values, struct TruthTable *f, struct TruthTable *g, struct TruthTable *l2, struct TruthTable **lPrime) {
+dfs(Node **domains, size_t k, size_t *values, TruthTable *f, TruthTable *g, TruthTable *l2, TruthTable **lPrime) {
     if (k >= f->dimension) {
         reconstructTruthTable(values, l2);
         *lPrime = composeFunctions(f, l2);
@@ -121,7 +121,7 @@ dfs(Node **domains, size_t k, size_t *values, struct TruthTable *f, struct Truth
     return false;
 }
 
-void reconstructTruthTable(const size_t *basisValues, struct TruthTable *l2) {
+void reconstructTruthTable(const size_t *basisValues, TruthTable *l2) {
     for (size_t coordinate = 0; coordinate < 1L << l2->dimension; ++coordinate) {
         size_t result = 0;
         for (size_t i = 0; i < l2->dimension; ++i) {

@@ -2,6 +2,7 @@
 #define EA_EQUIVALENCE_GROUP_H
 
 #include <stdbool.h>
+#include "structures.h"
 
 void checkFlags(int argc, char **argv);
 
