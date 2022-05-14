@@ -9,7 +9,6 @@
  */
 typedef struct {
     double total;
-    double parsing;
     double partition;
     double outerPermutation;
     double innerPermutation;

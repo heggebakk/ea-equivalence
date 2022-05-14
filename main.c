@@ -20,23 +20,41 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
  */
 TruthTable *inverse(TruthTable function);
 
+/**
+ * Shuffle a linked linked list
+ * @param head The head of the linked list
+ * @return A shuffled linked list
+ */
 TtNode * shuffle(TtNode *head);
 
+/**
+ * All the flags that is or can be used to run the program
+ * @param argc
+ * @param argv
+ * @param filename Path to where to write results to
+ * @param fileFunctionF Path to function F
+ * @param fileFunctionG  Path to function G
+ * @param k The number k, default is 4
+ * @param partitionOnly Is set to True if one is to only run the partitioning of a function
+ * @param autoMorphism Is set to true if one want to calculate the automorphism of a function
+ */
 void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k,
               bool *partitionOnly, bool *autoMorphism);
 
+/**
+ * A helper that tells the user what kind of flags that can be used and what the program need to run
+ */
 void printHelp();
 
 int main(int argc, char *argv[]) {
     char *filename = "result.txt"; // Default position to write results to
-    char *fileFunctionF;
-    char *fileFunctionG = NULL;
+    char *fileFunctionF; // Path to function F
+    char *fileFunctionG = NULL; // Path to function G
     long k = 4;
-    bool partitionOnly = false;
-    bool autoMorphism = false;
+    bool partitionOnly = false; // Set to true if one want to run only the partitioning of a function
+    bool autoMorphism = false; // Set to true if one want to run the automorphism of a function
 
     if (argc < 2) {
-        printf("Expected at least 1 argument!");
         printHelp();
         return 1;
     }
@@ -47,14 +65,11 @@ int main(int argc, char *argv[]) {
     FILE *fp = fopen(filename, "w+");
 
     // Parse files to truth tables
-    clock_t startParsing= clock();
-    double parsingTime = 0.0;
     // Parse function F. Parse function G if given, otherwise create random function G with respect to function F.
     TruthTable *functionF = parseTruthTable(fileFunctionF);
     TruthTable *functionG;
     if (fileFunctionG != NULL) functionG = parseTruthTable(fileFunctionG);
     else functionG = getFunctionG(functionF);
-    parsingTime += (double) (clock() - startParsing) / CLOCKS_PER_SEC;
 
     if (partitionOnly) {
         Partition *partition = partitionFunction(functionF, k);
@@ -112,7 +127,6 @@ int main(int argc, char *argv[]) {
         if (a == 0) {
             startTotalTime = clock();
             runTime = initRunTimes();
-            runTime->parsing = parsingTime;
             printf("Walsh transform\n");
 
             // Partition function f and g
@@ -139,7 +153,6 @@ int main(int argc, char *argv[]) {
         } else if (a == 1) {
             startTotalTime = clock();
             runTime = initRunTimes();
-            runTime->parsing = parsingTime;
             printf("\nNew algorithm\n");
 
             // Partition function f and g
@@ -219,14 +232,17 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
 }
 
 void printHelp() {
-    printf("How to use the program: \n");
-    printf("-h \tHelp\n");
-    printf("-f \t* Path to Function F\n");
-    printf("-g \t* Path to Function G");
-    printf("-k \tSize of tuple T\n");
-    printf("-o \tCalculate auto morphism\n");
-    printf("-p \tRuns only partitioning \tBy adding this flag it sets this to be true.\n");
-    printf("-w \tFilename for writing to file\n");
+    printf("EA-equivalence test\n");
+    printf("Usage: ea [ea_options]\n");
+    printf("Ea_options:\n");
+    printf("\t-f \t - Path to Function F\n");
+    printf("\t-g \t - Path to Function G\n");
+    printf("\t-h \t - Print help\n");
+    printf("\t-k \t - Size of k\n");
+    printf("\t-o \t - Calculate auto morphism, set this if you want to calculate the automorphisms of a function.\n");
+    printf("\t-p \t - Calculate partitioning, set this if you want to calculate the partition of a function.\n");
+    printf("\t-w \t - The path to where the results should be written to.\n");
+    printf("\n");
 }
 
 void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,

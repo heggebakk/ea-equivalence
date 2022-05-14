@@ -5,7 +5,6 @@
 RunTimes *initRunTimes() {
     RunTimes *newTime = malloc(sizeof(RunTimes));
     newTime->total = 0.0;
-    newTime->parsing = 0.0;
     newTime->partition = 0.0;
     newTime->outerPermutation = 0.0;
     newTime->innerPermutation = 0.0;
@@ -18,7 +17,6 @@ double stopTime(double runTime, clock_t startParsing) {
 }
 
 void printTimes(RunTimes *runTimes) {
-    printf("Time spent parsing files: %f\n", runTimes->parsing);
     printf("Time spent partitioning: %f \n", runTimes->partition);
     printf("Time spent outer permutation: %f \n", runTimes->outerPermutation);
     printf("Time spent inner permutation: %f \n", runTimes->innerPermutation);
