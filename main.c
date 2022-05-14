@@ -3,9 +3,7 @@
 #include <errno.h>
 #include <string.h>
 #include "time.h"
-#include "functions/outerPermutation.h"
 #include "utils/eaTest.h"
-#include "functions/walshTransform.h"
 #include "utils/runTime.h"
 #include "structures.h"
 #include "permutation.h"

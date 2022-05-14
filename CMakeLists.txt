@@ -8,5 +8,5 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 add_executable(ea_equivalence
         main.c
 #        functions/group.c functions/group.h
-        functions/outerPermutation.c functions/outerPermutation.h functions/walshTransform.h functions/walshTransform.c utils/eaTest.c utils/eaTest.h utils/runTime.c utils/runTime.h
+        utils/eaTest.c utils/eaTest.h utils/runTime.c utils/runTime.h
         structures.c structures.h permutation.c permutation.h)

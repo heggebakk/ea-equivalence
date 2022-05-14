@@ -17,7 +17,7 @@ Flags:
 
 Example:
 ```shell
-./main.out -f ./results/dim6/q_6_1.txt -k 6 -t resources/TT_library/dim6/q_6_1.tt 6
+./ea -w path-to-results.txt -k 6 -f path-to-functionF.tt
 ```
 
 The truth table file is expected to be in the format:
