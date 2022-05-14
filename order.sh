@@ -1,1 +1,1 @@
-gcc -lm -o order functions/order.c functions/order.h utils/linkedList.h utils/linkedList.c utils/truthTable.h utils/truthTable.c
+gcc -lm -o order src/order.c src/structures.c
