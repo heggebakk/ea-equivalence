@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "eaTest.h"
-#include "../functions/innerPermutation.h"
 
 TruthTable *randomLinearFunction(size_t dimension) {
     size_t entries = 1L << dimension;
