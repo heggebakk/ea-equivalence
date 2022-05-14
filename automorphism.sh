@@ -1,0 +1,1 @@
+gcc -lm -o automorphism src/automorphism.c src/structures.c src/permutation.c
