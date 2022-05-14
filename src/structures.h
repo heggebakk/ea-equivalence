@@ -298,4 +298,11 @@ void writeTimes(RunTimes *runTimes, FILE *fp);
  */
 void destroyRunTimes(RunTimes *runTimes);
 
+/**
+ * Create a standard basis for the given dimension. 2^n where n = dimension.
+ * @param dimension The dimension to create the basis from
+ * @return The standard basis of 2^n, where n = dimension
+ */
+size_t *createStandardBasis(size_t dimension);
+
 #endif //EA_EQUIVALENCE_STRUCTURES_H

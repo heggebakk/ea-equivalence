@@ -1,3 +1,5 @@
+#include "permutation.h"
+#include <stdbool.h>
 #include <time.h>
 #include <malloc.h>
 #include <stdlib.h>
@@ -561,4 +563,12 @@ void writeTimes(RunTimes *runTimes, FILE *fp) {
 
 void destroyRunTimes(RunTimes *runTimes) {
     free(runTimes);
+}
+
+size_t *createStandardBasis(size_t dimension) {
+    size_t *basis = malloc(sizeof(size_t) * dimension + 1);
+    for (size_t i = 0; i < dimension; ++i) {
+        basis[i] = 1L << i;
+    }
+    return basis;
 }

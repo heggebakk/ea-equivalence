@@ -16,6 +16,6 @@ bool isIdentity(TruthTable *dest);
 
 size_t standardBasis();
 
-void printEaHelp();
+void printGroupHelp();
 
 #endif //EA_EQUIVALENCE_GROUP_H

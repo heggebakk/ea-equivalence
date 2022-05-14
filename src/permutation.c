@@ -181,14 +181,6 @@ TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *b
     return l1;
 }
 
-size_t *createStandardBasis(size_t dimension) {
-    size_t *basis = malloc(sizeof(size_t) * dimension + 1);
-    for (size_t i = 0; i < dimension; ++i) {
-        basis[i] = 1L << i;
-    }
-    return basis;
-}
-
 void recursive(size_t k, const size_t *basis, size_t *images, Partition *partitionF, Partition *partitionG, size_t dimension,
                size_t *generated, bool *generatedImages, TtNode *l1, size_t *fClassPosition, size_t *gClassPosition,
                size_t *domainMap) {

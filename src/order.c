@@ -2,18 +2,19 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <stdbool.h>
-#include "group.h"
+#include "order.h"
 
 char *filename;
-char *writeFile = "group_test.txt";
+char *writeFile = "order_test.txt";
 FILE *fp;
 size_t numPermutations;
 size_t dimension;
 size_t *basis;
 
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        printHelp();
+        printGroupHelp();
         exit(0);
     }
     checkFlags(argc, argv);
@@ -21,6 +22,16 @@ int main(int argc, char *argv[]) {
     parsePermutationFile(filename);
     fclose(fp);
     return 0;
+}
+
+void printGroupHelp() {
+    printf("Order\n");
+    printf("Usage: order [order_options]\n");
+    printf("Order options:\n");
+    printf("\t-f Path to permutation\n");
+    printf("\t-h  Help\n");
+    printf("\t-w Path to where the results should be written to.\n");
+    printf("\n");
 }
 
 size_t standardBasis() {
@@ -107,14 +118,14 @@ void checkFlags(int argc, char **argv) {
             switch (argv[i][1]) {
                 case 'h':
                     // Help:
-                    printHelp();
+                    printGroupHelp();
 
-                case 't':
+                case 'f':
                     // File to read from
                     i++;
                     filename = argv[i];
                     continue;
-                case 'f':
+                case 'w':
                     // Filename to write to
                     i++;
                     writeFile = argv[i];
@@ -122,12 +133,4 @@ void checkFlags(int argc, char **argv) {
             }
         }
     }
-}
-
-void printEaHelp() {
-    printf("How to use the program:\n");
-    printf("-t Input file \t Permutation file, first line is number of permutations, next n lines is the permutations.\n");
-    printf("\n");
-    printf("-h  Help\n");
-    printf("-f Filename to write to.");
 }

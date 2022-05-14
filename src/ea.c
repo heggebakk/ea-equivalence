@@ -1,4 +1,3 @@
-#include "group.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -9,6 +8,8 @@
 
 void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG,
                   size_t n, RunTimes *runTime, size_t *basis, FILE *fp);
+
+void printEaHelp();
 
 /**
  * Calculate the inverse of a function F
@@ -32,11 +33,8 @@ TtNode * shuffle(TtNode *head);
  * @param fileFunctionF Path to function F
  * @param fileFunctionG  Path to function G
  * @param k The number k, default is 4
- * @param partitionOnly Is set to True if one is to only run the partitioning of a function
- * @param autoMorphism Is set to true if one want to calculate the automorphism of a function
  */
-void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k,
-              bool *partitionOnly, bool *autoMorphism);
+void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k);
 
 /**
  * A helper that tells the user what kind of flags that can be used and what the program need to run
@@ -69,15 +67,13 @@ int main(int argc, char *argv[]) {
     char *pathFunctionF; // Path to function F
     char *pathFunctionG = NULL; // Path to function G
     long k = 4;
-    bool partitionOnly = false; // Set to true if one want to run only the partitioning of a function
-    bool autoMorphism = false; // Set to true if one want to run the automorphism of a function
 
     if (argc < 2) {
         printEaHelp();
-        return 1;
+        return 0;
     }
 
-    setFlags(argc, argv, &filename, &pathFunctionF, &pathFunctionG, &k, &partitionOnly, &autoMorphism);
+    setFlags(argc, argv, &filename, &pathFunctionF, &pathFunctionG, &k);
 
     // Specify which file to write to.
     FILE *fp = fopen(filename, "w+");
@@ -88,46 +84,6 @@ int main(int argc, char *argv[]) {
     TruthTable *functionG;
     if (pathFunctionG != NULL) functionG = parseTruthTable(pathFunctionG);
     else functionG = createFunction(functionF);
-
-    if (partitionOnly) {
-        Partition *partition = partitionFunction(functionF, k);
-        writePartition(partition, fp);
-        printPartitionInfo(partition);
-        destroyPartitions(partition);
-        destroyTruthTable(functionF);
-        destroyTruthTable(functionG);
-        fclose(fp);
-        return 0;
-    }
-    if (autoMorphism) {
-        MappingOfBuckets *mappingOfClasses = initMappingsOfClasses();
-        Partition *partition = partitionFunction(functionF, k);
-        size_t dimension = functionF->dimension;
-        size_t *basis = createStandardBasis(dimension);
-        mapPartitionClasses(partition, partition, dimension, mappingOfClasses);
-
-        for (int m = 0; m < mappingOfClasses->numOfMappings; ++m) {
-            TtNode *l1 = initTtNode();
-            outerPermutation(partition, partition, dimension, basis, mappingOfClasses->mappings[m],
-                             mappingOfClasses->mappings[m],
-                             mappingOfClasses->domains[m]);
-            if (l1->data != NULL) {
-                fprintf(fp, "%zu\n", dimension);
-                fprintf(fp, "%zu\n", countTtNodes(l1));
-                writeTtLinkedList(l1, fp);
-                destroyTtLinkedList(l1);
-                break;
-            }
-            destroyTtLinkedList(l1);
-        }
-        destroyTruthTable(functionF);
-        destroyTruthTable(functionG);
-        destroyMappingOfClasses(mappingOfClasses);
-        destroyPartitions(partition);
-        free(basis);
-        fclose(fp);
-        return 0;
-    }
 
     printTruthTable(functionF);
     printTruthTable(functionG);
@@ -203,8 +159,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k,
-              bool *partitionOnly, bool *autoMorphism) {
+void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k) {
     for (int i = 1; i < argc; ++i) {
         // Check for flag
         if (argv[i][0] == '-') {
@@ -234,16 +189,10 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
                         exit(1);
                     }
                     continue;
-                case 'o':
-                    (*autoMorphism) = true;
-                    continue;
                 case 'w':
                     i++;
                     (*filename) = argv[i];
                     continue;
-                case 'p': {
-                    (*partitionOnly) = true;
-                }
             }
         }
     }
@@ -252,12 +201,11 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
 void printEaHelp() {
     printf("EA-equivalence test\n");
     printf("Usage: ea [ea_options]\n");
-    printf("Ea_options:\n");
+    printf("Ea options:\n");
     printf("\t-f \t - Path to Function F\n");
     printf("\t-g \t - Path to Function G\n");
     printf("\t-h \t - Print help\n");
     printf("\t-k \t - Size of k\n");
-    printf("\t-o \t - Calculate auto morphism, set this if you want to calculate the automorphisms of a function.\n");
     printf("\t-p \t - Calculate partitioning, set this if you want to calculate the partition of a function.\n");
     printf("\t-w \t - The path to where the results should be written to.\n");
     printf("\n");

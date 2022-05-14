@@ -61,13 +61,6 @@ TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *b
                          size_t *gClassPosition, size_t *domainMap);
 
 /**
- * Create a standard basis for the given dimension. 2^n where n = dimension.
- * @param dimension The dimension to create the basis from
- * @return The standard basis of 2^n, where n = dimension
- */
-size_t *createStandardBasis(size_t dimension);
-
-/**
  * This is a DFS for linear permutations respecting the given Partition, i.e. such that every element from a given bucket
  * with respect to F maps to an element from a bucket with the same size corresponding to G.
  * @param k The recursive step
