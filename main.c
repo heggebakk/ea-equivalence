@@ -20,6 +20,8 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
  */
 TruthTable *inverse(TruthTable function);
 
+TtNode * shuffle(TtNode *head);
+
 void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k,
               bool *partitionOnly, bool *autoMorphism);
 
@@ -127,8 +129,9 @@ int main(int argc, char *argv[]) {
             // Print time information
             printTimes(runTime);
 
-//            fprintf(fp, "\nWalsh Transform:\n");
-//            writeTimes(runTime, fp);
+            fprintf(fp, "\nWalsh Transform:\n");
+            writeTimes(runTime, fp);
+            fprintf(fp, "\n");
 
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
@@ -152,8 +155,9 @@ int main(int argc, char *argv[]) {
             runTime->total = stopTime(runTime->total, startTotalTime);
             // Print time information
             printTimes(runTime);
-//            fprintf(fp, "\nNew Algorithm\n");
-//            writeTimes(runTime, fp);
+            fprintf(fp, "\nNew Algorithm\n");
+            writeTimes(runTime, fp);
+            fprintf(fp, "\n");
 
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
@@ -243,14 +247,20 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
         TtNode *l1 = outerPermutation(partitionF, partitionG, DIMENSION, basis,
                                       mappingOfClassesF->mappings[m],
                                       mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m]);
-        size_t numPermutations = countTtNodes(l1);
         runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
+        size_t numPermutations = countTtNodes(l1);
+
+        /* Shuffle list of permutations */
+        TtNode *l1Shuffled = shuffle(l1);
+        destroyTtLinkedList(l1);
 
         // Calculate inner permutation
         clock_t startInnerPermutationTime = clock();
+        fprintf(fp, "Permutations: %zu\n", numPermutations);
+        printf("Permutations: %zu\n", numPermutations);
         for (size_t i = 0; i < numPermutations; ++i) {
-            fprintf(fp, "%zu\n", numPermutations);
-            TruthTable *l1Prime = getNode(l1, i);
+            TruthTable *l1Prime = getNode(l1Shuffled, i);
+            printTruthTable(l1Prime);
             TruthTable *l1Inverse = inverse(*l1Prime);
             TruthTable *gPrime = composeFunctions(l1Inverse, functionG);
             TruthTable *lPrime;
@@ -278,7 +288,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
             destroyTruthTable(l2);
             destroyTruthTable(gPrime);
         }
-        destroyTtLinkedList(l1);
+        destroyTtLinkedList(l1Shuffled);
         if (foundSolution) break;
     }
     destroyMappingOfClasses(mappingOfClassesF);
@@ -293,3 +303,27 @@ TruthTable *inverse(TruthTable function) {
     }
     return result;
 }
+
+TtNode *shuffle(TtNode *head) {
+    size_t n = countTtNodes(head);
+    if (n <= 1) return head;
+
+    TruthTable *ptr[n];
+    // Add pointer of node to array
+    for (size_t i = 0; i < n; ++i) {
+        ptr[i] = getNode(head, i);
+    }
+    for (size_t i = 0; i < n - 1; ++i) {
+        size_t rnd = (size_t) rand();
+        size_t j = (i + rnd / (RAND_MAX / (n - 1) + 1)) % n;
+        TruthTable *t = ptr[j];
+        ptr[j] = ptr[i];
+        ptr[i] = t;
+    }
+    TtNode *new = initTtNode();
+    for (int i = 0; i < n; ++i) {
+        addNode(new, ptr[i]);
+    }
+    return new;
+}
+

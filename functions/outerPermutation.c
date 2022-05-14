@@ -4,6 +4,8 @@
 #include "outerPermutation.h"
 #include "partition.h"
 
+TtNode * shuffle(TtNode *head);
+
 TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, size_t *fClassPosition,
                          size_t *gClassPosition, size_t *domainMap) {
     TtNode *l1 = initTtNode();
@@ -56,9 +58,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
         /* Since we want the function to be a permutation, the image of the basis element
          * should not be one of the images that we have already generated.
          */
-        if (generatedImages[ck] == true) {
-            continue;
-        }
+        if (generatedImages[ck]) continue;
         /* A contradiction can occur if assigning this value to the basis element causes some other
          * element to map to the wrong bucket by linearity. The following variable will be set to
          * true if such a contradiction is encountered.
