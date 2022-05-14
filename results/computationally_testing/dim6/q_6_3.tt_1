@@ -1,0 +1,8 @@
+6
+0 39 40 15 29 58 53 18 33 6 9 46 60 27 20 51 63 24 23 48 34 5 10 45 30 57 54 17 3 36 43 12 6 33 46 9 27 60 51 20 39 0 15 40 58 29 18 53 57 30 17 54 36 3 12 43 24 63 48 23 5 34 45 10 
+
+New Algorithm
+Time spent partitioning: 0.016396 
+Time spent outer permutation: 0.006673 
+Time spent inner permutation: 0.024598 
+Total time spent: 0.047705 
