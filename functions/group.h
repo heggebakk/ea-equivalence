@@ -1,7 +1,6 @@
 #ifndef EA_EQUIVALENCE_GROUP_H
 #define EA_EQUIVALENCE_GROUP_H
 
-#include "../utils/linkedList.h"
 #include <stdbool.h>
 
 void checkFlags(int argc, char **argv);

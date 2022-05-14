@@ -6,9 +6,9 @@
 #include "functions/outerPermutation.h"
 #include "utils/eaTest.h"
 #include "functions/walshTransform.h"
-#include "functions/innerPermutation.h"
 #include "utils/runTime.h"
 #include "structures.h"
+#include "permutation.h"
 
 void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, FILE *fp);
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     if (autoMorphism) {
-        MappingOfClasses *mappingOfClasses = initMappingsOfClasses();
+        MappingOfBuckets *mappingOfClasses = initMappingsOfClasses();
         Partition *partition = partitionFunction(functionF, k);
         size_t dimension = functionF->dimension;
         size_t *basis = createStandardBasis(dimension);
@@ -249,8 +249,8 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, FILE *fp) {
     // We might end up in a situation where we have more than one mapping of the Partition from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
-    MappingOfClasses *mappingOfClassesF = initMappingsOfClasses();
-    MappingOfClasses *mappingOfClassesG = initMappingsOfClasses();
+    MappingOfBuckets *mappingOfClassesF = initMappingsOfClasses();
+    MappingOfBuckets *mappingOfClassesG = initMappingsOfClasses();
     mapPartitionClasses(partitionG, partitionF, DIMENSION, mappingOfClassesF);
     mapPartitionClasses(partitionF, partitionG, DIMENSION, mappingOfClassesG);
 

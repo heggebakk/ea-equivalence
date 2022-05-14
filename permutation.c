@@ -1,9 +1,19 @@
-#include <malloc.h>
 #include <stdbool.h>
-#include "innerPermutation.h"
+#include <malloc.h>
+#include "permutation.h"
+#include "structures.h"
 
-bool innerPermutation(TruthTable *f, TruthTable *g, const size_t *basis, TruthTable *l2, TruthTable **lPrime) {
-    Node **restrictedDomains = calloc(sizeof(Node **), f->dimension); // A list of Linked Lists
+/**
+ * Reconstruction the inner permutations of function F and function G
+ * @param f A TruthTable of function F
+ * @param g A TruthTable of function G
+ * @param basis
+ * @param l2 The inner permutation result
+ * @param lPrime l'
+ * @return Returns true if reconstruction of the inner permutation was successful, false otherwise.
+ */
+bool innerPermutation(struct TruthTable *f, struct TruthTable *g, const size_t *basis, struct TruthTable *l2, struct TruthTable **lPrime) {
+    struct Node **restrictedDomains = calloc(sizeof(struct Node **), f->dimension); // A list of Linked Lists
 
     for (size_t i = 0; i < f->dimension; ++i) {
         bool *map = computeSetOfTs(g, basis[i]);
@@ -21,7 +31,13 @@ bool innerPermutation(TruthTable *f, TruthTable *g, const size_t *basis, TruthTa
     return result;
 }
 
-bool *computeSetOfTs(TruthTable *f, size_t x) {
+/**
+ * Compute the set of t's where t = f[x] + f[y] + f[x + y]
+ * @param f The function containing the elements to compute the sets over
+ * @param x A fixed x to compute with
+ * @return The set of t's from the computation
+ */
+bool *computeSetOfTs(struct TruthTable *f, size_t x) {
     size_t n = f->dimension;
     bool *map = calloc(sizeof(bool), 1L << n);
 
@@ -32,7 +48,7 @@ bool *computeSetOfTs(TruthTable *f, size_t x) {
     return map;
 }
 
-Node *computeDomain(const bool *listOfTs, TruthTable *f) {
+struct Node *computeDomain(const bool *listOfTs, struct TruthTable *f) {
     size_t n = f->dimension;
     bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
@@ -69,7 +85,20 @@ Node *computeDomain(const bool *listOfTs, TruthTable *f) {
     return head;
 }
 
-bool dfs(Node **domains, size_t k, size_t *values, TruthTable *f, TruthTable *g, TruthTable *l2, TruthTable **lPrime) {
+/**
+ * A depth first search over a array containing linked lists.
+ * @param domains A array containing a linked list of restricted domains
+ * @param k
+ * @param values
+ * @param f The TruthTable of function f
+ * @param g The TruthTable of function g
+ * @param l2 The inner permutation that is to be computed
+ * @param lPrime The l' that is to be computed
+ * @return True if the dfs successfully reconstructed a inner permutation, false otherwise.
+ */
+
+bool
+dfs(Node **domains, size_t k, size_t *values, struct TruthTable *f, struct TruthTable *g, struct TruthTable *l2, struct TruthTable **lPrime) {
     if (k >= f->dimension) {
         reconstructTruthTable(values, l2);
         *lPrime = composeFunctions(f, l2);
@@ -90,7 +119,7 @@ bool dfs(Node **domains, size_t k, size_t *values, TruthTable *f, TruthTable *g,
     return false;
 }
 
-void reconstructTruthTable(const size_t *basisValues, TruthTable *l2) {
+void reconstructTruthTable(const size_t *basisValues, struct TruthTable *l2) {
     for (size_t coordinate = 0; coordinate < 1L << l2->dimension; ++coordinate) {
         size_t result = 0;
         for (size_t i = 0; i < l2->dimension; ++i) {
@@ -116,6 +145,11 @@ void addFunctionsTogether(TruthTable *to, TruthTable *from) {
     }
 }
 
+/**
+ * Check if a function is linear or not
+ * @param f The function to check
+ * @return True if the function is linear, false otherwise
+ */
 bool isLinear(TruthTable *f) {
     for (size_t a = 1; a < 1L << f->dimension; ++a) {
         for (size_t b = a + 1; b < 1L << f->dimension; ++b) {

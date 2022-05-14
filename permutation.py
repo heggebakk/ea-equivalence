@@ -11,7 +11,7 @@ dirs = os.listdir(f"./resources/TT_library/{dim}")
 def permute(name):
     filename = f"./resources/TT_library/{dim}/{name}"
     dest_name = f"./results/automorphism_group/{dim}/{name[:-3]}.txt"
-    subprocess.run(["./main.out", '-t', filename, '-f', dest_name, '-o'])
+    subprocess.run(["./ea", '-t', filename, '-f', dest_name, '-o'])
 
 
 if __name__ == '__main__':

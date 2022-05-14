@@ -3,9 +3,8 @@
 
 #include <stdio.h>
 #include "stdbool.h"
-#include "partition.h"
 #include "../utils/runTime.h"
-#include "../utils/linkedList.h"
+#include "../structures.h"
 
 /**
  * Find all linear permutations L respecting two given Partition f and g, i.e. such that L maps all elements from a given

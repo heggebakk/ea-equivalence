@@ -1,7 +1,7 @@
 #ifndef EA_EQUIVALENCE_WALSHTRANSFORM_H
 #define EA_EQUIVALENCE_WALSHTRANSFORM_H
 
-#include "partition.h"
+#include "../structures.h"
 
 typedef struct {
     size_t dimension;

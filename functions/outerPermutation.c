@@ -2,7 +2,6 @@
 #include <string.h>
 #include "stdlib.h"
 #include "outerPermutation.h"
-#include "partition.h"
 
 TtNode * shuffle(TtNode *head);
 
