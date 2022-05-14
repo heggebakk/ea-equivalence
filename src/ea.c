@@ -7,15 +7,15 @@
 #include "structures.h"
 #include "permutation.h"
 
-void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
-                  size_t DIMENSION, RunTimes *runTime, size_t *basis, FILE *fp);
+void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG,
+                  size_t n, RunTimes *runTime, size_t *basis, FILE *fp);
 
 /**
- * Create the inverse function
- * @param function The function to create the inverse of
- * @return The inverse
+ * Calculate the inverse of a function F
+ * @param F The function F to inverse
+ * @return The inverse of function F
  */
-TruthTable *inverse(TruthTable function);
+TruthTable *inverse(TruthTable F);
 
 /**
  * Shuffle a linked linked list
@@ -41,37 +41,52 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
 /**
  * A helper that tells the user what kind of flags that can be used and what the program need to run
  */
-void printHelp();
+void printEaHelp();
 
-TruthTable *randomLinearFunction(size_t dimension);
+/**
+ * Create a random linear function of dimension n
+ * @param n The dimension
+ * @return A random linear function of dimension n
+ */
+TruthTable *randomLinearFunction(size_t n);
 
-TruthTable *randomLinearPermutation(size_t dimension);
+/**
+ * Create a random linear permutation of dimension n
+ * @param n The dimension
+ * @return A random linear permutation of dimension n
+ */
+TruthTable *randomLinearPermutation(size_t n);
 
+/**
+ * Create a new function with respect to a function F
+ * @param F The function F to create with respect to
+ * @return A new function
+ */
 TruthTable * createFunction(TruthTable *F);
 
 int main(int argc, char *argv[]) {
     char *filename = "result.txt"; // Default position to write results to
-    char *fileFunctionF; // Path to function F
-    char *fileFunctionG = NULL; // Path to function G
+    char *pathFunctionF; // Path to function F
+    char *pathFunctionG = NULL; // Path to function G
     long k = 4;
     bool partitionOnly = false; // Set to true if one want to run only the partitioning of a function
     bool autoMorphism = false; // Set to true if one want to run the automorphism of a function
 
     if (argc < 2) {
-        printHelp();
+        printEaHelp();
         return 1;
     }
 
-    setFlags(argc, argv, &filename, &fileFunctionF, &fileFunctionG, &k, &partitionOnly, &autoMorphism);
+    setFlags(argc, argv, &filename, &pathFunctionF, &pathFunctionG, &k, &partitionOnly, &autoMorphism);
 
     // Specify which file to write to.
     FILE *fp = fopen(filename, "w+");
 
     // Parse files to truth tables
     // Parse function F. Parse function G if given, otherwise create random function G with respect to function F.
-    TruthTable *functionF = parseTruthTable(fileFunctionF);
+    TruthTable *functionF = parseTruthTable(pathFunctionF);
     TruthTable *functionG;
-    if (fileFunctionG != NULL) functionG = parseTruthTable(fileFunctionG);
+    if (pathFunctionG != NULL) functionG = parseTruthTable(pathFunctionG);
     else functionG = createFunction(functionF);
 
     if (partitionOnly) {
@@ -116,9 +131,9 @@ int main(int argc, char *argv[]) {
 
     printTruthTable(functionF);
     printTruthTable(functionG);
-    size_t DIMENSION = functionF->dimension;
+    size_t n = functionF->dimension;
 
-    size_t *basis = createStandardBasis(DIMENSION);
+    size_t *basis = createStandardBasis(n);
 
     RunTimes *runTime;
     Partition *partitionF;
@@ -138,7 +153,7 @@ int main(int argc, char *argv[]) {
             partitionG = eaPartitionWalsh(functionG, k);
             runTime->partition = stopTime(runTime->partition, startPartitionTime);
 
-            runAlgorithm(functionF, functionG, partitionF, partitionG, DIMENSION,
+            runAlgorithm(functionF, functionG, partitionF, partitionG, n,
                          runTime, basis, fp);
 
             // End time
@@ -164,7 +179,7 @@ int main(int argc, char *argv[]) {
             partitionG = partitionFunction(functionG, k);
             runTime->partition = stopTime(runTime->partition, startPartitionTime);
 
-            runAlgorithm(functionF, functionG, partitionF, partitionG, DIMENSION,
+            runAlgorithm(functionF, functionG, partitionF, partitionG, n,
                          runTime, basis, fp);
 
             // End time
@@ -196,7 +211,7 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
             switch (argv[i][1]) {
                 // Help
                 case 'h':
-                    printHelp();
+                    printEaHelp();
                     exit(0);
                 case 'f':
                     // Parse function F to TruthTable
@@ -234,7 +249,7 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
     }
 }
 
-void printHelp() {
+void printEaHelp() {
     printf("EA-equivalence test\n");
     printf("Usage: ea [ea_options]\n");
     printf("Ea_options:\n");
@@ -248,14 +263,14 @@ void printHelp() {
     printf("\n");
 }
 
-void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
-                  size_t DIMENSION, RunTimes *runTime, size_t *basis, FILE *fp) {
+void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG,
+                  size_t n, RunTimes *runTime, size_t *basis, FILE *fp) {
     // We might end up in a situation where we have more than one mapping of the Partition from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
     MappingOfBuckets *mappingOfClassesF = initMappingsOfClasses();
     MappingOfBuckets *mappingOfClassesG = initMappingsOfClasses();
-    mapPartitionClasses(partitionG, partitionF, DIMENSION, mappingOfClassesF);
-    mapPartitionClasses(partitionF, partitionG, DIMENSION, mappingOfClassesG);
+    mapPartitionClasses(partitionG, partitionF, n, mappingOfClassesF);
+    mapPartitionClasses(partitionF, partitionG, n, mappingOfClassesG);
 
     // Loop over all the mappings, if we find a solution, we break and finish.
     for (int m = 0; m < mappingOfClassesG->numOfMappings; ++m) {
@@ -263,61 +278,60 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
         // Calculate Outer Permutation
         clock_t startOuterPermutationTime = clock();
-        TtNode *l1 = outerPermutation(partitionF, partitionG, DIMENSION, basis,
-                                      mappingOfClassesF->mappings[m],
-                                      mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m]);
+        TtNode *allL1 = outerPermutation(partitionF, partitionG, n, basis,
+                                         mappingOfClassesF->mappings[m],
+                                         mappingOfClassesG->mappings[m], mappingOfClassesG->domains[m]);
         runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
-        size_t numPermutations = countTtNodes(l1);
+        size_t numPermutations = countTtNodes(allL1);
 
         /* Shuffle list of permutations */
-        TtNode *l1Shuffled = shuffle(l1);
-        destroyTtLinkedList(l1);
+        TtNode *L1Shuffled = shuffle(allL1);
+        destroyTtLinkedList(allL1);
 
-        // Calculate inner permutation
-        clock_t startInnerPermutationTime = clock();
         fprintf(fp, "Permutations: %zu\n", numPermutations);
         printf("Permutations: %zu\n", numPermutations);
         for (size_t i = 0; i < numPermutations; ++i) {
-            TruthTable *l1Prime = getNode(l1Shuffled, i);
-            printTruthTable(l1Prime);
-            TruthTable *l1Inverse = inverse(*l1Prime);
-            TruthTable *gPrime = composeFunctions(l1Inverse, functionG);
-            TruthTable *lPrime;
-            TruthTable *l2 = initTruthTable(DIMENSION);
+            TruthTable *L1 = getNode(L1Shuffled, i);
+            printTruthTable(L1);
+            TruthTable *L1Inverse = inverse(*L1);
+            TruthTable *currentG = composeFunctions(L1Inverse, G);
+            TruthTable *LPrime;
+            TruthTable *L2 = initTruthTable(n);
 
-            if (innerPermutation(functionF, gPrime, basis, l2, &lPrime)) {
+            // Calculate inner permutation
+            clock_t startInnerPermutationTime = clock();
+            if (innerPermutation(F, currentG, basis, L2, &LPrime)) {
+                runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
                 foundSolution = true;
 
-                runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
-
-                // Find l
-                TruthTable *l = composeFunctions(l1Prime, lPrime);
-                writeTruthTable(fp, l);
+                // Find L
+                TruthTable *L = composeFunctions(L1, LPrime);
+                writeTruthTable(fp, L);
 
                 // Free memory
-                destroyTruthTable(l);
-                destroyTruthTable(l1Inverse);
-                destroyTruthTable(l2);
-                destroyTruthTable(lPrime);
-                destroyTruthTable(gPrime);
+                destroyTruthTable(L);
+                destroyTruthTable(L1Inverse);
+                destroyTruthTable(L2);
+                destroyTruthTable(LPrime);
+                destroyTruthTable(currentG);
 
                 break;
             }
-            destroyTruthTable(l1Inverse);
-            destroyTruthTable(l2);
-            destroyTruthTable(gPrime);
+            destroyTruthTable(L1Inverse);
+            destroyTruthTable(L2);
+            destroyTruthTable(currentG);
         }
-        destroyTtLinkedList(l1Shuffled);
+        destroyTtLinkedList(L1Shuffled);
         if (foundSolution) break;
     }
     destroyMappingOfClasses(mappingOfClassesF);
     destroyMappingOfClasses(mappingOfClassesG);
 }
 
-TruthTable *inverse(TruthTable function) {
-    TruthTable *result = initTruthTable(function.dimension);
-    for (size_t x = 0; x < 1L << function.dimension; ++x) {
-        size_t y = function.elements[x];
+TruthTable *inverse(TruthTable F) {
+    TruthTable *result = initTruthTable(F.dimension);
+    for (size_t x = 0; x < 1L << F.dimension; ++x) {
+        size_t y = F.elements[x];
         result->elements[y] = x;
     }
     return result;
@@ -346,35 +360,32 @@ TtNode *shuffle(TtNode *head) {
     return new;
 }
 
-TruthTable *randomLinearFunction(size_t dimension) {
-    size_t entries = 1L << dimension;
+TruthTable *randomLinearFunction(size_t n) {
+    size_t entries = 1L << n;
     size_t listGenerated[entries];
     listGenerated[0] = 0;
-    size_t basisImages[dimension];
-    for (size_t i = 0; i < dimension; ++i) {
+    size_t basisImages[n];
+    for (size_t i = 0; i < n; ++i) {
         size_t j = rand() % entries;
         basisImages[i] = j;
         for (int k = 0; k < 1L << i; ++k) {
             listGenerated[(1L << i) + k] = listGenerated[k] ^ j;
         }
     }
-    TruthTable *result = initTruthTable(dimension);
+    TruthTable *result = initTruthTable(n);
     memcpy(result->elements, listGenerated, sizeof(size_t) * entries);
     return result;
 }
 
-TruthTable *randomLinearPermutation(size_t dimension) {
-    size_t entries = 1L << dimension;
-    bool generated[entries];
+TruthTable *randomLinearPermutation(size_t n) {
+    size_t entries = 1L << n;
+    bool *generated = calloc(sizeof (bool), entries);
     size_t listGenerated[entries];
     generated[0] = true;
-    for (size_t i = 1; i < entries; ++i) {
-        generated[i] = false;
-    }
     listGenerated[0] = 0;
 
-    size_t basisImages[dimension];
-    for (int i = 0; i < dimension; ++i) {
+    size_t basisImages[n];
+    for (int i = 0; i < n; ++i) {
         size_t j = rand() % entries;
         while (generated[j]) {
             j = (j + 1) % entries;
@@ -385,25 +396,25 @@ TruthTable *randomLinearPermutation(size_t dimension) {
             generated[listGenerated[k] ^ j] = true;
         }
     }
-    TruthTable *result = initTruthTable(dimension);
+    TruthTable *result = initTruthTable(n);
     memcpy(result->elements, listGenerated, sizeof(size_t) * entries);
     return result;
 }
 
 TruthTable * createFunction(TruthTable *F) {
     size_t n = F->dimension;
-    TruthTable *l1 = randomLinearPermutation(n);
-    TruthTable *l2 = randomLinearPermutation(n);
-    TruthTable *l = randomLinearFunction(n);
+    TruthTable *L1 = randomLinearPermutation(n);
+    TruthTable *L2 = randomLinearPermutation(n);
+    TruthTable *L = randomLinearFunction(n);
 
-    TruthTable *temp = composeFunctions(F, l2);
-    TruthTable *g = composeFunctions(l1, temp);
-    addFunctionsTogether(g, l);
+    TruthTable *temp = composeFunctions(F, L2);
+    TruthTable *G = composeFunctions(L1, temp);
+    addFunctionsTogether(G, L);
 
-    destroyTruthTable(l1);
-    destroyTruthTable(l2);
-    destroyTruthTable(l);
+    destroyTruthTable(L1);
+    destroyTruthTable(L2);
+    destroyTruthTable(L);
     destroyTruthTable(temp);
 
-    return g;
+    return G;
 }

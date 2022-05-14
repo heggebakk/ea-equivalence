@@ -1,1 +1,1 @@
-gcc -lm -o ea main.c functions/partition.c functions/partition.h functions/outerPermutation.c functions/outerPermutation.h functions/innerPermutation.c functions/innerPermutation.h utils/linkedList.h utils/linkedList.c functions/walshTransform.h functions/walshTransform.c utils/eaTest.c utils/eaTest.h utils/truthTable.c utils/runTime.c utils/runTime.h
+gcc -lm -o ea src/ea.c src/structures.c src/structures.h src/permutation.c src/permutation.h

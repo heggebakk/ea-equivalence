@@ -124,7 +124,7 @@ void checkFlags(int argc, char **argv) {
     }
 }
 
-void printHelp() {
+void printEaHelp() {
     printf("How to use the program:\n");
     printf("-t Input file \t Permutation file, first line is number of permutations, next n lines is the permutations.\n");
     printf("\n");
