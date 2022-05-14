@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "linkedList.h"
-#include "truthTable.h"
 
 Node *initLinkedList() {
     Node *newNode = malloc(sizeof(Node));

@@ -5,7 +5,6 @@
 #include "stdbool.h"
 #include "partition.h"
 #include "../utils/runTime.h"
-#include "../utils/truthTable.h"
 #include "../utils/linkedList.h"
 
 /**

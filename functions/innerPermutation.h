@@ -1,7 +1,6 @@
 #ifndef EA_EQUIVALENCE_INNERPERMUTATION_H
 #define EA_EQUIVALENCE_INNERPERMUTATION_H
 
-#include "../utils/truthTable.h"
 #include "stdbool.h"
 #include "../utils/linkedList.h"
 

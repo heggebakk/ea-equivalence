@@ -2,7 +2,6 @@
 #define EA_EQUIVALENCE_PARTITION_H
 
 #include <stdbool.h>
-#include "../utils/truthTable.h"
 #include "../utils/linkedList.h"
 
 typedef struct {

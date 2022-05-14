@@ -3,12 +3,12 @@
 #include <errno.h>
 #include <string.h>
 #include "time.h"
-#include "utils/truthTable.h"
 #include "functions/outerPermutation.h"
 #include "utils/eaTest.h"
 #include "functions/walshTransform.h"
 #include "functions/innerPermutation.h"
 #include "utils/runTime.h"
+#include "structures.h"
 
 void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *partitionF, Partition *partitionG,
                   size_t DIMENSION, RunTimes *runTime, size_t *basis, FILE *fp);
@@ -289,7 +289,7 @@ void runAlgorithm(TruthTable *functionF, TruthTable *functionG, Partition *parti
 
                 // Find l
                 TruthTable *l = composeFunctions(l1Prime, lPrime);
-                writeTruthTable(l, fp);
+                writeTruthTable(fp, l);
 
                 // Free memory
                 destroyTruthTable(l);

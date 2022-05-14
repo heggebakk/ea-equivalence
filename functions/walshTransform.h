@@ -1,7 +1,6 @@
 #ifndef EA_EQUIVALENCE_WALSHTRANSFORM_H
 #define EA_EQUIVALENCE_WALSHTRANSFORM_H
 
-#include "../utils/truthTable.h"
 #include "partition.h"
 
 typedef struct {

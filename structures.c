@@ -1,10 +1,10 @@
 #include <stdlib.h>
-#include "truthTable.h"
+#include "structures.h"
 
-TruthTable * initTruthTable(size_t dimension) {
+TruthTable *initTruthTable(size_t n) {
     TruthTable *newTt = malloc(sizeof(TruthTable));
-    newTt->dimension = dimension;
-    newTt->elements = malloc(sizeof(size_t) * 1L << dimension);
+    newTt->dimension = n;
+    newTt->elements = malloc(sizeof(size_t) * 1L << n);
     return newTt;
 }
 
@@ -23,7 +23,7 @@ void printTruthTable(TruthTable *tt) {
     printf("\n");
 }
 
-void writeTruthTable(TruthTable *tt, FILE *fp) {
+void writeTruthTable(FILE *fp, TruthTable *tt) {
     for (size_t i = 0; i < 1L << tt->dimension; ++i) {
         fprintf(fp, "%zu ", tt->elements[i]);
     }

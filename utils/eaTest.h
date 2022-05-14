@@ -1,7 +1,7 @@
 #ifndef EA_EQUIVALENCE_EATEST_H
 #define EA_EQUIVALENCE_EATEST_H
 
-#include "truthTable.h"
+#include "../structures.h"
 
 TruthTable *randomLinearPermutation(size_t dimension);
 
