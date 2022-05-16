@@ -1,1 +1,0 @@
-gcc -lm -o partition src/partition.c src/structures.c

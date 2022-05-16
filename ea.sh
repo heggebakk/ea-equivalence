@@ -1,1 +1,0 @@
-gcc -lm -o ea src/ea.c src/structures.c src/structures.h src/permutation.c src/permutation.h
