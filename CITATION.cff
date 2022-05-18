@@ -1,0 +1,9 @@
+cff-version: 1.0.0
+title: "An efficient implemention of testing EA-equivalence"
+message: "If you use this software, please cite it using the metadata from this file."
+type: "software"
+authors:
+  - family-names: "Heggebakk"
+    given-names: "Marie"
+    orcid: "https://orcid.org/0000-0003-4553-4711"
+url: "https://github.com/heggebakk/ea-equivalence"
