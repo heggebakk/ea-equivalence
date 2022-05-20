@@ -1,30 +1,39 @@
 # ea-equivalence
-ea-equivalence is an implementation from the paper `Deciding EA-equivalence via invariants` by Nikolay Kaleyski.
+This is an efficient implementation of a test for EA-equivalence between two functions $F$ and $G$.
 
-## Build and run project:
-To build the project, run `comp.sh` at the command line in the current directory, which will generate an executable called `main.out` by default.
+## What you need
+- [GCC](https://gcc.gnu.org/) to compile the program, version 10 or above.
 
-The program uses flags to run the program. Use `-h` for help.
+## How to build and run project:
+To build the program, make `compile.sh` executable and run `./compile.sh` at the command line in the root directory of 
+the project, which will generate an executable called `ea`.
 
-Flags:
+For information on how to run the program, you can run `./ea -h` in the command line. Then you will get information on
+how to run the program. It will look something like:
+
 ```text
--h Help
--f Filename for writing to a file. Default value: result.txt
--k Size of the tuple T. Default value: 4
--t Truth table file
--p Use for finding the partitions and write them to a file.
-```
+EA-equivalence test
+Usage: ea [ea_options] [filename_F] [filename_G]
+Ea options:
+	-h 	 - Print help
+	-k 	 - Size of k
+	-t 	 - Add this for printing running times for different functions.
 
-Example:
-```shell
-./ea -w path-to-results.txt -k 6 -f path-to-functionF.tt
+	filename_F: path to the file of a function F
+	filename_G: path to the file of a function G
 ```
-
-The truth table file is expected to be in the format:
+The truth table file is expected to be of the format:
 
 ```text
 6
 0 1 8 15 27 14 35 48 53 39 43 63 47 41 1 1 41 15 15 47 52 6 34 22 20 33 36 23 8 41 8 47 36 52 35 53 35 39 20 22 33 34 48 53 39 48 6 23 22 33 63 14 23 52 14 43 27 63 36 6 27 43 20 34 
 ```
 
-The first line is the dimension, and the second is the truth table.
+Example for testing for EA-equivalence between two functions $F$ and $G$.
+```shell
+./ea path/to/functionF path/to/functionG
+```
+
+The program will print the result to the command line. If the two functions $F$ and $G$ are EA-equivalent, the program will 
+print out truth tables for $L_1, A_2, A$.
+
