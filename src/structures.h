@@ -11,11 +11,11 @@
 
 /**
  * A Truth Table of a function F.
- * Holds the dimension, n, and all the elements of the function (2^n elements)
+ * Holds the n, n, and all the elements of the function (2^n elements)
  */
 typedef struct TruthTable {
-    size_t dimension;
-    size_t *elements;
+    size_t n; // Dimension of the function
+    size_t *elements; // All the elements of the function
 } TruthTable;
 
 
@@ -24,10 +24,10 @@ typedef struct TruthTable {
  * Number of buckets, all the multiplicities, the sizes of the buckets, and all the elements in all the buckets.
  */
 typedef struct Partition {
-    size_t numberOfClasses;
-    size_t *multiplicities;
-    size_t *classSizes;
-    size_t **classes;
+    size_t numberOfBuckets; // Total number of partition buckets
+    size_t *multiplicities; // A list of all the multiplicities
+    size_t *bucketSizes; // The size of each bucket, given as a list
+    size_t **buckets; // A list of all the elements in each bucket.
 } Partition;
 
 typedef struct MappingOfBuckets {
@@ -43,12 +43,13 @@ typedef struct Node {
     size_t data;
     struct Node *next;
 } Node ;
+
 typedef struct TtNode {
     TruthTable *data;
     struct TtNode *next;
 } TtNode ;
 
-typedef struct {
+typedef struct WalshTransform {
     size_t dimension;
     size_t **elements;
 } WalshTransform;
@@ -56,7 +57,7 @@ typedef struct {
 /**
  * A struct for keeping all the run times for the entire program
  */
-typedef struct {
+typedef struct RunTimes {
     double total;
     double partition;
     double outerPermutation;
@@ -92,7 +93,7 @@ void writeTruthTable(FILE *fp, TruthTable *tt);
 
 /**
  * Parse a file to a Truth Table Struct
- * The first line of the file must be the numberOfClasses, the next line should be all the elements seperated with white space
+ * The first line of the file must be the numberOfBuckets, the next line should be all the elements seperated with white space
  *
  * Example:
  * 6
@@ -103,50 +104,59 @@ void writeTruthTable(FILE *fp, TruthTable *tt);
  */
 TruthTable *parseTruthTable(const char filename[64]);
 
-Partition *initPartition(size_t size);
-
 /**
- * Partition bucket size where k = even
- * Works only for k = 4
- * @param function The function to be partitioned
- * @param k The size of the tuple T
- * @return Partitions
+ * Initialize a new Partition. This method takes in the n (n) of the function and created a new Partition where
+ * it allocates all the memory needed to create all the lists.
+ * @param n The n of the field we are working in
+ * @return A pointer to a new Partition
  */
-Partition *partitionFunction(TruthTable *function, size_t k);
+Partition *initPartition(size_t n);
 
 /**
- * Printing out to the console, information about a partition (The multiplicity of a "bucket, the size of the
+ * Partition a function F. This function will find the bucket partition for each element in F.
+ * @param F The truth table of a function.
+ * @param k The size of the tuple T
+ * @return A new Partition of function F
+ */
+Partition *partitionFunction(TruthTable *F, size_t k);
+
+/**
+ * Printing out to the console. The information about a partition (The multiplicity of a "bucket, the size of the
  * bucket and the elements in the bucket.
- * @param partition A partition
+ * @param partition A partition of a function
  */
 void printPartitionInfo(Partition *partition);
 
 /**
  * Write partition information to a file where
- * First line, n, is the number of classes
- * Next n lines contains the class n
- * @param partition The partition to write
+ * First line, n, is the number of buckets
+ * Next n lines contains the bucket n
+ * @param partition The partition of a function
  * @param fp The file to write to
  */
 void writePartition(Partition *partition, FILE *fp);
 
 /**
- * To avoid recalculating which permutation class maps to which, we'll create a map. This map will tell us which class
- * in partition F maps to a class in partition G. We can end up in a scenario where we have two classes in a permutation
+ * Free the memory allocated for the Partition
+ * @param partition The Partition to destroy
+ */
+void destroyPartitions(Partition *partition);
+
+/**
+ * To avoid recalculating which permutation bucket maps to which, we'll create a map. This map will tell us which bucket
+ * in partition F maps to a bucket in partition G. We can end up in a scenario where we have two buckets in a permutation
  * with the same size. Then we have to try different mappings. If we get a result, then the mapping is correct, otherwise
  * we need to try a different mapping.
  * @param partitionF A partition of function F
  * @param partitionG A partition of function G
  */
-void **mapPartitionClasses(Partition *partitionF, Partition *partitionG, size_t dimension, MappingOfBuckets *mappingOfClasses);
+void **mapPartitionBuckets(Partition *partitionF, Partition *partitionG, size_t dimension, MappingOfBuckets *mappingOfBuckets);
 
-void destroyPartitions(Partition *p);
-
-MappingOfBuckets *initMappingsOfClasses();
+MappingOfBuckets *initMappingsOfBuckets();
 
 void addToMOC(MappingOfBuckets *moc, size_t *mappings, size_t *domains, size_t mappingSize, size_t domainSize);
 
-void destroyMappingOfClasses(MappingOfBuckets *mappingsOfClasses);
+void destroyMappingOfBuckets(MappingOfBuckets *mappingsOfBuckets);
 
 /**
  * A recursive function that find the multiplicities from k by xor'ing the elements from a function
@@ -160,26 +170,26 @@ void destroyMappingOfClasses(MappingOfBuckets *mappingsOfClasses);
 void findAllMultiplicities(size_t k, int i, size_t *multiplicities, TruthTable *function, size_t x, size_t value);
 
 void
-createMappings(MappingOfBuckets *mappingOfClasses, Node **domains, Partition *partitionG, size_t dimension, size_t numOfMappings);
+createMappings(MappingOfBuckets *mappingOfBuckets, Node **domains, Partition *partitionG, size_t dimension, size_t numOfMappings);
 
 /**
  * Initialize a new linked list of struct Node
  * @return A new empty linked list
  */
-Node * initLinkedList();
+Node * initNode();
 
 /**
  * Add a new node to a linked list.
  * @param head The head of the linked list
  * @param data The data for the node to be added
  */
-void addToLinkedList(Node *head, size_t data);
+void addToNode(Node *head, size_t data);
 
 /**
  * Print a linked list to the console
  * @param head The head of the linked list
  */
-void printLinkedList(Node *head);
+void printNodes(Node *head);
 
 /**
  * Counts all the nodes in a linked list and returns the result
@@ -192,7 +202,7 @@ size_t countNodes(Node *head);
  * Destroy a linked list of struct Node
  * @param head The head of the Linked List
  */
-void destroyLinkedList(Node *head);
+void destroyNodes(Node *head);
 
 /**
  * Initialize a new Linked list of type Truth Table Node
@@ -205,7 +215,7 @@ TtNode * initTtNode();
  * @param head The pointer to the head of the linked list
  * @param data The data to add to the list
  */
-void addNode(TtNode *head, TruthTable *data);
+void addTtNode(TtNode *head, TruthTable *data);
 
 /**
  * Counts all the nodes in a linked list and returns the result
@@ -219,26 +229,26 @@ size_t countTtNodes(TtNode *head);
  * @param head The pointer to the head of the linked list
  * @return The number of nodes in the linked list
  */
-TruthTable * getNode(TtNode *head, size_t index);
+TruthTable * getTtNode(TtNode *head, size_t index);
 
 /**
  * Print linked list to the console
  * @param head The head of the linked list
  */
-void printTtLinkedList(TtNode *head);
+void printTtNodes(TtNode *head);
 
 /**
  * Write all truth tables from a linked list to a file
  * @param head The head of the linked list
  * @param fp The file to write to
  */
-void writeTtLinkedList(TtNode *head, FILE *fp);
+void writeTtNodes(TtNode *head, FILE *fp);
 
 /**
  * Destroy Linked List of struct TtNode
  * @param head The head of the linked list
  */
-void destroyTtLinkedList(TtNode *head);
+void destroyTtNodes(TtNode *head);
 
 void
 selectRecursive(size_t i, size_t *newList, size_t *currentDomain, bool *chosen, Node **domains, Partition *partitionG,
@@ -299,9 +309,9 @@ void writeTimes(RunTimes *runTimes, FILE *fp);
 void destroyRunTimes(RunTimes *runTimes);
 
 /**
- * Create a standard basis for the given dimension. 2^n where n = dimension.
- * @param dimension The dimension to create the basis from
- * @return The standard basis of 2^n, where n = dimension
+ * Create a standard basis for the given n. 2^n where n = n.
+ * @param dimension The n to create the basis from
+ * @return The standard basis of 2^n, where n = n
  */
 size_t *createStandardBasis(size_t dimension);
 

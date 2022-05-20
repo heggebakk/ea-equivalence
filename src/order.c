@@ -28,9 +28,9 @@ void printGroupHelp() {
     printf("Order\n");
     printf("Usage: order [order_options]\n");
     printf("Order options:\n");
-    printf("\t-f Path to permutation\n");
-    printf("\t-h  Help\n");
-    printf("\t-w Path to where the results should be written to.\n");
+    printf("\t-f \t- Path to permutation\n");
+    printf("\t-h \t- Print help\n");
+    printf("\t-w \t- Path to where the results should be written to.\n");
     printf("\n");
 }
 
@@ -41,9 +41,9 @@ size_t standardBasis() {
     }
 }
 
-void findGroups(TruthTable *src) {
+void findOrder(TruthTable *src) {
     if (numPermutations == 1) {
-        // If the number of permutation is 1, the permutation is the identity.
+        // If the number of permutations is 1, the permutation is the identity.
         return;
     }
     size_t counter = 1;
@@ -64,9 +64,9 @@ void findGroups(TruthTable *src) {
     destroyTruthTable(dest);
 }
 
-bool isIdentity(TruthTable *dest) {
+bool isIdentity(TruthTable *F) {
     for (int i = 0; i < dimension; ++i) {
-        if (dest->elements[(1L << i) - 1] != basis[i]) {
+        if (F->elements[(1L << i) - 1] != basis[i]) {
             return false;
         }
     }
@@ -106,7 +106,7 @@ void parsePermutationFile(char *input) {
         for (int j = 0; j < 1L << dimension; ++j) {
             fscanf(file, "%zu", &truthTable->elements[j]);
         }
-        findGroups(truthTable);
+        findOrder(truthTable);
         destroyTruthTable(truthTable);
     }
     fclose(file);
@@ -119,7 +119,7 @@ void checkFlags(int argc, char **argv) {
                 case 'h':
                     // Help:
                     printGroupHelp();
-
+                    exit(0);
                 case 'f':
                     // File to read from
                     i++;

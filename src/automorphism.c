@@ -19,11 +19,11 @@ int main(int argc, char *argv[]) {
     FILE *fp = fopen(writePath, "w+");
     TruthTable *functionF = parseTruthTable(pathFunctionF);
 
-    MappingOfBuckets *mappingOfClasses = initMappingsOfClasses();
+    MappingOfBuckets *mappingOfClasses = initMappingsOfBuckets();
     Partition *partition = partitionFunction(functionF, 4);
-    size_t dimension = functionF->dimension;
+    size_t dimension = functionF->n;
     size_t *basis = createStandardBasis(dimension);
-    mapPartitionClasses(partition, partition, dimension, mappingOfClasses);
+    mapPartitionBuckets(partition, partition, dimension, mappingOfClasses);
 
     for (int m = 0; m < mappingOfClasses->numOfMappings; ++m) {
         TtNode *l1 = outerPermutation(partition, partition, dimension, basis, mappingOfClasses->mappings[m],
@@ -32,14 +32,14 @@ int main(int argc, char *argv[]) {
         if (l1->data != NULL) {
             fprintf(fp, "%zu\n", dimension);
             fprintf(fp, "%zu\n", countTtNodes(l1));
-            writeTtLinkedList(l1, fp);
-            destroyTtLinkedList(l1);
+            writeTtNodes(l1, fp);
+            destroyTtNodes(l1);
             break;
         }
-        destroyTtLinkedList(l1);
+        destroyTtNodes(l1);
     }
     destroyTruthTable(functionF);
-    destroyMappingOfClasses(mappingOfClasses);
+    destroyMappingOfBuckets(mappingOfClasses);
     destroyPartitions(partition);
     free(basis);
     fclose(fp);

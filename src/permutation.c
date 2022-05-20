@@ -7,51 +7,52 @@
 
 /**
  * Reconstruction the inner permutations of function F and function G
- * @param f A TruthTable of function F
- * @param g A TruthTable of function G
+ * @param F A TruthTable of function F
+ * @param G A TruthTable of function G
  * @param basis
- * @param l2 The inner permutation result
- * @param lPrime l'
+ * @param L2 The inner permutation result
+ * @param L l'
  * @return Returns true if reconstruction of the inner permutation was successful, false otherwise.
  */
-bool innerPermutation(TruthTable *f, TruthTable *g, const size_t *basis, TruthTable *l2, TruthTable **lPrime) {
-    struct Node **restrictedDomains = calloc(sizeof(struct Node **), f->dimension); // A list of Linked Lists
+bool innerPermutation(TruthTable *F, TruthTable *G, const size_t *basis, TruthTable *L2, TruthTable **L) {
+    struct Node **domain = calloc(sizeof(struct Node **), F->n); // The domain D(x) that will be reduced by computing the sets O(t)
 
-    for (size_t i = 0; i < f->dimension; ++i) {
-        bool *map = computeSetOfTs(g, basis[i]);
-        restrictedDomains[i] = computeDomain(map, f);
-        free(map);
+    for (size_t i = 0; i < F->n; ++i) {
+        bool *setOfT = computeSetOfTs(G, basis[i]); // Compute the set O(t)
+        domain[i] = reduceDomain(setOfT, F); // Reduce the domain with the set O(t)
+        free(setOfT);
     }
-    size_t *values = malloc(sizeof(size_t) * f->dimension);
-    bool result = dfs(restrictedDomains, 0, values, f, g, l2, lPrime);
+    size_t *values = malloc(sizeof(size_t) * F->n);
+    bool result = dfs(domain, 0, values, F, G, L2, L);
     free(values);
 
-    for (size_t i = 0; i < f->dimension; ++i) {
-        destroyLinkedList(restrictedDomains[i]);
+    for (size_t i = 0; i < F->n; ++i) {
+        destroyNodes(domain[i]);
     }
-    free(restrictedDomains);
+    free(domain);
     return result;
 }
 
 /**
- * Compute the set of t's where t = f[x] + f[y] + f[x + y]
- * @param f The function containing the elements to compute the sets over
+ * Compute the sets O(t) of all triplets (x1,x2,x1+x2) with F(x1)+F(x2)+(Fx1+x2)=t
+ * Is used to reduce the domains D(x)
+ * @param F The function containing the elements to compute the sets over
  * @param x A fixed x to compute with
  * @return The set of t's from the computation
  */
-bool *computeSetOfTs(TruthTable *f, size_t x) {
-    size_t n = f->dimension;
-    bool *map = calloc(sizeof(bool), 1L << n);
+bool *computeSetOfTs(TruthTable *F, size_t x) {
+    size_t n = F->n;
+    bool *set = calloc(sizeof(bool), 1L << n);
 
     for (size_t y = 0; y < 1L << n; ++y) {
-        size_t t = f->elements[x] ^ f->elements[y] ^ f->elements[x ^ y];
-        map[t] = true;
+        size_t t = F->elements[x] ^ F->elements[y] ^ F->elements[x ^ y];
+        set[t] = true;
     }
-    return map;
+    return set;
 }
 
-struct Node *computeDomain(const bool *listOfTs, TruthTable *f) {
-    size_t n = f->dimension;
+struct Node *reduceDomain(const bool *listOfTs, TruthTable *f) {
+    size_t n = f->n;
     bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
         domain[i] = true;
@@ -76,11 +77,11 @@ struct Node *computeDomain(const bool *listOfTs, TruthTable *f) {
     }
 
     // Restricted domain represented as a Linked List
-    Node *head = initLinkedList();
+    Node *head = initNode();
     for (size_t i = 0; i < 1L << n; ++i) {
         if (domain[i]) {
             // Add a new node to the linked list
-            addToLinkedList(head, i);
+            addToNode(head, i);
         }
     }
     free(domain);
@@ -88,33 +89,34 @@ struct Node *computeDomain(const bool *listOfTs, TruthTable *f) {
 }
 
 /**
- * A depth first search over a array containing linked lists.
- * @param domains A array containing a linked list of restricted domains
+ * L depth first search over a array containing linked lists.
+ * @param domain L array containing a linked list of restricted domain
  * @param k
  * @param values
- * @param f The TruthTable of function f
- * @param g The TruthTable of function g
- * @param l2 The inner permutation that is to be computed
- * @param lPrime The l' that is to be computed
+ * @param F The TruthTable of function F
+ * @param G The TruthTable of function G
+ * @param A2 The inner permutation that is to be computed
+ * @param L The l' that is to be computed
  * @return True if the dfs successfully reconstructed a inner permutation, false otherwise.
  */
 
 bool
-dfs(Node **domains, size_t k, size_t *values, TruthTable *f, TruthTable *g, TruthTable *l2, TruthTable **lPrime) {
-    if (k >= f->dimension) {
-        reconstructTruthTable(values, l2);
-        *lPrime = composeFunctions(f, l2);
-        addFunctionsTogether(*lPrime, g);
-        if (isLinear(*lPrime)) {
+dfs(Node **domain, size_t k, size_t *values, TruthTable *F, TruthTable *G, TruthTable *A2, TruthTable **L) {
+    if (k >= F->n) {
+        // L = F * A2 + G
+        reconstructTruthTable(values, A2);
+        *L = composeFunctions(F, A2);
+        addFunctionsTogether(*L, G);
+        if (isAffine(*L)) {
             return true;
         }
-        destroyTruthTable(*lPrime);
+        destroyTruthTable(*L);
         return false;
     }
-    Node *current = domains[k];
+    Node *current = domain[k];
     while (current != NULL) {
         values[k] = current->data;
-        bool linear = dfs(domains, k + 1, values, f, g, l2, lPrime);
+        bool linear = dfs(domain, k + 1, values, F, G, A2, L);
         if (linear) return true;
         current = (Node *) current->next;
     }
@@ -122,9 +124,9 @@ dfs(Node **domains, size_t k, size_t *values, TruthTable *f, TruthTable *g, Trut
 }
 
 void reconstructTruthTable(const size_t *basisValues, TruthTable *l2) {
-    for (size_t coordinate = 0; coordinate < 1L << l2->dimension; ++coordinate) {
+    for (size_t coordinate = 0; coordinate < 1L << l2->n; ++coordinate) {
         size_t result = 0;
-        for (size_t i = 0; i < l2->dimension; ++i) {
+        for (size_t i = 0; i < l2->n; ++i) {
             if (1L << i & coordinate) {
                 result ^= basisValues[i];
             }
@@ -134,27 +136,27 @@ void reconstructTruthTable(const size_t *basisValues, TruthTable *l2) {
 }
 
 TruthTable *composeFunctions(TruthTable *f, TruthTable *g) {
-    TruthTable *result = initTruthTable(f->dimension);
-    for (size_t x = 0; x < 1L << f->dimension; ++x) {
+    TruthTable *result = initTruthTable(f->n);
+    for (size_t x = 0; x < 1L << f->n; ++x) {
         result->elements[x] = f->elements[g->elements[x]];
     }
     return result;
 }
 
 void addFunctionsTogether(TruthTable *to, TruthTable *from) {
-    for (size_t i = 0; i < 1L << to->dimension; ++i) {
+    for (size_t i = 0; i < 1L << to->n; ++i) {
         to->elements[i] ^= from->elements[i];
     }
 }
 
 /**
- * Check if a function is linear or not
+ * Check if a function is affine or not
  * @param f The function to check
- * @return True if the function is linear, false otherwise
+ * @return True if the function is affine, false otherwise
  */
-bool isLinear(TruthTable *f) {
-    for (size_t a = 1; a < 1L << f->dimension; ++a) {
-        for (size_t b = a + 1; b < 1L << f->dimension; ++b) {
+bool isAffine(TruthTable *f) {
+    for (size_t a = 1; a < 1L << f->n; ++a) {
+        for (size_t b = a + 1; b < 1L << f->n; ++b) {
             if (b > (a ^ b)) continue;
             size_t result = f->elements[0] ^ f->elements[a] ^ f->elements[b] ^ f->elements[a ^ b];
             if (result != 0) return false;
@@ -163,8 +165,8 @@ bool isLinear(TruthTable *f) {
     return true;
 }
 
-TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, size_t *fClassPosition,
-                         size_t *gClassPosition, size_t *domainMap) {
+TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *basis, size_t *fBucketPosition,
+                         size_t *gBucketPosition, size_t *domainMap) {
     TtNode *l1 = initTtNode();
     size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
     size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
@@ -172,7 +174,7 @@ TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *b
     generatedImages[0] = true;
 
     /* Recursively guess the values of L on the basis (essentially, a DFS with backtracking upon contradiction) */
-    recursive(0, basis, images, f, g, dimension, generated, generatedImages, l1, fClassPosition, gClassPosition,
+    recursive(0, basis, images, f, g, dimension, generated, generatedImages, l1, fBucketPosition, gBucketPosition,
               domainMap);
 
     free(images);
@@ -182,7 +184,7 @@ TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *b
 }
 
 void recursive(size_t k, const size_t *basis, size_t *images, Partition *partitionF, Partition *partitionG, size_t dimension,
-               size_t *generated, bool *generatedImages, TtNode *l1, size_t *fClassPosition, size_t *gClassPosition,
+               size_t *generated, bool *generatedImages, TtNode *l1, size_t *fBucketPosition, size_t *gBucketPosition,
                size_t *domainMap) {
     /* If all basis elements have been assigned an image, and no contradictions have occurred, then we have found
      * a linear permutation preserving the Partition. We reconstruct its truth-table, and add it to the linked
@@ -191,19 +193,19 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
     if (k == dimension) {
         TruthTable *new = initTruthTable(dimension);
         memcpy(new->elements, generated, sizeof(size_t) * 1L << dimension);
-        addNode(l1, new);
+        addTtNode(l1, new);
         destroyTruthTable(new);
         return;
     }
 
     /* We then take the bucket of the same size from the partition with
      * respect to G. We know that the image of the basis element must
-     * belong to that bucket.
-     */
-    size_t posBg = domainMap[fClassPosition[basis[k]]];
+     * belong to that bucket. */
+    size_t posBg = domainMap[fBucketPosition[basis[k]]];
+
     /* We now go through all possible choice from the bucket */
-    for (size_t ick = 0; ick < partitionG->classSizes[posBg]; ++ick) {
-        size_t ck = partitionG->classes[posBg][ick];
+    for (size_t ick = 0; ick < partitionG->bucketSizes[posBg]; ++ick) {
+        size_t ck = partitionG->buckets[posBg][ick];
         /* Since we want the function to be a permutation, the image of the basis element
          * should not be one of the images that we have already generated.
          */
@@ -237,7 +239,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
             }
 
             /* Check for contradiction as described above. */
-            if (partitionF->classSizes[fClassPosition[x]] != partitionG->classSizes[gClassPosition[y]]) {
+            if (partitionF->bucketSizes[fBucketPosition[x]] != partitionG->bucketSizes[gBucketPosition[y]]) {
                 problem = true;
                 break;
             }
@@ -250,7 +252,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
         if (!problem) {
             images[k] = ck;
             recursive(k + 1, basis, images, partitionF, partitionG, dimension, generated, generatedImages, l1,
-                      fClassPosition, gClassPosition, domainMap);
+                      fBucketPosition, gBucketPosition, domainMap);
         }
 
         /* When backtracking, we need to reset the generated image indicators */
