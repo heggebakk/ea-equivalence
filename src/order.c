@@ -5,32 +5,20 @@
 #include "order.h"
 
 char *filename;
-char *writeFile = "order_test.txt";
-FILE *fp;
 size_t numPermutations;
 size_t dimension;
 size_t *basis;
 
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printGroupHelp();
-        exit(0);
-    }
     checkFlags(argc, argv);
-    fp = fopen(writeFile, "w+");
-    parsePermutationFile(filename);
-    fclose(fp);
     return 0;
 }
 
 void printGroupHelp() {
     printf("Order\n");
-    printf("Usage: order [order_options]\n");
-    printf("Order options:\n");
-    printf("\t-f \t- Path to permutation\n");
-    printf("\t-h \t- Print help\n");
-    printf("\t-w \t- Path to where the results should be written to.\n");
+    printf("Usage: order [filename]\n");
+    printf("filename = Path to file of partition of a function F.\n");
     printf("\n");
 }
 
@@ -51,7 +39,7 @@ void findOrder(TruthTable *src) {
     memcpy(dest->elements, src->elements, sizeof(size_t) * 1L << dimension);
     while (true) {
         if (isIdentity(dest)) {
-            fprintf(fp, "%zu\n", counter);
+            printf("%zu\n", counter);
             break;
         }
         compose(src, dest);
@@ -113,24 +101,11 @@ void parsePermutationFile(char *input) {
 }
 
 void checkFlags(int argc, char **argv) {
-    for (int i = 0; i < argc; ++i) {
-        if (argv[i][0] == '-') {
-            switch (argv[i][1]) {
-                case 'h':
-                    // Help:
-                    printGroupHelp();
-                    exit(0);
-                case 'f':
-                    // File to read from
-                    i++;
-                    filename = argv[i];
-                    continue;
-                case 'w':
-                    // Filename to write to
-                    i++;
-                    writeFile = argv[i];
-                    continue;
-            }
-        }
+    if (argc < 2) {
+        printGroupHelp();
+        exit(0);
+    } else {
+        parsePermutationFile(argv[1]);
     }
+
 }

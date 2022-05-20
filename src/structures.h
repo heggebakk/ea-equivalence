@@ -84,14 +84,6 @@ void destroyTruthTable(TruthTable *tt);
 void printTruthTable(TruthTable *tt);
 
 /**
- * Write a Truth Table to a file
- * @param tt The truth table
- * @param fp The file to write to
- * @param ttName The name of the truth table represented as a String
- */
-void writeTruthTable(FILE *fp, TruthTable *tt);
-
-/**
  * Parse a file to a Truth Table Struct
  * The first line of the file must be the numberOfBuckets, the next line should be all the elements seperated with white space
  *
@@ -125,16 +117,7 @@ Partition *partitionFunction(TruthTable *F, size_t k);
  * bucket and the elements in the bucket.
  * @param partition A partition of a function
  */
-void printPartitionInfo(Partition *partition);
-
-/**
- * Write partition information to a file where
- * First line, n, is the number of buckets
- * Next n lines contains the bucket n
- * @param partition The partition of a function
- * @param fp The file to write to
- */
-void writePartition(Partition *partition, FILE *fp);
+void printPartition(Partition *partition);
 
 /**
  * Free the memory allocated for the Partition
@@ -238,13 +221,6 @@ TruthTable * getTtNode(TtNode *head, size_t index);
 void printTtNodes(TtNode *head);
 
 /**
- * Write all truth tables from a linked list to a file
- * @param head The head of the linked list
- * @param fp The file to write to
- */
-void writeTtNodes(TtNode *head, FILE *fp);
-
-/**
  * Destroy Linked List of struct TtNode
  * @param head The head of the linked list
  */
@@ -294,13 +270,6 @@ double stopTime(double runTime, clock_t startParsing);
  * @param runTimes the Run times to print
  */
 void printTimes(RunTimes *runTimes);
-
-/**
- * Write all times to a file
- * @param runTimes The run times to write
- * @param fp The file to write to
- */
-void writeTimes(RunTimes *runTimes, FILE *fp);
 
 /**
  * Destroy the run times

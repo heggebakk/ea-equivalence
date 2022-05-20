@@ -4,20 +4,16 @@
 
 void printAmHelp();
 
-void setAmFlags(int argc, char *const *argv, char **pathFunctionF, char **writePath);
+void setAmFlags(int argc, char *const *argv, TruthTable **functionF);
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         printAmHelp();
         return 0;
     }
-    char *pathFunctionF;
-    char *writePath;
+    TruthTable *functionF;
 
-    setAmFlags(argc, argv, &pathFunctionF, &writePath);
-
-    FILE *fp = fopen(writePath, "w+");
-    TruthTable *functionF = parseTruthTable(pathFunctionF);
+    setAmFlags(argc, argv, &functionF);
 
     MappingOfBuckets *mappingOfClasses = initMappingsOfBuckets();
     Partition *partition = partitionFunction(functionF, 4);
@@ -30,9 +26,9 @@ int main(int argc, char *argv[]) {
                          mappingOfClasses->mappings[m],
                          mappingOfClasses->domains[m]);
         if (l1->data != NULL) {
-            fprintf(fp, "%zu\n", dimension);
-            fprintf(fp, "%zu\n", countTtNodes(l1));
-            writeTtNodes(l1, fp);
+            printf("%zu\n", dimension);
+            printf("%zu\n", countTtNodes(l1));
+            printTtNodes(l1);
             destroyTtNodes(l1);
             break;
         }
@@ -42,36 +38,21 @@ int main(int argc, char *argv[]) {
     destroyMappingOfBuckets(mappingOfClasses);
     destroyPartitions(partition);
     free(basis);
-    fclose(fp);
     return 0;
 }
 
-void setAmFlags(int argc, char *const *argv, char **pathFunctionF, char **writePath) {
-    for (int i = 0; i < argc; ++i) {
-        if (argv[i][0] == '-') {
-            switch (argv[i][1]) {
-                case 'h':
-                    printAmHelp();
-                    exit(0);
-                case 'f':
-                    i++;
-                    *pathFunctionF = argv[i];
-                    continue;
-                case 'w':
-                    i++;
-                    *writePath = argv[i];
-                    continue;
-            }
-        }
+void setAmFlags(int argc, char *const *argv, TruthTable **functionF) {
+    if (argc < 2) {
+        printAmHelp();
+        exit(0);
+    } else {
+        *functionF = parseTruthTable(argv[1]);
     }
 }
 
 void printAmHelp() {
     printf("Automorphism\n");
-    printf("Usage: automorphism [automorphism_options]\n");
-    printf("Automorphism options:\n");
-    printf("\t-f \t- Path to function F\n");
-    printf("\t-h \t- Print help\n");
-    printf("\t-w \t- Path to where the results should be written to.\n");
+    printf("Usage: automorphism [filename]\n");
     printf("\n");
+    printf("filename = the path to the file of a function F.\n");
 }

@@ -19,8 +19,7 @@ void destroyTruthTable(TruthTable *tt) {
 }
 
 void printTruthTable(TruthTable *tt) {
-    printf("Dimension: %zu \n", tt->n);
-    printf("Truth table: ");
+    printf("%zu\n", tt->n);
 
     for (size_t i = 0; i < 1L << tt->n; ++i) {
         printf("%zu ", tt->elements[i]);
@@ -28,17 +27,10 @@ void printTruthTable(TruthTable *tt) {
     printf("\n");
 }
 
-void writeTruthTable(FILE *fp, TruthTable *tt) {
-    for (size_t i = 0; i < 1L << tt->n; ++i) {
-        fprintf(fp, "%zu ", tt->elements[i]);
-    }
-    fprintf(fp, "\n");
-}
-
 TruthTable * parseTruthTable(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
-        printf("Requested file does not exists in system or is not found. \n");
+        printf("Requested file does not exists in system or is not found.\n");
         printf("File: %s\n", filename);
         fclose(file);
         exit(1);
@@ -72,11 +64,6 @@ Partition *partitionFunction(TruthTable *F, size_t k) {
     size_t *multiplicities = calloc(sizeof(size_t), 1L << F->n);
 
     findAllMultiplicities(k, 0, multiplicities, F, 0, 0);
-    printf("All multiplicites:\n");
-    for (int i = 0; i < 1L << F->n; ++i) {
-        printf("%zu ", multiplicities[i]);
-    }
-    printf("\n");
 
     Partition *partition = initPartition(1L << F->n);
 
@@ -109,28 +96,14 @@ Partition *partitionFunction(TruthTable *F, size_t k) {
     return partition;
 }
 
-void printPartitionInfo(Partition *partition) {
-    printf("Partition:\n%zu\n", partition->numberOfBuckets);
+void printPartition(Partition *partition) {
+    printf("%zu\n", partition->numberOfBuckets);
     for (int i = 0; i < partition->numberOfBuckets; ++i) {
         for (int j = 0; j < partition->bucketSizes[i]; ++j) {
             if (j == partition->bucketSizes[i] - 1) {
                 printf("%zu\n", partition->buckets[i][j]);
             } else {
                 printf("%zu ", partition->buckets[i][j]);
-            }
-        }
-    }
-    printf("\n");
-}
-
-void writePartition(Partition *partition, FILE *fp) {
-    fprintf(fp, "%zu\n", partition->numberOfBuckets);
-    for (int i = 0; i < partition->numberOfBuckets; ++i) {
-        for (int j = 0; j < partition->bucketSizes[i]; ++j) {
-            if (j == partition->bucketSizes[i] - 1) {
-                fprintf(fp, "%zu\n", partition->buckets[i][j]);
-            } else {
-                fprintf(fp, "%zu ", partition->buckets[i][j]);
             }
         }
     }
@@ -365,20 +338,6 @@ void printTtNodes(TtNode *head) {
     printf("\n");
 }
 
-void writeTtNodes(TtNode *head, FILE *fp) {
-    TtNode *current = head;
-    while (current != NULL) {
-        for (int i = 0; i < 1L << current->data->n; ++i) {
-            if (i == (1L << current->data->n) - 1) {
-                fprintf(fp, "%zu\n", current->data->elements[i]);
-            } else {
-                fprintf(fp, "%zu ", current->data->elements[i]);
-            }
-        }
-        current = current->next;
-    }
-}
-
 void destroyTtNodes(TtNode *head) {
     if (head->data == NULL) {
         free(head);
@@ -558,13 +517,6 @@ void printTimes(RunTimes *runTimes) {
     printf("Time spent outer permutation: %f \n", runTimes->outerPermutation);
     printf("Time spent inner permutation: %f \n", runTimes->innerPermutation);
     printf("Total time spent: %f \n", runTimes->total);
-}
-
-void writeTimes(RunTimes *runTimes, FILE *fp) {
-    fprintf(fp, "Time spent partitioning: %f \n", runTimes->partition);
-    fprintf(fp, "Time spent outer permutation: %f \n", runTimes->outerPermutation);
-    fprintf(fp, "Time spent inner permutation: %f \n", runTimes->innerPermutation);
-    fprintf(fp, "Total time spent: %f \n", runTimes->total);
 }
 
 void destroyRunTimes(RunTimes *runTimes) {

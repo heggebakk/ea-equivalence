@@ -6,8 +6,9 @@
 #include "structures.h"
 #include "permutation.h"
 
-void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG,
-                  size_t n, RunTimes *runTime, size_t *basis, FILE *fp);
+void
+runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG, size_t n, RunTimes *runTime,
+             size_t *basis);
 
 /**
  * Calculate the inverse of a function F
@@ -28,11 +29,11 @@ TtNode * shuffle(TtNode *head);
  * @param argc
  * @param argv
  * @param filename Path to where to write results to
- * @param fileFunctionF Path to function F
- * @param fileFunctionG  Path to function G
+ * @param functionF Path to function F
+ * @param functionG  Path to function G
  * @param k The number k, default is 4
  */
-void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k);
+void setFlags(int argc, char *const *argv, bool *times, TruthTable **functionF, TruthTable **functionG, long *k);
 
 /**
  * A helper that tells the user what kind of flags that can be used and what the program need to run
@@ -61,45 +62,29 @@ TruthTable *randomLinearPermutation(size_t n);
 TruthTable * createFunction(TruthTable *F);
 
 int main(int argc, char *argv[]) {
-    char *filename = "result.txt"; // Default position to write results to
-    char *pathFunctionF; // Path to function F
-    char *pathFunctionG = NULL; // Path to function G
+    TruthTable *functionF = NULL;
+    TruthTable *functionG = NULL;
     long k = 4;
-
-    if (argc < 2) {
-        printEaHelp();
-        return 0;
-    }
-
-    setFlags(argc, argv, &filename, &pathFunctionF, &pathFunctionG, &k);
-
-    // Specify which file to write to.
-    FILE *fp = fopen(filename, "w+");
-
-    // Parse files to truth tables
-    // Parse function F. Parse function G if given, otherwise create random function G with respect to function F.
-    TruthTable *functionF = parseTruthTable(pathFunctionF);
-    TruthTable *functionG;
-    if (pathFunctionG != NULL) functionG = parseTruthTable(pathFunctionG);
-    else functionG = createFunction(functionF);
-
-    printTruthTable(functionF);
-    printTruthTable(functionG);
-    size_t n = functionF->n;
-
-    size_t *basis = createStandardBasis(n);
-
     RunTimes *runTime;
+    bool times = false; // Set to true to print out running times
     Partition *partitionF;
     Partition *partitionG;
     clock_t startTotalTime;
+
+    setFlags(argc, argv, &times, &functionF, &functionG, &k);
+
+    // Parse files to truth tables
+    // Parse function F. Parse function G if given, otherwise create random function G with respect to function F.
+    if (functionG == NULL) functionG = createFunction(functionF);
+
+    size_t n = functionF->n;
+    size_t *basis = createStandardBasis(n);
 
     for (int a = 0; a < 2; ++a) {
         // Solve with Walsh transform:
         if (a == 0) {
             startTotalTime = clock();
             runTime = initRunTimes();
-//            printf("Walsh transform\n");
 
             // Partition function f and g
             clock_t startPartitionTime = clock();
@@ -108,24 +93,21 @@ int main(int argc, char *argv[]) {
             runTime->partition = stopTime(runTime->partition, startPartitionTime);
 
             runAlgorithm(functionF, functionG, partitionF, partitionG, n,
-                         runTime, basis, fp);
+                         runTime, basis);
 
-            // End time
-            runTime->total = stopTime(runTime->total, startTotalTime);
-            // Print time information
-//            printTimes(runTime);
+            runTime->total = stopTime(runTime->total, startTotalTime); // End time
 
-            fprintf(fp, "\nWalsh Transform:\n");
-            writeTimes(runTime, fp);
-            fprintf(fp, "\n");
-
+            if (times) {
+                // Print running times
+                printf("\nWalsh Transform:\n");
+                printTimes(runTime);
+            }
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
             destroyPartitions(partitionG);
         } else if (a == 1) {
             startTotalTime = clock();
             runTime = initRunTimes();
-//            printf("\nNew algorithm\n");
 
             // Partition function f and g
             clock_t startPartitionTime = clock();
@@ -134,16 +116,15 @@ int main(int argc, char *argv[]) {
             runTime->partition = stopTime(runTime->partition, startPartitionTime);
 
             runAlgorithm(functionF, functionG, partitionF, partitionG, n,
-                         runTime, basis, fp);
+                         runTime, basis);
 
-            // End time
-            runTime->total = stopTime(runTime->total, startTotalTime);
-            // Print time information
-//            printTimes(runTime);
-            fprintf(fp, "\nNew Algorithm\n");
-            writeTimes(runTime, fp);
-            fprintf(fp, "\n");
+            runTime->total = stopTime(runTime->total, startTotalTime); // End time
 
+            if (times) {
+                // Print running times
+                printf("\nNew Algorithm\n");
+                printTimes(runTime);
+            }
             destroyRunTimes(runTime);
             destroyPartitions(partitionF);
             destroyPartitions(partitionG);
@@ -152,12 +133,16 @@ int main(int argc, char *argv[]) {
     destroyTruthTable(functionF);
     destroyTruthTable(functionG);
     free(basis);
-    fclose(fp);
 
     return 0;
 }
 
-void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF, char **fileFunctionG, long *k) {
+void setFlags(int argc, char *const *argv, bool *times, TruthTable **functionF, TruthTable **functionG, long *k) {
+    if (argc < 2) {
+        printEaHelp();
+        exit(0);
+    }
+
     for (int i = 1; i < argc; ++i) {
         // Check for flag
         if (argv[i][0] == '-') {
@@ -166,16 +151,6 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
                 case 'h':
                     printEaHelp();
                     exit(0);
-                case 'f':
-                    // Parse function F to TruthTable
-                    i++;
-                    (*fileFunctionF) = argv[i];
-                    continue;
-                case 'g':
-                    // Parse function G to TruthTable
-                    i++;
-                    (*fileFunctionG) = argv[i];
-                    continue;
                 case 'k':
                     // Set the k
                     i++;
@@ -187,10 +162,16 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
                         exit(1);
                     }
                     continue;
-                case 'w':
+                case 't':
                     i++;
-                    (*filename) = argv[i];
+                    *times = true;
                     continue;
+            }
+        } else {
+            if (*functionF == NULL) {
+                *functionF = parseTruthTable(argv[i]);
+            } else if (*functionG == NULL) {
+                *functionG = parseTruthTable(argv[i]);
             }
         }
     }
@@ -198,18 +179,19 @@ void setFlags(int argc, char *const *argv, char **filename, char **fileFunctionF
 
 void printEaHelp() {
     printf("EA-equivalence test\n");
-    printf("Usage: ea [ea_options]\n");
+    printf("Usage: ea [ea_options] [filename_F] [filename_G]\n");
     printf("Ea options:\n");
-    printf("\t-f \t - Path to Function F\n");
-    printf("\t-g \t - Path to Function G\n");
     printf("\t-h \t - Print help\n");
     printf("\t-k \t - Size of k\n");
-    printf("\t-w \t - The path to where the results should be written to.\n");
+    printf("\t-t \t - Add this for printing running times for different functions.\n");
     printf("\n");
+    printf("\tfilename_F: path to the file of a function F\n");
+    printf("\tfilename_G: path to the file of a function G\n");
 }
 
-void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG,
-                  size_t n, RunTimes *runTime, size_t *basis, FILE *fp) {
+void
+runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG, size_t n, RunTimes *runTime,
+             size_t *basis) {
     // We might end up in a situation where we have more than one mapping of the Partition from F and G.
     // In this case, we must try and fail. If we succeed, we can finish, otherwise we need to try again.
     MappingOfBuckets *mappingOfBucketsF = initMappingsOfBuckets();
@@ -236,12 +218,9 @@ void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition
 //            destroyTtLinkedList(allL1);
 //        } else continue;
 
-        fprintf(fp, "Permutations: %zu\n", numPermutations);
-//        printf("Permutations: %zu\n", numPermutations);
         for (size_t i = 0; i < numPermutations; ++i) {
 //            TruthTable *L1 = getNode(L1Shuffled, i);
-            TruthTable *L1 = getNode(allL1, i); // The current L1 from the outer permutations
-//            printTruthTable(L1);
+            TruthTable *L1 = getTtNode(allL1, i); // The current L1 from the outer permutations
             TruthTable *L1Inverse = inverse(*L1);
             TruthTable *currentG = composeFunctions(L1Inverse, G);
             TruthTable *L;
@@ -252,10 +231,17 @@ void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition
             if (innerPermutation(F, currentG, basis, A2, &L)) {
                 runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
                 foundSolution = true;
-
                 // Find A, such that A = L1 * F * A2 + G
                 TruthTable *A = composeFunctions(L1, L);
-                writeTruthTable(fp, A);
+
+                // Print L1, A2 and A
+                printf("L1:\n");
+                printTruthTable(L1);
+                printf("\nA2:\n");
+                printTruthTable(A2);
+                printf("\nA:\n");
+                printTruthTable(A);
+                printf("\n");
 
                 // Free memory
                 destroyTruthTable(A);
@@ -271,7 +257,7 @@ void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition
             destroyTruthTable(currentG);
         }
 //        destroyTtLinkedList(L1Shuffled);
-        destroyTtLinkedList(allL1);
+        destroyTtNodes(allL1);
         if (foundSolution) break;
     }
     destroyMappingOfBuckets(mappingOfBucketsF);
@@ -294,7 +280,7 @@ TtNode *shuffle(TtNode *head) {
     TruthTable *ptr[n];
     // Add pointer of node to array
     for (size_t i = 0; i < n; ++i) {
-        ptr[i] = getNode(head, i);
+        ptr[i] = getTtNode(head, i);
     }
     for (size_t i = 0; i < n - 1; ++i) {
         size_t rnd = (size_t) rand();
@@ -305,7 +291,7 @@ TtNode *shuffle(TtNode *head) {
     }
     TtNode *new = initTtNode();
     for (int i = 0; i < n; ++i) {
-        addNode(new, ptr[i]);
+        addTtNode(new, ptr[i]);
     }
     return new;
 }
