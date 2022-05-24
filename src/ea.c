@@ -70,59 +70,57 @@ int main(int argc, char *argv[]) {
     // Parse files to truth tables
     // Parse function F. Parse function G if given, otherwise create random function G with respect to function F.
     if (functionG == NULL) functionG = createFunction(functionF);
-
+    printTruthTable(functionG);
     size_t n = functionF->n;
     size_t *basis = createStandardBasis(n);
 
-    for (int a = 0; a < 2; ++a) {
-        // Solve with Walsh transform:
-        if (a == 0) {
-            startTotalTime = clock();
-            runTime = initRunTimes();
+    if (k == 4) {
+        // Solve with k-tuples
+        startTotalTime = clock();
+        runTime = initRunTimes();
 
-            // Partition function f and g
-            clock_t startPartitionTime = clock();
-            partitionF = eaPartitionWalsh(functionF, k);
-            partitionG = eaPartitionWalsh(functionG, k);
-            runTime->partition = stopTime(runTime->partition, startPartitionTime);
+        // Partition function f and g
+        clock_t startPartitionTime = clock();
+        partitionF = partitionFunction(functionF, k);
+        partitionG = partitionFunction(functionG, k);
+        runTime->partition = stopTime(runTime->partition, startPartitionTime);
 
-            runAlgorithm(functionF, functionG, partitionF, partitionG, n,
-                         runTime, basis);
+        runAlgorithm(functionF, functionG, partitionF, partitionG, n,
+                     runTime, basis);
 
-            runTime->total = stopTime(runTime->total, startTotalTime); // End time
+        runTime->total = stopTime(runTime->total, startTotalTime); // End time
 
-            if (times) {
-                // Print running times
-                printf("\nWalsh Transform:\n");
-                printTimes(runTime);
-            }
-            destroyRunTimes(runTime);
-            destroyPartitions(partitionF);
-            destroyPartitions(partitionG);
-        } else if (a == 1) {
-            startTotalTime = clock();
-            runTime = initRunTimes();
-
-            // Partition function f and g
-            clock_t startPartitionTime = clock();
-            partitionF = partitionFunction(functionF, k);
-            partitionG = partitionFunction(functionG, k);
-            runTime->partition = stopTime(runTime->partition, startPartitionTime);
-
-            runAlgorithm(functionF, functionG, partitionF, partitionG, n,
-                         runTime, basis);
-
-            runTime->total = stopTime(runTime->total, startTotalTime); // End time
-
-            if (times) {
-                // Print running times
-                printf("\nNew Algorithm\n");
-                printTimes(runTime);
-            }
-            destroyRunTimes(runTime);
-            destroyPartitions(partitionF);
-            destroyPartitions(partitionG);
+        if (times) {
+            // Print running times
+            printf("Running times:\n");
+            printTimes(runTime);
         }
+        destroyRunTimes(runTime);
+        destroyPartitions(partitionF);
+        destroyPartitions(partitionG);
+    } else {
+        // Solve with walsh
+        startTotalTime = clock();
+        runTime = initRunTimes();
+
+        // Partition function f and g
+        clock_t startPartitionTime = clock();
+        partitionF = eaPartitionWalsh(functionF, k);
+        partitionG = eaPartitionWalsh(functionG, k);
+        runTime->partition = stopTime(runTime->partition, startPartitionTime);
+
+        runAlgorithm(functionF, functionG, partitionF, partitionG, n, runTime, basis);
+
+        runTime->total = stopTime(runTime->total, startTotalTime); // End time
+
+        if (times) {
+            // Print running times
+            printf("Walsh Transform:\n");
+            printTimes(runTime);
+        }
+        destroyRunTimes(runTime);
+        destroyPartitions(partitionF);
+        destroyPartitions(partitionG);
     }
     destroyTruthTable(functionF);
     destroyTruthTable(functionG);

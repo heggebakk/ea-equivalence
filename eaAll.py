@@ -10,8 +10,8 @@ dirs = os.listdir(f"../TT_library/{dim}")
 
 def ea(name):
     filename = f"../TT_library/{dim}/{name}"
-    dest_name = f"./results/ea/{dim}/{name[:-3]}.txt"
-    subprocess.run(["./ea", '-f', filename, '-w', dest_name])
+    dest_name = f"./{name[:-3]}.txt"
+    subprocess.run(["./ea", filename, "-t"])
 
 
 if __name__ == '__main__':
@@ -20,10 +20,11 @@ if __name__ == '__main__':
     start = time.perf_counter()
     threads = list()
     for file in dirs:
-        x = threading.Thread(target=ea, args=(file,))
-        threads.append(x)
-        x.start()
-    for thread in threads:
-        thread.join()
+        for i in range(10):
+            x = threading.Thread(target=ea, args=(file,))
+            threads.append(x)
+            x.start()
+        for thread in threads:
+            thread.join()
     end = time.perf_counter()
     print(end-start)
