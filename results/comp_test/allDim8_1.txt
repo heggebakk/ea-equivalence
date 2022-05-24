@@ -1,0 +1,841 @@
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.016505 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016507 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.016667 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016669 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.019255 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.019258 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.017668 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017669 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.017463 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017466 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.019973 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.019976 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.017565 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017568 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.021497 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.021500 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.041153 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.041156 
+../TT_library/dim6/q_6_1.tt
+Walsh Transform:
+Time spent partitioning: 0.042040 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042043 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.016597 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016599 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.015365 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.015368 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.016956 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016956 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.017041 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017043 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.017091 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017093 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.016788 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016789 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.017142 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017144 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.034291 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.034294 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.039444 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.039447 
+../TT_library/dim6/q_6_10.tt
+Walsh Transform:
+Time spent partitioning: 0.042411 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042416 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.014251 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014253 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.014204 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014206 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.016792 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016793 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.017483 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017484 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.017427 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017428 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.016886 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016886 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.026645 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.026647 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.025751 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025753 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.036360 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.036362 
+../TT_library/dim6/q_6_11.tt
+Walsh Transform:
+Time spent partitioning: 0.039835 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.039838 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.013589 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.013591 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.013879 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.013881 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.018073 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.018075 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.017714 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017715 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.025338 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025340 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.025954 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025956 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.025586 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025589 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.025126 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025129 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.038448 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.038451 
+../TT_library/dim6/q_6_12.tt
+Walsh Transform:
+Time spent partitioning: 0.041384 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.041387 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.016726 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016727 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.016934 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016935 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.016899 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016901 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.017094 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017096 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.022456 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.022458 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.023353 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.023355 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.027303 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.027305 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.025731 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025733 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.043665 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.043668 
+../TT_library/dim6/q_6_13.tt
+Walsh Transform:
+Time spent partitioning: 0.043366 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.043370 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.014512 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014513 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.016900 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016900 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.016915 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016917 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.025285 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025287 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.025289 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025292 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.038787 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.038792 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.045981 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.045982 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.047710 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.047713 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.046505 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.046508 
+../TT_library/dim6/q_6_14.tt
+Walsh Transform:
+Time spent partitioning: 0.048318 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.048322 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.016629 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016631 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.017771 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017772 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.016805 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016807 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.017680 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017683 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.030638 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.030640 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.034327 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.034331 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.041596 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.041599 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.042881 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042884 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.040028 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.040030 
+../TT_library/dim6/q_6_2.tt
+Walsh Transform:
+Time spent partitioning: 0.042442 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042445 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.016757 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016759 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.017073 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017073 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.017097 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017098 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.016836 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016837 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.019809 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.019812 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.017389 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017391 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.033407 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.033409 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.034919 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.034922 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.042674 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042678 
+../TT_library/dim6/q_6_3.tt
+Walsh Transform:
+Time spent partitioning: 0.042759 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042763 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.014247 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014247 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.016733 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016735 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.017141 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017143 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.017188 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017190 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.016831 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016833 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.035091 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.035095 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.039097 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.039099 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.038573 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.038576 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.042222 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042225 
+../TT_library/dim6/q_6_4.tt
+Walsh Transform:
+Time spent partitioning: 0.040647 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.040650 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.012981 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.012983 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.014372 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014374 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.024375 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.024376 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.023106 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.023109 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.036230 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.036231 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.035181 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.035185 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.039780 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.039783 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.039587 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.039591 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.042792 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042796 
+../TT_library/dim6/q_6_5.tt
+Walsh Transform:
+Time spent partitioning: 0.042870 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042873 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.014162 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014163 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.014453 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014453 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.017266 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017267 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.017365 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017367 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.020053 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.020055 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.019010 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.019012 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.041183 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.041186 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.042634 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042636 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.041700 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.041703 
+../TT_library/dim6/q_6_6.tt
+Walsh Transform:
+Time spent partitioning: 0.042766 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.042770 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.016748 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016749 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.017237 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017237 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.018528 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.018531 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.017190 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017192 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.028500 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.028503 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.026510 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.026513 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.043029 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.043032 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.046376 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.046379 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.048987 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.048990 
+../TT_library/dim6/q_6_7.tt
+Walsh Transform:
+Time spent partitioning: 0.047320 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.047323 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.014531 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014533 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.014292 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014293 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.016650 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016651 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.017164 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017165 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.016835 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.016837 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.017135 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017136 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.025956 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025958 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.025933 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.025934 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.040987 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.040989 
+../TT_library/dim6/q_6_8.tt
+Walsh Transform:
+Time spent partitioning: 0.041722 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.041726 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.014204 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014205 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.014549 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.014550 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.017374 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017375 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.017229 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017231 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.018209 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.018211 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.017369 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017370 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.017184 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017185 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.017628 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.017629 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.040482 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.040484 
+../TT_library/dim6/q_6_9.tt
+Walsh Transform:
+Time spent partitioning: 0.038870 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 0.038873 
+0.6551731169893174
