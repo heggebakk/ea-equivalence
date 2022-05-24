@@ -1,3 +1,6 @@
+#include "time.h"
+#include <errno.h>
+#include <stdio.h>
 #include "stdlib.h"
 #include <string.h>
 #include <stdbool.h>
@@ -268,4 +271,160 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
             generatedImages[y] = false;
         }
     }
+}
+
+void hybridEquivalenceTest(Partition *f, Partition *g, size_t dimension, size_t *basis, size_t *fBucketPosition,
+                           size_t *gBucketPosition, size_t *domainMap, TruthTable *functionF, TruthTable *functionG,
+                           RunTimes *runTime) {
+    size_t *images = calloc(sizeof(size_t), dimension); /* the images of the basis elements under L */
+    size_t *generated = calloc(sizeof(size_t), 1L << dimension); /* a partial truth table for L */
+    bool *generatedImages = calloc(sizeof(bool), 1L
+            << dimension); /* a Boolean map showing which elements are among the images of the partially defined L */
+    generatedImages[0] = true;
+
+    /* Recursively guess the values of L on the basis (essentially, a DFS with backtracking upon contradiction) */
+
+    bool foundSolution = false;
+    size_t counter = 0;
+    hybridRecursive(0, basis, images, f, g, dimension, generated, generatedImages, fBucketPosition, gBucketPosition,
+                    domainMap, functionF, functionG, runTime, &foundSolution, &counter);
+    printf("Counter: %zu\n", counter);
+
+    free(images);
+    free(generated);
+    free(generatedImages);
+}
+
+void hybridRecursive(size_t k, const size_t *basis, size_t *images, Partition *partitionF, Partition *partitionG,
+                     size_t dimension, size_t *generated, bool *generatedImages, size_t *fBucketPosition,
+                     size_t *gBucketPosition, size_t *domainMap, TruthTable *functionF, TruthTable *functionG,
+                     RunTimes *runTime, bool *foundSolution, size_t *counter) {
+    if (*foundSolution) return;
+
+    /* If all basis elements have been assigned an image, and no contradictions have occurred, then we have found
+     * a linear permutation preserving the Partition. We reconstruct its truth-table, and add it to the linked
+     * list containing all permutations found by the search.
+     */
+    if (k == dimension) {
+        TruthTable *L1 = initTruthTable(dimension);
+        memcpy(L1->elements, generated, sizeof(size_t) * 1L << dimension);
+//        addTtNode(l1, L1);
+//        destroyTruthTable(L1);
+        TruthTable *L1Inverse = inverse(L1);
+        TruthTable *currentG = composeFunctions(L1Inverse, functionG);
+        TruthTable *L;
+        TruthTable *A2 = initTruthTable(dimension);
+        clock_t startInnerPermutationTime = clock();
+        bool foundInner = innerPermutation(functionF, currentG, basis, A2, &L);
+        if (foundInner) {
+            runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
+            *foundSolution = true;
+            // Find A, such that A = L1 * F * A2 + G
+            TruthTable *A = composeFunctions(L1, L);
+
+            // Print L1, A2 and A
+            printf("L1:\n");
+            printTruthTable(L1);
+            printf("\nA2:\n");
+            printTruthTable(A2);
+            printf("\nA:\n");
+            printTruthTable(A);
+            printf("\n");
+
+            // Free memory
+            destroyTruthTable(A);
+            destroyTruthTable(L1Inverse);
+            destroyTruthTable(A2);
+            destroyTruthTable(L);
+            destroyTruthTable(currentG);
+            return;
+        }
+        *counter += 1;
+        destroyTruthTable(L1Inverse);
+        destroyTruthTable(A2);
+        destroyTruthTable(currentG);
+        destroyTruthTable(L1);
+        return;
+    }
+
+    /* We then take the bucket of the same size from the partition with
+     * respect to G. We know that the image of the basis element must
+     * belong to that bucket. */
+    size_t posBg = domainMap[fBucketPosition[basis[k]]];
+
+    /* We now go through all possible choice from the bucket */
+    for (size_t ick = 0; ick < partitionG->bucketSizes[posBg]; ++ick) {
+        size_t ck = partitionG->buckets[posBg][ick];
+        /* Since we want the function to be a permutation, the image of the basis element
+         * should not be one of the images that we have already generated.
+         */
+        if (generatedImages[ck]) continue;
+        /* A contradiction can occur if assigning this value to the basis element causes some other
+         * element to map to the wrong bucket by linearity. The following variable will be set to
+         * true if such a contradiction is encountered.
+         */
+        bool problem = false;
+
+        /* This is done to handle the special case of k = 0, since otherwise we get (1L << (k-1)) == MAX_INT. */
+        size_t LIMIT = k ? 1L << k : 1;
+
+        /* We now go through all linear combinations of the basis elements that have been previously assigned.
+         * Adding the newly guessed basis element to such combination allows us to derive one more value of the
+         * function; if one of these values maps to the wrong bucket, we set "problem" = false, to indicate a
+         * contradiction and backtrack.
+         */
+        for (size_t linearCombination = 0; linearCombination < LIMIT; ++linearCombination) {
+            size_t x = linearCombination ^ basis[k];
+            size_t y = ck;
+            /* The following loop simply XOR's all images corresponding to the linear combination, so that
+             * we get its image by linearity.
+             */
+            if (k) {
+                for (size_t i = 0; i < k; ++i) {
+                    if (1L << i & linearCombination) {
+                        y ^= generated[basis[i]];
+                    }
+                }
+            }
+
+            /* Check for contradiction as described above. */
+            if (partitionF->bucketSizes[fBucketPosition[x]] != partitionG->bucketSizes[gBucketPosition[y]]) {
+                problem = true;
+                break;
+            }
+            /* Add the new preimage-image pair to the partial truth table of the function */
+            generated[x] = y;
+            /* We also indicate that the image belongs to the set of generated images */
+            generatedImages[y] = true;
+        }
+        /* If no contradiction is encountered, we go to the next basis element. */
+        if (!problem) {
+            images[k] = ck;
+            hybridRecursive(k + 1, basis, images, partitionF, partitionG, dimension, generated, generatedImages,
+                            fBucketPosition, gBucketPosition, domainMap, functionF, functionG, runTime, foundSolution,
+                            counter);
+        }
+
+        /* When backtracking, we need to reset the generated image indicators */
+        for (size_t linearCombinations = 0; linearCombinations < LIMIT; ++linearCombinations) {
+            size_t y = ck;
+            if (k) {
+                for (size_t i = 0; i < k; ++i) {
+                    if (1L << i & linearCombinations) {
+                        y ^= generated[basis[i]];
+                    }
+                }
+            }
+            generatedImages[y] = false;
+        }
+    }
+}
+
+TruthTable *inverse(TruthTable *F) {
+    TruthTable *result = initTruthTable(F->n);
+    for (size_t x = 0; x < 1L << F->n; ++x) {
+        size_t y = F->elements[x];
+        result->elements[y] = x;
+    }
+    return result;
 }

@@ -283,5 +283,4 @@ void destroyRunTimes(RunTimes *runTimes);
  * @return The standard basis of 2^n, where n = n
  */
 size_t *createStandardBasis(size_t dimension);
-
 #endif //EA_EQUIVALENCE_STRUCTURES_H
