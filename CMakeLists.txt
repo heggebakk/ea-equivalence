@@ -10,4 +10,4 @@ add_executable(ea_equivalence
 #        src/order.c src/order.h src/structures.c src/structures.h
 #        src/partition.c src/structures.h src/structures.c
         src/ea.c src/structures.c src/structures.h src/permutation.c src/permutation.h
-        )
+        src/hybrid.c)

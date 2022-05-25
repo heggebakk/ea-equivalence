@@ -10,13 +10,6 @@ runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *par
              size_t *basis);
 
 /**
- * Shuffle a linked linked list
- * @param head The head of the linked list
- * @return A shuffled linked list
- */
-TtNode * shuffle(TtNode *head);
-
-/**
  * All the flags that is or can be used to run the program
  * @param argc
  * @param argv
@@ -67,9 +60,8 @@ int main(int argc, char *argv[]) {
 
     // Parse files to truth tables
     // Parse function F. Parse function G if given, otherwise create random function G with respect to function F.
-    if (functionG == NULL){
+    if (functionG == NULL) {
         functionG = createFunction(functionF);
-        printf("G:\n");
         printTruthTable(functionG);
     }
     size_t n = functionF->n;
@@ -163,6 +155,7 @@ void setFlags(int argc, char *const *argv, bool *times, TruthTable **functionF, 
         } else {
             if (*functionF == NULL) {
                 *functionF = parseTruthTable(argv[i]);
+                printf("%s\n", argv[i]);
             } else if (*functionG == NULL) {
                 *functionG = parseTruthTable(argv[i]);
             }
@@ -171,8 +164,8 @@ void setFlags(int argc, char *const *argv, bool *times, TruthTable **functionF, 
 }
 
 void printEaHelp() {
-    printf("EA-equivalence test\n");
-    printf("Usage: ea [ea_options] [filename_F] [filename_G]\n");
+    printf("EA-equivalence test - hybrid\n");
+    printf("Usage: hybrid [hybrid_options] [filename_F] [filename_G]\n");
     printf("Ea options:\n");
     printf("\t-h \t - Print help\n");
     printf("\t-k \t - Size of k\n");
@@ -191,93 +184,16 @@ runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *par
     MappingOfBuckets *mappingOfBucketsG = initMappingsOfBuckets();
     mapPartitionBuckets(partitionG, partitionF, n, mappingOfBucketsF);
     mapPartitionBuckets(partitionF, partitionG, n, mappingOfBucketsG);
+    bool foundSolution = false;
 
     // Loop over all the mappings, if we find a solution, we break and finish.
     for (int m = 0; m < mappingOfBucketsG->numOfMappings; ++m) {
-            bool foundSolution = false;
-
-            // Calculate Outer Permutation
-            clock_t startOuterPermutationTime = clock();
-            TtNode *allL1 = outerPermutation(partitionF, partitionG, n, basis,
-                                             mappingOfBucketsF->mappings[m],
-                                             mappingOfBucketsG->mappings[m], mappingOfBucketsG->domains[m]);
-            runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
-            size_t numPermutations = countTtNodes(allL1);
-
-            /* Shuffle list of permutations */
-//        TtNode *L1Shuffled;
-//        if (numPermutations > 0) {
-//            L1Shuffled = shuffle(allL1);
-//            destroyTtLinkedList(allL1);
-//        } else continue;
-
-            for (size_t i = 0; i < numPermutations; ++i) {
-//            TruthTable *L1 = getNode(L1Shuffled, i);
-                TruthTable *L1 = getTtNode(allL1, i); // The current L1 from the outer permutations
-                TruthTable *L1Inverse = inverse(L1);
-                TruthTable *currentG = composeFunctions(L1Inverse, G);
-                TruthTable *L;
-                TruthTable *A2 = initTruthTable(n);
-
-                // Calculate inner permutation
-                clock_t startInnerPermutationTime = clock();
-                if (innerPermutation(F, currentG, basis, A2, &L)) {
-                    runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
-                    foundSolution = true;
-                    // Find A, such that A = L1 * F * A2 + G
-                    TruthTable *A = composeFunctions(L1, L);
-
-                    // Print L1, A2 and A
-                    printf("L1:\n");
-                    printTruthTable(L1);
-                    printf("\nA2:\n");
-                    printTruthTable(A2);
-                    printf("\nA:\n");
-                    printTruthTable(A);
-                    printf("\n");
-
-                    // Free memory
-                    destroyTruthTable(A);
-                    destroyTruthTable(L1Inverse);
-                    destroyTruthTable(A2);
-                    destroyTruthTable(L);
-                    destroyTruthTable(currentG);
-
-                    break;
-                }
-                destroyTruthTable(L1Inverse);
-                destroyTruthTable(A2);
-                destroyTruthTable(currentG);
-            }
-//        destroyTtLinkedList(L1Shuffled);
-        destroyTtNodes(allL1);
+        foundSolution = hybridEquivalenceTest(partitionF, partitionG, n, basis, mappingOfBucketsF->mappings[m],
+                              mappingOfBucketsG->mappings[m], mappingOfBucketsG->domains[m], F, G, runTime);
         if (foundSolution) break;
     }
     destroyMappingOfBuckets(mappingOfBucketsF);
     destroyMappingOfBuckets(mappingOfBucketsG);
-}
-
-TtNode *shuffle(TtNode *head) {
-    size_t n = countTtNodes(head);
-    if (n <= 1) return head;
-
-    TruthTable *ptr[n];
-    // Add pointer of node to array
-    for (size_t i = 0; i < n; ++i) {
-        ptr[i] = getTtNode(head, i);
-    }
-    for (size_t i = 0; i < n - 1; ++i) {
-        size_t rnd = (size_t) rand();
-        size_t j = (i + rnd / (RAND_MAX / (n - 1) + 1)) % n;
-        TruthTable *t = ptr[j];
-        ptr[j] = ptr[i];
-        ptr[i] = t;
-    }
-    TtNode *new = initTtNode();
-    for (int i = 0; i < n; ++i) {
-        addTtNode(new, ptr[i]);
-    }
-    return new;
 }
 
 TruthTable *randomLinearFunction(size_t n) {

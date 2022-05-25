@@ -4,14 +4,14 @@ import os
 import subprocess
 import threading
 
-dim = "dim8/classic"
+dim = "dim6"
 dirs = os.listdir(f"../TT_library/{dim}")
 
 
 def ea(name):
     filename = f"../TT_library/{dim}/{name}"
-    dest_name = f"./{name[:-3]}.txt"
-    subprocess.run(["./ea", filename, "-t"])
+#    dest_name = f"results/hybrid/{dim}/{name}"
+    subprocess.run(["./hybrid", filename, "-t"])
 
 
 if __name__ == '__main__':
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     start = time.perf_counter()
     threads = list()
     for file in dirs:
-        for i in range(10):
+        for i in range(5):
             x = threading.Thread(target=ea, args=(file,))
             threads.append(x)
             x.start()

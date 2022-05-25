@@ -87,7 +87,7 @@ void recursive(size_t k, const size_t *basis, size_t *images, Partition *partiti
                size_t *generated, bool *generatedImages, TtNode *l1, size_t *fBucketPosition, size_t *gBucketPosition,
                size_t *domainMap);
 
-void hybridEquivalenceTest(Partition *f, Partition *g, size_t dimension, size_t *basis, size_t *fBucketPosition,
+bool hybridEquivalenceTest(Partition *f, Partition *g, size_t dimension, size_t *basis, size_t *fBucketPosition,
                            size_t *gBucketPosition, size_t *domainMap, TruthTable *functionF, TruthTable *functionG,
                            RunTimes *runTime);
 
