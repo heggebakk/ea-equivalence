@@ -1,6 +1,6 @@
 import os
 
-files = os.listdir("results/computationally_testing/dim10_5/")
+files = os.listdir("../results/computationally_testing/dim10_5/")
 
 count = 0
 for f in files:
@@ -9,7 +9,7 @@ for f in files:
 print(f"10.5 : {count / 10}")
 
 
-files = os.listdir("results/computationally_testing/dim10_6/")
+files = os.listdir("../results/computationally_testing/dim10_6/")
 
 count = 0
 for f in files:

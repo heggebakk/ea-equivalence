@@ -13,11 +13,11 @@
  * @param F A TruthTable of function F
  * @param G A TruthTable of function G
  * @param basis
- * @param L2 The inner permutation result
- * @param L l'
+ * @param A2 The inner permutation A2
+ * @param A A'
  * @return Returns true if reconstruction of the inner permutation was successful, false otherwise.
  */
-bool innerPermutation(TruthTable *F, TruthTable *G, const size_t *basis, TruthTable *L2, TruthTable **L) {
+bool innerPermutation(TruthTable *F, TruthTable *G, const size_t *basis, TruthTable *A2, TruthTable **A) {
     struct Node **domain = calloc(sizeof(struct Node **), F->n); // The domain D(x) that will be reduced by computing the sets O(t)
 
     for (size_t i = 0; i < F->n; ++i) {
@@ -26,7 +26,7 @@ bool innerPermutation(TruthTable *F, TruthTable *G, const size_t *basis, TruthTa
         free(setOfT);
     }
     size_t *values = malloc(sizeof(size_t) * F->n);
-    bool result = dfs(domain, 0, values, F, G, L2, L);
+    bool result = dfs(domain, 0, values, F, G, A2, A);
     free(values);
 
     for (size_t i = 0; i < F->n; ++i) {
@@ -54,8 +54,15 @@ bool *computeSetOfTs(TruthTable *F, size_t x) {
     return set;
 }
 
-struct Node *reduceDomain(const bool *listOfTs, TruthTable *f) {
-    size_t n = f->n;
+/**
+ * Reduce a domain with a list of T's, where t = F(x1) + F(x2) + F(x1+x2).
+ * Reduced by the intersection of the t's
+ * @param listOfTs The list of T's
+ * @param F Function F
+ * @return A linked list of the reduced domain
+ */
+struct Node *reduceDomain(const bool *listOfTs, TruthTable *F) {
+    size_t n = F->n;
     bool *domain = calloc(sizeof(bool), 1L << n);
     for (size_t i = 0; i < 1L << n; ++i) {
         domain[i] = true;
@@ -65,7 +72,7 @@ struct Node *reduceDomain(const bool *listOfTs, TruthTable *f) {
             bool *tempSet = calloc(sizeof(bool), 1L << n);
             for (size_t x = 0; x < 1L << n; ++x) {
                 for (size_t y = 0; y < 1L << n; ++y) {
-                    if (t == (f->elements[x] ^ f->elements[y] ^ f->elements[x ^ y])) {
+                    if (t == (F->elements[x] ^ F->elements[y] ^ F->elements[x ^ y])) {
                         tempSet[x] = true;
                         tempSet[y] = true;
                         tempSet[x ^ y] = true;
@@ -126,22 +133,33 @@ dfs(Node **domain, size_t k, size_t *values, TruthTable *F, TruthTable *G, Truth
     return false;
 }
 
-void reconstructTruthTable(const size_t *basisValues, TruthTable *l2) {
-    for (size_t coordinate = 0; coordinate < 1L << l2->n; ++coordinate) {
+/**
+ * Reconstruct the inner permutation A2
+ * @param basis The list of the basis
+ * @param A2 The pointer to the inner permutation A2
+ */
+void reconstructTruthTable(const size_t *basis, TruthTable *A2) {
+    for (size_t coordinate = 0; coordinate < 1L << A2->n; ++coordinate) {
         size_t result = 0;
-        for (size_t i = 0; i < l2->n; ++i) {
+        for (size_t i = 0; i < A2->n; ++i) {
             if (1L << i & coordinate) {
-                result ^= basisValues[i];
+                result ^= basis[i];
             }
         }
-        l2->elements[coordinate] = result;
+        A2->elements[coordinate] = result;
     }
 }
 
-TruthTable *composeFunctions(TruthTable *f, TruthTable *g) {
-    TruthTable *result = initTruthTable(f->n);
-    for (size_t x = 0; x < 1L << f->n; ++x) {
-        result->elements[x] = f->elements[g->elements[x]];
+/**
+ * Compose two function F and G together.
+ * @param F The function F
+ * @param G The function G
+ * @return The composed function of F and G
+ */
+TruthTable *composeFunctions(TruthTable *F, TruthTable *G) {
+    TruthTable *result = initTruthTable(F->n);
+    for (size_t x = 0; x < 1L << F->n; ++x) {
+        result->elements[x] = F->elements[G->elements[x]];
     }
     return result;
 }

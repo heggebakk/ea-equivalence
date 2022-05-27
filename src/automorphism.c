@@ -1,7 +1,13 @@
 #include <stdlib.h>
 #include "structures.h"
 #include "permutation.h"
+/**
+ * Find the automorphism group of a function F
+ */
 
+/**
+ * A helper that tells the user what kind of flags that can be used and what the program need to run
+ */
 void printAmHelp();
 
 void setAmFlags(int argc, char *const *argv, TruthTable **functionF);

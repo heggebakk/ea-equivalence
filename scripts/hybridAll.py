@@ -4,13 +4,13 @@ import os
 import subprocess
 import threading
 
-dim = "dim8/classic"
+dim = "dim10"
 dirs = os.listdir(f"../TT_library/{dim}")
 
 
 def ea(name):
-    filename = f"../TT_library/{dim}/{name}"
-    subprocess.run(["./hybrid", filename, "-t"])
+#    filename = f"../TT_library/{dim}/{name}"
+    subprocess.run(["./hybrid", name, "-t"])
 
 
 if __name__ == '__main__':
@@ -18,12 +18,12 @@ if __name__ == '__main__':
     logging.basicConfig(format=time_format, level=logging.INFO, datefmt="%H:%M:%S")
     start = time.perf_counter()
     threads = list()
-    for file in dirs:
-        for i in range(10):
-            x = threading.Thread(target=ea, args=(file,))
-            threads.append(x)
-            x.start()
-        for thread in threads:
-            thread.join()
+    file = "../../TT_library/dim10/q_10_6.tt"
+    for i in range(10):
+        x = threading.Thread(target=ea, args=(file,))
+        threads.append(x)
+        x.start()
+    for thread in threads:
+        thread.join()
     end = time.perf_counter()
     print(end-start)

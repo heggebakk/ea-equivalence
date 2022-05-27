@@ -1,3 +1,5 @@
+#include <errno.h>
+#include <stdio.h>
 #include "permutation.h"
 #include <stdbool.h>
 #include <time.h>
@@ -529,4 +531,64 @@ size_t *createStandardBasis(size_t dimension) {
         basis[i] = 1L << i;
     }
     return basis;
+}
+
+TruthTable *randomLinearFunction(size_t n) {
+    size_t entries = 1L << n;
+    size_t listGenerated[entries];
+    listGenerated[0] = 0;
+    size_t basisImages[n];
+    for (size_t i = 0; i < n; ++i) {
+        size_t j = rand() % entries;
+        basisImages[i] = j;
+        for (int k = 0; k < 1L << i; ++k) {
+            listGenerated[(1L << i) + k] = listGenerated[k] ^ j;
+        }
+    }
+    TruthTable *result = initTruthTable(n);
+    memcpy(result->elements, listGenerated, sizeof(size_t) * entries);
+    return result;
+}
+
+TruthTable *randomLinearPermutation(size_t n) {
+    size_t entries = 1L << n;
+    bool *generated = calloc(sizeof (bool), entries);
+    size_t listGenerated[entries];
+    generated[0] = true;
+    listGenerated[0] = 0;
+
+    size_t basisImages[n];
+    for (int i = 0; i < n; ++i) {
+        size_t j = rand() % entries;
+        while (generated[j]) {
+            j = (j + 1) % entries;
+        }
+        basisImages[i] = j;
+        for (int k = 0; k < 1L << i; ++k) {
+            listGenerated[1L << i ^ k] = listGenerated[k] ^ j;
+            generated[listGenerated[k] ^ j] = true;
+        }
+    }
+    TruthTable *result = initTruthTable(n);
+    memcpy(result->elements, listGenerated, sizeof(size_t) * entries);
+    free(generated);
+    return result;
+}
+
+TruthTable * createFunction(TruthTable *F) {
+    size_t n = F->n;
+    TruthTable *L1 = randomLinearPermutation(n);
+    TruthTable *L2 = randomLinearPermutation(n);
+    TruthTable *L = randomLinearFunction(n);
+
+    TruthTable *temp = composeFunctions(F, L2);
+    TruthTable *G = composeFunctions(L1, temp);
+    addFunctionsTogether(G, L);
+
+    destroyTruthTable(L1);
+    destroyTruthTable(L2);
+    destroyTruthTable(L);
+    destroyTruthTable(temp);
+
+    return G;
 }

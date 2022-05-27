@@ -3,6 +3,7 @@
 #include "structures.h"
 
 void printPartitionHelp();
+
 void setPartitionFlags(int argc, char *const *argv, TruthTable **functionF);
 
 int main(int argc, char *argv[]) {
@@ -18,6 +19,7 @@ int main(int argc, char *argv[]) {
 }
 void printPartitionHelp() {
     printf("Partition\n");
+    printf("Find the partition of a function.\n")
     printf("Usage: partition [filename]\n");
     printf("filename = Path to file of a function F.\n");
     printf("\n");

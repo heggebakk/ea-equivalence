@@ -9,5 +9,6 @@ add_executable(ea_equivalence
 #        src/automorphism.c src/permutation.h src/permutation.c src/structures.h src/structures.c
 #        src/order.c src/order.h src/structures.c src/structures.h
 #        src/partition.c src/structures.h src/structures.c
+#        src/eaFull.c src/structures.c src/structures.h src/permutation.c src/permutation.h
         src/ea.c src/structures.c src/structures.h src/permutation.c src/permutation.h
-        src/hybrid.c)
+        )
