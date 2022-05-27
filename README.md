@@ -49,3 +49,42 @@ Example for testing for EA-equivalence between two functions $F$ and $G$.
 
 The program will print the result to the command line. If the two functions $F$ and $G$ are EA-equivalent, the program will 
 print out truth tables for $L_1, A_2, A$.
+
+### Other executables 
+When compiling `compile.sh` some other executables is created other than the `ea`. These can also be used:
+
+- `eaFull` Runs the program as above, but first computes all possible $L_1$ before trying to find an inner permutation.
+- `automorphism` Computes the automorphism group of a function F
+- `order` Computes the order of a function F
+- `partition` Partition a function F
+
+All of these expect one argument, the function $F$.
+```shell
+EA-equivalence test - full version
+Finds all outer permutations L1 first
+
+Usage: eaFull [eaFull_options] [filename_F] [filename_G]
+EaFull options:
+	-h 	 - Print help
+	-k 	 - Size of k
+	-t 	 - Add this for printing running times for different functions.
+
+	filename_F: path to the file of a function F
+	filename_G: path to the file of a function G
+```
+```shell
+Automorphism
+Usage: automorphism [filename]
+
+filename = the path to the file of a function F.
+```
+```shell
+Order
+Usage: order [filename]
+filename = Path to file of partition of a function F.
+```
+```shell
+Partition
+Usage: partition [filename]
+filename = Path to file of a function F.
+```
