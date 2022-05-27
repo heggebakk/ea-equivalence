@@ -1,5 +1,6 @@
-# ea-equivalence
-This is an efficient implementation of a test for EA-equivalence between two functions $F$ and $G$.
+# A test for EA-equivalence
+Testing if two functions $F$ and $G$ are EA-equivalent through the relation $L_1 \circ F \circ A2 + A = G$. If such a 
+relation is found, returns $L_1, A2, A$.
 
 ## What you need
 - [GCC](https://gcc.gnu.org/) to compile the program, version 10 or above.
@@ -13,7 +14,7 @@ how to run the program. It will look something like:
 
 ```text
 EA-equivalence test
-Usage: ea [ea_options] [filename_F] [filename_G]
+Usage: ea[ea_options] [filename_F] [filename_G]
 Ea options:
 	-h 	 - Print help
 	-k 	 - Size of k
@@ -32,8 +33,19 @@ The truth table file is expected to be of the format:
 Example for testing for EA-equivalence between two functions $F$ and $G$.
 ```shell
 ./ea path/to/functionF path/to/functionG
+  L1:
+  6
+  0 3 1 2 38 37 39 36 32 35 33 34 6 5 7 4 9 10 8 11 47 44 46 45 41 42 40 43 15 12 14 13 58 57 59 56 28 31 29 30 26 25 27 24 60 63 61 62 51 48 50 49 21 22 20 23 19 16 18 17 53 54 52 55
+
+  A2:
+  6
+  0 52 50 6 40 28 26 46 4 48 54 2 44 24 30 42 43 31 25 45 3 55 49 5 47 27 29 41 7 51 53 1 39 19 21 33 15 59 61 9 35 23 17 37 11 63 57 13 12 56 62 10 36 16 22 34 8 60 58 14 32 20 18 38
+
+  A:
+  6
+  0 50 59 9 35 17 24 42 6 52 61 15 37 23 30 44 60 14 7 53 31 45 36 22 58 8 1 51 25 43 34 16 2 48 57 11 33 19 26 40 4 54 63 13 39 21 28 46 62 12 5 55 29 47 38 20 56 10 3 49 27 41 32 18
+
 ```
 
 The program will print the result to the command line. If the two functions $F$ and $G$ are EA-equivalent, the program will 
 print out truth tables for $L_1, A_2, A$.
-

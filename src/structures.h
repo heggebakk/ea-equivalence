@@ -284,4 +284,25 @@ void destroyRunTimes(RunTimes *runTimes);
  */
 size_t *createStandardBasis(size_t dimension);
 
+/**
+ * Create a random linear function of n n
+ * @param n The n
+ * @return A random linear function of n n
+ */
+TruthTable *randomLinearFunction(size_t n);
+
+/**
+ * Create a random linear permutation of n n
+ * @param n The n
+ * @return A random linear permutation of n n
+ */
+TruthTable *randomLinearPermutation(size_t n);
+
+/**
+ * Create a new function with respect to a function F
+ * @param F The function F to create with respect to
+ * @return A new function
+ */
+TruthTable * createFunction(TruthTable *F);
+
 #endif //EA_EQUIVALENCE_STRUCTURES_H

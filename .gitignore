@@ -166,8 +166,8 @@ bb.out.*
 
 # End of https://www.toptal.com/developers/gitignore/api/c,clion+all,latex
 
-/result.txt
-/test.txt
+/results/result.txt
+/results/test.txt
 /group_test.txt
 /group.txt
 /automorphism

@@ -5,36 +5,54 @@
 #include "structures.h"
 #include "stdbool.h"
 
-bool innerPermutation(TruthTable *F, TruthTable *G, const size_t *basis, TruthTable *L2, TruthTable **L);
+/**
+ * Find the inner permutation
+ * Apply the inverse of L1 to the relation L1 * F * A2 + G to obtain F * A2 + A' = G'
+ * Find a A2 and compute A' = F * A2 + G'. If A' is affine, we have found a valid EA-equivalence.
+ * @param F Function F
+ * @param G Function G
+ * @param basis A basis
+ * @param A2
+ * @param A
+ * @return
+ */
+bool innerPermutation(TruthTable *F, TruthTable *G, const size_t *basis, TruthTable *A2, TruthTable **A);
 
 bool *computeSetOfTs(TruthTable *F, size_t x);
+
+/**
+ * Calculate the inverse of a function F
+ * @param F The function F to inverse
+ * @return The inverse of function F
+ */
+TruthTable *inverse(TruthTable *F);
 
 /**
  * Compute the restricted domain for the given list of T's.
  * The domain is represented with a linked list.
  * @param listOfTs A set of T's that we want to compute the domain for
- * @param f A function F
+ * @param F A function F
  * @return The restricted domain represented as a linked list.
  */
-struct Node * reduceDomain(const bool *listOfTs, TruthTable *f);
+struct Node * reduceDomain(const bool *listOfTs, TruthTable *F);
 
 bool
 dfs(Node **domain, size_t k, size_t *values, TruthTable *F, TruthTable *G, TruthTable *A2, TruthTable **L);
 
 /**
  * Reconstruction of a truth table
- * @param basisValues A standard basis values
+ * @param basis A standard basis values
  * @param dimension Working n
  */
-void reconstructTruthTable(const size_t *basisValues, TruthTable *l2);
+void reconstructTruthTable(const size_t *basis, TruthTable *A2);
 
 /**
  * Compose function F with function G
- * @param f Function that is f be composed
- * @param g Function that is composed with
+ * @param F Function that is F be composed
+ * @param G Function that is composed with
  * @return The result of the composing
  */
-TruthTable * composeFunctions(TruthTable *f, TruthTable *g);
+TruthTable * composeFunctions(TruthTable *F, TruthTable *G);
 
 /**
  * Add function F with function G
@@ -79,5 +97,14 @@ TtNode *outerPermutation(Partition *f, Partition *g, size_t dimension, size_t *b
 void recursive(size_t k, const size_t *basis, size_t *images, Partition *partitionF, Partition *partitionG, size_t dimension,
                size_t *generated, bool *generatedImages, TtNode *l1, size_t *fBucketPosition, size_t *gBucketPosition,
                size_t *domainMap);
+
+bool hybridEquivalenceTest(Partition *f, Partition *g, size_t dimension, size_t *basis, size_t *fBucketPosition,
+                           size_t *gBucketPosition, size_t *domainMap, TruthTable *functionF, TruthTable *functionG,
+                           RunTimes *runTime);
+
+void hybridRecursive(size_t k, const size_t *basis, size_t *images, Partition *partitionF, Partition *partitionG,
+                     size_t dimension, size_t *generated, bool *generatedImages, size_t *fBucketPosition,
+                     size_t *gBucketPosition, size_t *domainMap, TruthTable *functionF, TruthTable *functionG,
+                     RunTimes *runTime, bool *foundSolution, size_t *counter);
 
 #endif //EA_EQUIVALENCE_PERMUTATION_H

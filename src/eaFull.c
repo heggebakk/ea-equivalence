@@ -5,9 +5,10 @@
 #include "time.h"
 #include "structures.h"
 #include "permutation.h"
+
 /**
- * Here you will find the implementation of the algorithm for running the efficient implementation, where for each outer
- * permutation we try to find an inner permutation
+ * Here you will find the implementation of the algorithm for running the full version, where we fist find all outer
+ * permutations, before we try to find an inner permutation.
  */
 
 /**
@@ -20,14 +21,13 @@
  * @param runTime The run times for different functions
  * @param basis The basis
  */
-void
-runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG, size_t n, RunTimes *runTime,
-             size_t *basis);
+void runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG, size_t n,
+                  RunTimes *runTime, size_t *basis);
 
 /**
  * All the flags that is or can be used to run the program
- * @param argc
- * @param argv
+ * @param argc Number of program arguments
+ * @param argv Program arguments
  * @param filename Path to where to write results to
  * @param functionF Path to function F
  * @param functionG  Path to function G
@@ -54,8 +54,9 @@ int main(int argc, char *argv[]) {
 
     // Parse files to truth tables
     // Parse function F. Parse function G if given, otherwise create random function G with respect to function F.
-    if (functionG == NULL) {
+    if (functionG == NULL){
         functionG = createFunction(functionF);
+        printf("G:\n");
         printTruthTable(functionG);
     }
     size_t n = functionF->n;
@@ -86,7 +87,7 @@ int main(int argc, char *argv[]) {
         destroyPartitions(partitionF);
         destroyPartitions(partitionG);
     } else {
-        // Solve with walsh
+        // Solve with Walsh Transform
         startTotalTime = clock();
         runTime = initRunTimes();
 
@@ -116,6 +117,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+
 void
 runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *partitionG, size_t n, RunTimes *runTime,
              size_t *basis) {
@@ -125,12 +127,58 @@ runAlgorithm(TruthTable *F, TruthTable *G, Partition *partitionF, Partition *par
     MappingOfBuckets *mappingOfBucketsG = initMappingsOfBuckets();
     mapPartitionBuckets(partitionG, partitionF, n, mappingOfBucketsF);
     mapPartitionBuckets(partitionF, partitionG, n, mappingOfBucketsG);
-    bool foundSolution = false;
 
     // Loop over all the mappings, if we find a solution, we break and finish.
     for (int m = 0; m < mappingOfBucketsG->numOfMappings; ++m) {
-        foundSolution = hybridEquivalenceTest(partitionF, partitionG, n, basis, mappingOfBucketsF->mappings[m],
-                                              mappingOfBucketsG->mappings[m], mappingOfBucketsG->domains[m], F, G, runTime);
+        bool foundSolution = false;
+
+        // Calculate Outer Permutation
+        clock_t startOuterPermutationTime = clock();
+        TtNode *allL1 = outerPermutation(partitionF, partitionG, n, basis,
+                                         mappingOfBucketsF->mappings[m],
+                                         mappingOfBucketsG->mappings[m], mappingOfBucketsG->domains[m]);
+        runTime->outerPermutation = stopTime(runTime->outerPermutation, startOuterPermutationTime);
+        size_t numPermutations = countTtNodes(allL1);
+        printf("Permutations: %zu\n", numPermutations);
+
+        for (size_t i = 0; i < numPermutations; ++i) {
+            TruthTable *L1 = getTtNode(allL1, i); // The current L1 from the outer permutations
+            TruthTable *L1Inverse = inverse(L1);
+            TruthTable *currentG = composeFunctions(L1Inverse, G);
+            TruthTable *L;
+            TruthTable *A2 = initTruthTable(n);
+
+            // Calculate inner permutation
+            clock_t startInnerPermutationTime = clock();
+            if (innerPermutation(F, currentG, basis, A2, &L)) {
+                runTime->innerPermutation = stopTime(runTime->innerPermutation, startInnerPermutationTime);
+                foundSolution = true;
+                // Find A, such that A = L1 * F * A2 + G
+                TruthTable *A = composeFunctions(L1, L);
+
+                // Print L1, A2 and A
+                printf("L1:\n");
+                printTruthTable(L1);
+                printf("\nA2:\n");
+                printTruthTable(A2);
+                printf("\nA:\n");
+                printTruthTable(A);
+                printf("\n");
+
+                // Free memory
+                destroyTruthTable(A);
+                destroyTruthTable(L1Inverse);
+                destroyTruthTable(A2);
+                destroyTruthTable(L);
+                destroyTruthTable(currentG);
+
+                break;
+            }
+            destroyTruthTable(L1Inverse);
+            destroyTruthTable(A2);
+            destroyTruthTable(currentG);
+        }
+        destroyTtNodes(allL1);
         if (foundSolution) break;
     }
     destroyMappingOfBuckets(mappingOfBucketsF);
@@ -170,7 +218,6 @@ void setFlags(int argc, char *const *argv, bool *times, TruthTable **functionF, 
         } else {
             if (*functionF == NULL) {
                 *functionF = parseTruthTable(argv[i]);
-                printf("%s\n", argv[i]);
             } else if (*functionG == NULL) {
                 *functionG = parseTruthTable(argv[i]);
             }
@@ -179,9 +226,10 @@ void setFlags(int argc, char *const *argv, bool *times, TruthTable **functionF, 
 }
 
 void printEaHelp() {
-    printf("EA-equivalence test\n");
-    printf("Usage: ea[ea_options] [filename_F] [filename_G]\n");
-    printf("Ea options:\n");
+    printf("EA-equivalence test - full version\n");
+    printf("Finds all outer permutations L1 first\n\n");
+    printf("Usage: eaFull [eaFull_options] [filename_F] [filename_G]\n");
+    printf("EaFull options:\n");
     printf("\t-h \t - Print help\n");
     printf("\t-k \t - Size of k\n");
     printf("\t-t \t - Add this for printing running times for different functions.\n");

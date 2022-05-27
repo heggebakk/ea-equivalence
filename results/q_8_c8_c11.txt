@@ -1,0 +1,7 @@
+../TT_library/dim8/classic/classic_8.tt
+Counter: 0
+Running times:
+Time spent partitioning: 0.382466 
+Time spent outer permutation: 0.000000 
+Time spent inner permutation: 0.000000 
+Total time spent: 30.997650 
