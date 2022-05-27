@@ -10,7 +10,7 @@ dirs = os.listdir(f"../TT_library/{dim}")
 
 def ea(name):
 #    filename = f"../TT_library/{dim}/{name}"
-    subprocess.run(["./hybrid", name, "-t"])
+    subprocess.run(["./ea", name, "-t"])
 
 
 if __name__ == '__main__':
